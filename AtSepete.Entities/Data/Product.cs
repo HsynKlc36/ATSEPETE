@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace AtSepete.Entities.Data
 {
     public class Product:Base
     {
-      
+        [Key]
         public Guid ProductId { get; set; }
         public string Barcode { get; set; }
 
@@ -28,7 +29,6 @@ namespace AtSepete.Entities.Data
         //navigation property
         public Category Category { get; set; }
         public IEnumerable<Market> Markets { get; set; }
-        public IEnumerable<User> Customers { get; set; }
         public IEnumerable<Order> Orders { get; set; }
 
 

@@ -2,6 +2,7 @@
 using AtSepete.Entities.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace AtSepete.Entities.Data
 {
     public class User:Base
     {
-        
+        [Key]
         public Guid UserId { get; set; }
         public string FirstName { get; set; }
         public string SecondName { get; set; }
