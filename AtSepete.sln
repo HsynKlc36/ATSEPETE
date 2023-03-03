@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtSepete.UI", "AtSepete.UI\AtSepete.UI.csproj", "{96908511-5BB8-44CA-A2BB-0CAA58886523}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtSepete.UI", "AtSepete.UI\AtSepete.UI.csproj", "{96908511-5BB8-44CA-A2BB-0CAA58886523}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtSepete.Api", "AtSepete.Api\AtSepete.Api.csproj", "{3EAA4675-7EAC-40FB-88A1-AD84A8CA7D09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtSepete.Api", "AtSepete.Api\AtSepete.Api.csproj", "{3EAA4675-7EAC-40FB-88A1-AD84A8CA7D09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtSepete.Business", "AtSepete.Business\AtSepete.Business.csproj", "{5C04BA1A-3E19-45AB-B7C9-64C736AA6507}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtSepete.Business", "AtSepete.Business\AtSepete.Business.csproj", "{5C04BA1A-3E19-45AB-B7C9-64C736AA6507}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtSepete.Entities", "AtSepete.Entities\AtSepete.Entities.csproj", "{6C7E49A3-5DB8-4108-AD3B-90B420BC382E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtSepete.Entities", "AtSepete.Entities\AtSepete.Entities.csproj", "{6C7E49A3-5DB8-4108-AD3B-90B420BC382E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtSepete.Repositories", "AtSepete.Repositories\AtSepete.Repositories.csproj", "{98718B2E-D89D-4650-8DB3-F7B39E5F3148}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtSepete.Repositories", "AtSepete.Repositories\AtSepete.Repositories.csproj", "{98718B2E-D89D-4650-8DB3-F7B39E5F3148}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtSepete.Dtos", "AtSepete.Dtos\AtSepete.Dtos.csproj", "{CAF6BFD2-79F0-49EA-BF45-E4818549CBE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{98718B2E-D89D-4650-8DB3-F7B39E5F3148}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98718B2E-D89D-4650-8DB3-F7B39E5F3148}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98718B2E-D89D-4650-8DB3-F7B39E5F3148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAF6BFD2-79F0-49EA-BF45-E4818549CBE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAF6BFD2-79F0-49EA-BF45-E4818549CBE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAF6BFD2-79F0-49EA-BF45-E4818549CBE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAF6BFD2-79F0-49EA-BF45-E4818549CBE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

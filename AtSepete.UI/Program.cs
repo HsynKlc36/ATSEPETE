@@ -1,10 +1,16 @@
+using AtSepete.Repositories.Context;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
+builder.Services.AddDbContext<AtSepeteDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AtSepete"));
+});
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

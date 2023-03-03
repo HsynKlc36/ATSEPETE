@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AtSepete.Entities
+namespace AtSepete.Entities.Enums
 {
-    class Class2
+    public enum Role
     {
+        Admin=1,
+        Customer=3
+
     }
 }

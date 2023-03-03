@@ -1,4 +1,4 @@
-﻿namespace AtSepete.Entities
+﻿namespace AtSepete.Dtos
 {
     public class Class1
     {
