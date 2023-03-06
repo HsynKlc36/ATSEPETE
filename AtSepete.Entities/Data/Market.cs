@@ -15,8 +15,9 @@ namespace AtSepete.Entities.Data
         public string MarketName { get; set; }
         public string Description { get; set; }
         public string Adress { get; set; }
+        public string PhoneNumber { get; set; }
         //navigation property
-        public IEnumerable<Product> Products { get; set; }
+        public IEnumerable<ProductMarket> ProductMarkets{ get; set; }
         public IEnumerable<Order> Orders { get; set; }
 
     }

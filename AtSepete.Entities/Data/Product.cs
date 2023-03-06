@@ -28,8 +28,8 @@ namespace AtSepete.Entities.Data
         public Guid CategoryId { get; set; }
         //navigation property
         public Category Category { get; set; }
-        public IEnumerable<Market> Markets { get; set; }
-        public IEnumerable<Order> Orders { get; set; }
+        public IEnumerable<ProductMarket> ProductMarkets { get; set; }
+        public IEnumerable<OrderDetail> OrderDetails { get; set; }
 
 
 

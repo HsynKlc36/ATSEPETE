@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtSepete.Entities", "AtSepe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtSepete.Repositories", "AtSepete.Repositories\AtSepete.Repositories.csproj", "{98718B2E-D89D-4650-8DB3-F7B39E5F3148}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtSepete.Dtos", "AtSepete.Dtos\AtSepete.Dtos.csproj", "{CAF6BFD2-79F0-49EA-BF45-E4818549CBE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtSepete.Dtos", "AtSepete.Dtos\AtSepete.Dtos.csproj", "{CAF6BFD2-79F0-49EA-BF45-E4818549CBE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

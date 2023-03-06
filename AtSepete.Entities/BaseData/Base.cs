@@ -8,8 +8,9 @@ namespace AtSepete.Entities.BaseData
 {
     public abstract class Base
     {
-        public DateTime CreatedDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
-        public DateTime DeletedDate { get; set; }
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? ModifiedDate { get; set; }
+        public DateTime? DeletedDate { get; set; }
+        public bool  IsActive { get; set; }=true; 
     }
 }

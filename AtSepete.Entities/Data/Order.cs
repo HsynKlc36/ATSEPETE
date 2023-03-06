@@ -18,7 +18,7 @@ namespace AtSepete.Entities.Data
         [ForeignKey("Market")]
         public Guid MarketId { get; set; }
         //navigation property
-        public IEnumerable<Product> Products { get; set; }
+        public IEnumerable<OrderDetail> OrderDetails { get; set; }
         public User Customer { get; set; }
         public Market Market { get; set; }
 
