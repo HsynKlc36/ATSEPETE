@@ -51,13 +51,16 @@ namespace AtSepete.Api.Controllers
         [Route("[action]")]
         public async Task<IActionResult> CreateUser(User User)
         {
-            return Ok(await _UserService.Add(User));//User ile birlikte appUser dan rolu yazar olanı da göndermemiz gerekecek!!!!
+            return Ok(await _UserService.Add(User));
         }
         [HttpPut]
         [Route("[action]")]
-        public async Task<IActionResult> UpdateUser(User User)
+        public async Task<IActionResult> UpdateUser([FromBody]User User)
         {
-            return Ok(await _UserService.Update(User));
+            User Customer = await _UserService.GetById(User.UserId);
+            
+            Customer.IsActive= User.IsActive;
+            return Ok(await _UserService.Update(Customer));
         }
         [HttpDelete]
         [Route("[action]/{id}")]

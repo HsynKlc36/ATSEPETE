@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AtSepete.Business\AtSepete.Business.csproj" />
     <ProjectReference Include="..\AtSepete.Repositories\AtSepete.Repositories.csproj" />
   </ItemGroup>
 

@@ -4,6 +4,7 @@ using AtSepete.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AtSepete.Repositories.Migrations
 {
     [DbContext(typeof(AtSepeteDbContext))]
-    partial class AtSepeteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230307125119_second")]
+    partial class second
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -264,8 +266,7 @@ namespace AtSepete.Repositories.Migrations
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(0);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Adress")
                         .IsRequired()
