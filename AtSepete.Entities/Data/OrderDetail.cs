@@ -18,7 +18,7 @@ namespace AtSepete.Entities.Data
         [ForeignKey("OrderInProduct")]
         public Guid ProductId { get; set; }
         public int Amount { get; set; }
-        public virtual Order ProductInOrder { get; set; }
-        public virtual Product OrderInProduct { get; set; }
+        virtual public  Order ProductInOrder { get; set; }
+        virtual public  Product OrderInProduct { get; set; }
     }
 }

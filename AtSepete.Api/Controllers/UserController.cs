@@ -58,10 +58,10 @@ namespace AtSepete.Api.Controllers
         public async Task<IActionResult> UpdateUser([FromBody]User User)
         {
             User Customer = await _UserService.GetById(User.UserId);
-            
-            Customer.IsActive= User.IsActive;
             return Ok(await _UserService.Update(Customer));
         }
+      
+      
         [HttpDelete]
         [Route("[action]/{id}")]
         public async Task<IActionResult> PassiveUser(Guid id)

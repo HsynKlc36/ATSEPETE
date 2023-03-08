@@ -14,7 +14,7 @@ namespace AtSepete.Repositories.Concrete
 {
     public class GenericRepository<T>:IGenericRepository<T> where T:Base
     {
-        private readonly AtSepeteDbContext _context;
+        protected readonly AtSepeteDbContext _context;
         private DbSet<T> _db;
 
         public GenericRepository(AtSepeteDbContext Context)
@@ -22,79 +22,79 @@ namespace AtSepete.Repositories.Concrete
             _context = Context;
             _db=_context.Set<T>();
         }
-        public async Task<bool> Activate(Guid id)
+        public async Task<bool> ActivateAsync(Guid id)
         {
-            T item = await GetById(id);
+            T item = await GetByIdAsync(id);
             item.IsActive = true;
             return await Save();
         }
 
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             return _db.ToList();
         }
 
-        public async Task<T> GetByDefault(Expression<Func<T, bool>> exp)
+        public async Task<T> GetByDefaultAsync(Expression<Func<T, bool>> exp)
         {
             return  _db.FirstOrDefault(exp);
         }
 
-        public async Task<T> GetById(Guid id)
+        public async Task<T> GetByIdAsync(Guid id)
         {
             return _db.Find(id);
         }
 
-        public async Task<IEnumerable<T>> GetDefault(Expression<Func<T, bool>> exp)
+        public async Task<IEnumerable<T>> GetDefaultAsync(Expression<Func<T, bool>> exp)
         {
             return _db.Where(exp).ToList();
         }
-        public async Task<IEnumerable<T>> GetAll(string[] includes)
+        public async Task<IEnumerable<T>> GetAllAsync(string[] includes)
         {
             var query = _db.AsQueryable();
             foreach (var include in includes)
                 query = query.Include(include);
             return query.ToList();
         }
-        public async Task<IEnumerable<T>> GetActive(string[] includes)
+        public async Task<IEnumerable<T>> GetActiveAsync(string[] includes)
         {
             var query = _db.AsQueryable();
             foreach (var include in includes)
                 query = query.Include(include);
             return query.Where(x => x.IsActive == true).ToList();
         }
-        public async Task<bool> Add(T item)
+        public async Task<bool> AddAsync(T item)
         {
-            _db.Add(item);
-            return await Save();
+            _db.Add(item);          
+            return  await Save();
         }
 
 
-        public async Task<bool> SetPassive(Guid id)
+        public async Task<bool> SetPassiveAsync(Guid id)
         {
-            T item =await GetById(id);
+            T item =await GetByIdAsync(id);
             item.IsActive = true;
             return await Save();
         }
-        public async Task<bool> Remove(T item)
+        public async Task<bool> RemoveAsync(T item)
         {
             _db.Remove(item);
             return await Save();
         }
 
-        public async Task<bool> SetPassive(Expression<Func<T, bool>> exp)
+        public async Task<bool> SetPassiveAsync(Expression<Func<T, bool>> exp)
         {
             try
             {
                 using (TransactionScope ts = new TransactionScope())
                 {
-                    var items =await GetDefault(exp);
+                    var items =await GetDefaultAsync(exp);
                     int count = 0;
 
                     foreach (var item in items)
                     {
                         item.IsActive = false;
-                        bool result = await Update(item);
+                        bool result = await UpdateAsync(item);
                         if (result) count++;
                     }
 
@@ -112,7 +112,7 @@ namespace AtSepete.Repositories.Concrete
 
 
 
-        public async Task<bool> Update(T item)
+        public async Task<bool> UpdateAsync(T item)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace AtSepete.Repositories.Concrete
             }
         }
 
-        public async Task<bool> Update(IEnumerable<T> items)
+        public async Task<bool> UpdateAsync(IEnumerable<T> items)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace AtSepete.Repositories.Concrete
 
                     foreach (var item in items)
                     {
-                        bool result = await Update(item);
+                        bool result = await UpdateAsync(item);
                         if (result) count++;
                     }
 
@@ -148,6 +148,10 @@ namespace AtSepete.Repositories.Concrete
             {
                 return false;
             }
+        }
+        public IEnumerable<T> Where(Expression<Func<T, bool>> where)
+        {
+            return _db.Where(where).AsQueryable();
         }
         public async Task<bool> Save()
         {

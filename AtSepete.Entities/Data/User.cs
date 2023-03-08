@@ -17,7 +17,7 @@ namespace AtSepete.Entities.Data
         public DateTime BirthDate { get; set; }
         public string PhoneNumber { get; set; }
         //navigation property
-        public IEnumerable<Order>? Orders { get; set; }
+        virtual public IEnumerable<Order>? Orders { get; set; }
         
     }
 }

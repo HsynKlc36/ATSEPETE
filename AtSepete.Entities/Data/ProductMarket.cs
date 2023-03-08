@@ -19,7 +19,7 @@ namespace AtSepete.Entities.Data
         public Guid MarketId { get; set; }
         public int Stock { get; set; }
         public decimal Price { get; set; }
-        public virtual Product ProductInMarket { get; set; }
-        public virtual Market MarketInProduct { get; set; }
+        virtual public Product ProductInMarket { get; set; }
+        virtual public Market MarketInProduct { get; set; }
     }
 }
