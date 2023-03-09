@@ -1,6 +1,8 @@
 ﻿using AtSepete.Business.Abstract;
+using AtSepete.Entities.Base;
 using AtSepete.Entities.BaseData;
 using AtSepete.Repositories.Abstract;
+using AutoMapper;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -11,33 +13,42 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Business.Concrete
 {
-    public class GenericManager<T>:IGenericService<T> where T : Base
+    public class GenericManager<Dto,T>:IGenericService<Dto,T> where T : Base
     {
         private readonly IGenericRepository<T> _repository;
+        private readonly IMapper _mapper;
 
-        public GenericManager(IGenericRepository<T> repository)
+        public GenericManager(IGenericRepository<T> repository,IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
-        public async Task<bool> Activate(Guid id)
+        public async Task<BaseResponse<bool>> Activate(Guid id)
         {
-            try
+            var tempEntity=await _repository.GetByIdAsync(id);
+            if (tempEntity==null)
             {
+                return new BaseResponse<bool>("data bulunamadı");
+            }
+            var result = await _repository.ActivateAsync(id);
+            return new BaseResponse<bool>(result);
+            //try
+            //{
 
-            if ( GetById(id) == null)
-            {
-                return false;
-            }
-            return  await _repository.Activate(id);
-            }
-            catch (Exception)
-            {
+            //if ( GetById(id) == null)
+            //{
+            //    return false;
+            //}
+            //return  await _repository.Activate(id);
+            //}
+            //catch (Exception)
+            //{
 
-                throw new Exception("Aktivasyon yapılırken hata oluştu");
-            }
+            //    throw new Exception("Aktivasyon yapılırken hata oluştu");
+            //}
         }
 
-        public async Task<bool> Add(T item)
+        public async Task<BaseResponse<bool>> Add(Dto item)
         {
             try
             {
@@ -55,28 +66,28 @@ namespace AtSepete.Business.Concrete
 
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<BaseResponse<IEnumerable<Dto>>> GetAll()
         {
             return await _repository.GetAll();
         }
 
-        public async Task<T> GetByDefault(Expression<Func<T, bool>> exp)
+        public async Task<BaseResponse<Dto>> GetByDefault(Expression<Func<Dto, bool>> exp)
         {
             return await _repository.GetByDefault(exp);
         }
 
-        public async Task<T> GetById(Guid id)
+        public async Task<BaseResponse<Dto>> GetById(Guid id)
         {
             return await _repository.GetById(id);
            
         }
 
-        public async Task<IEnumerable<T>> GetDefault(Expression<Func<T, bool>> exp)
+        public async Task<BaseResponse<IEnumerable<Dto>>> GetDefault(Expression<Func<Dto, bool>> exp)
         {
             return await _repository.GetDefault(exp);
         }
 
-        public async Task<bool> SetPassive(Guid id)
+        public async Task<BaseResponse<bool>> SetPassive(Guid id)
         {
             
             if ( GetById(id) == null)
@@ -86,7 +97,7 @@ namespace AtSepete.Business.Concrete
             return await _repository.SetPassive(id);
         }
 
-        public async Task<bool> Remove(T item)
+        public async Task<BaseResponse<bool>> Remove(Dto item)
         {
             try
             {
@@ -104,12 +115,12 @@ namespace AtSepete.Business.Concrete
             }
         }
 
-        public async Task<bool> SetPassive(Expression<Func<T, bool>> exp)
+        public async Task<BaseResponse<bool>> SetPassive(Expression<Func<Dto, bool>> exp)
         {
             return await _repository.SetPassive(exp);
         }
 
-        public async Task<bool> Update(T item)
+        public async Task<BaseResponse<bool>> Update(Dto item)
         {
             if (item == null)
             {
@@ -118,7 +129,7 @@ namespace AtSepete.Business.Concrete
             return await _repository.Update(item);
         }
 
-        public async Task<bool> Update(IEnumerable<T> items)
+        public async Task<BaseResponse<bool>> Update(IEnumerable<Dto> items)
         {
             if (items == null)
             {
@@ -126,13 +137,15 @@ namespace AtSepete.Business.Concrete
             }
             return await _repository.Update(items);
         }
-        public async Task<IEnumerable<T>> GetActive(string[] includes)
-        {
-            return await _repository.GetActive(includes);
-        }
-        public async Task<IEnumerable<T>> GetAll(string[] includes)
-        {
-            return await _repository.GetAll(includes);
-        }
+
+      
+        //public async Task<BaseResponse<IEnumerable<Dto>>> GetActive(string[] includes)
+        //{
+        //    return await _repository.GetActive(includes);
+        //}
+        //public async Task<BaseResponse<IEnumerable<Dto>>> GetAll(string[] includes)
+        //{
+        //    return await _repository.GetAll(includes);
+        //}
     }
 }

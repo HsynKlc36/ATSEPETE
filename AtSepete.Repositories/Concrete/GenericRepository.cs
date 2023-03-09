@@ -26,6 +26,8 @@ namespace AtSepete.Repositories.Concrete
         {
             T item = await GetByIdAsync(id);
             item.IsActive = true;
+            item.ModifiedDate= DateTime.Now;
+            _db.Update(item);
             return await Save();
         }
 
@@ -48,20 +50,6 @@ namespace AtSepete.Repositories.Concrete
         public async Task<IEnumerable<T>> GetDefaultAsync(Expression<Func<T, bool>> exp)
         {
             return _db.Where(exp).ToList();
-        }
-        public async Task<IEnumerable<T>> GetAllAsync(string[] includes)
-        {
-            var query = _db.AsQueryable();
-            foreach (var include in includes)
-                query = query.Include(include);
-            return query.ToList();
-        }
-        public async Task<IEnumerable<T>> GetActiveAsync(string[] includes)
-        {
-            var query = _db.AsQueryable();
-            foreach (var include in includes)
-                query = query.Include(include);
-            return query.Where(x => x.IsActive == true).ToList();
         }
         public async Task<bool> AddAsync(T item)
         {
@@ -94,6 +82,7 @@ namespace AtSepete.Repositories.Concrete
                     foreach (var item in items)
                     {
                         item.IsActive = false;
+                        item.DeletedDate = DateTime.Now;
                         bool result = await UpdateAsync(item);
                         if (result) count++;
                     }
@@ -116,6 +105,7 @@ namespace AtSepete.Repositories.Concrete
         {
             try
             {
+                item.ModifiedDate= DateTime.Now;
                 _db.Update(item);
                 return await Save();
             }
@@ -135,6 +125,7 @@ namespace AtSepete.Repositories.Concrete
 
                     foreach (var item in items)
                     {
+                        item.ModifiedDate= DateTime.Now;
                         bool result = await UpdateAsync(item);
                         if (result) count++;
                     }
@@ -158,5 +149,19 @@ namespace AtSepete.Repositories.Concrete
             return _context.SaveChanges() > 0;
         }
 
+        //public async Task<IEnumerable<T>> GetAllAsync(string[] includes)
+        //{
+        //    var query = _db.AsQueryable();
+        //    foreach (var include in includes)
+        //        query = query.Include(include);
+        //    return query.ToList();
+        //}
+        //public async Task<IEnumerable<T>> GetActiveAsync(string[] includes)
+        //{
+        //    var query = _db.AsQueryable();
+        //    foreach (var include in includes)
+        //        query = query.Include(include);
+        //    return query.Where(x => x.IsActive == true).ToList();
+        //}
     }
 }
