@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AtSepete.Dtos\AtSepete.Dtos.csproj" />
     <ProjectReference Include="..\AtSepete.Entities\AtSepete.Entities.csproj" />
   </ItemGroup>
 

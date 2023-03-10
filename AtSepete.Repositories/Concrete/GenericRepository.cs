@@ -66,6 +66,7 @@ namespace AtSepete.Repositories.Concrete
         }
         public async Task<bool> RemoveAsync(T item)
         {
+
             _db.Remove(item);
             return await Save();
         }

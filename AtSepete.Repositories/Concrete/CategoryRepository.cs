@@ -1,4 +1,5 @@
-﻿using AtSepete.Entities.Data;
+﻿using AtSepete.Dtos.Dto;
+using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Context;
 using Microsoft.EntityFrameworkCore;

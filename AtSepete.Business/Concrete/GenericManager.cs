@@ -1,7 +1,8 @@
 ﻿using AtSepete.Business.Abstract;
-using AtSepete.Entities.Base;
+using AtSepete.Entities.BaseMessage;
 using AtSepete.Entities.BaseData;
 using AtSepete.Repositories.Abstract;
+using AtSepete.Repositories.Concrete;
 using AutoMapper;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -13,132 +14,130 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Business.Concrete
 {
-    public class GenericManager<Dto,T>:IGenericService<Dto,T> where T : Base
+    public class GenericManager<Dto, T> : IGenericService<Dto, T> where T : Base
     {
         private readonly IGenericRepository<T> _repository;
         private readonly IMapper _mapper;
 
-        public GenericManager(IGenericRepository<T> repository,IMapper mapper)
+        public GenericManager(IGenericRepository<T> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
-        public async Task<BaseResponse<bool>> Activate(Guid id)
+
+        public Task<BaseResponse<bool>> ActivateAsync(Guid id)
         {
-            var tempEntity=await _repository.GetByIdAsync(id);
-            if (tempEntity==null)
-            {
-                return new BaseResponse<bool>("data bulunamadı");
-            }
-            var result = await _repository.ActivateAsync(id);
-            return new BaseResponse<bool>(result);
-            //try
-            //{
-
-            //if ( GetById(id) == null)
-            //{
-            //    return false;
-            //}
-            //return  await _repository.Activate(id);
-            //}
-            //catch (Exception)
-            //{
-
-            //    throw new Exception("Aktivasyon yapılırken hata oluştu");
-            //}
+            throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<bool>> Add(Dto item)
+        public Task<BaseResponse<IEnumerable<Dto>>> GetAllAsync()
         {
-            try
-            {
-                if (item == null)
-                {
-                    return false;
-                }
-                return await _repository.Add(item);
-            }
-            catch (Exception)
-            {
-
-                throw new Exception("Ekleme işlemi sırasında hata oluştu");
-            }
-
+            throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<IEnumerable<Dto>>> GetAll()
+        public Task<BaseResponse<Dto>> GetByDefaultAsync(Expression<Func<Dto, bool>> exp)
         {
-            return await _repository.GetAll();
+            throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<Dto>> GetByDefault(Expression<Func<Dto, bool>> exp)
+        public Task<BaseResponse<Dto>> GetByIdAsync(Guid id)
         {
-            return await _repository.GetByDefault(exp);
+            throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<Dto>> GetById(Guid id)
+        public Task<BaseResponse<IEnumerable<Dto>>> GetDefaultAsync(Expression<Func<Dto, bool>> exp)
         {
-            return await _repository.GetById(id);
-           
+            throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<IEnumerable<Dto>>> GetDefault(Expression<Func<Dto, bool>> exp)
+        public Task<BaseResponse<bool>> RemoveAsync(Guid id)
         {
-            return await _repository.GetDefault(exp);
+            throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<bool>> SetPassive(Guid id)
+        public Task<BaseResponse<bool>> SetPassiveAsync(Guid id)
         {
-            
-            if ( GetById(id) == null)
-            {
-                return false;
-            }
-            return await _repository.SetPassive(id);
+            throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<bool>> Remove(Dto item)
+        public Task<BaseResponse<bool>> SetPassiveAsync(Expression<Func<Dto, bool>> exp)
         {
-            try
-            {
-
-            if (item==null)
-            {
-                return false;
-            }
-            return  await _repository.Remove(item);
-            }
-            catch (Exception)
-            {
-
-                throw new Exception("Silme işlemi sırasında hata oluştu");
-            }
+            throw new NotImplementedException();
         }
+        //public async Task<BaseResponse<bool>> ActivateAsync(Guid id)
+        //{
+        //    var tempEntity = await _repository.GetByIdAsync(id);
+        //    if (tempEntity is null)
+        //    {
+        //        return new BaseResponse<bool>("NoData");
+        //    }
+        //    var result = await _repository.ActivateAsync(id);
+        //    return new BaseResponse<bool>(result);
 
-        public async Task<BaseResponse<bool>> SetPassive(Expression<Func<Dto, bool>> exp)
-        {
-            return await _repository.SetPassive(exp);
-        }
+        //}
 
-        public async Task<BaseResponse<bool>> Update(Dto item)
-        {
-            if (item == null)
-            {
-                return false;
-            }
-            return await _repository.Update(item);
-        }
+        //public async Task<BaseResponse<IEnumerable<Dto>>> GetAllAsync()
+        //{
+        //    return await _repository.GetAllAsync();
+        //}
 
-        public async Task<BaseResponse<bool>> Update(IEnumerable<Dto> items)
-        {
-            if (items == null)
-            {
-                return false;
-            }
-            return await _repository.Update(items);
-        }
+        //public async Task<BaseResponse<Dto>> GetByDefaultAsync(Expression<Func<Dto, bool>> exp)
+        //{
+        //    return await _repository.GetByDefaultAsync(exp);
+        //}
 
-      
+        //public async Task<BaseResponse<Dto>> GetByIdAsync(Guid id)
+        //{
+        //    return await _repository.GetByIdAsync(id);
+
+        //}
+
+        //public async Task<BaseResponse<IEnumerable<Dto>>> GetDefaultAsync(Expression<Func<Dto, bool>> exp)
+        //{
+        //    return await _repository.GetDefaultAsync(exp);
+        //}
+
+        //public async Task<BaseResponse<bool>> SetPassiveAsync(Guid id)
+        //{
+
+        //    if (GetById(id) is null)
+        //    {
+        //        return false;
+        //    }
+        //    return await _repository.SetPassiveAsync(id);
+
+        //}
+
+        //public async Task<BaseResponse<bool>> RemoveAsync(Guid id)
+        //{
+        //    try
+        //    {
+
+        //        var entity = await _repository.GetByIdAsync(id);
+        //        if (entity is null)
+        //        {
+        //            return new BaseResponse<bool>("NoData");
+        //        }
+        //        var result = await _repository.RemoveAsync(entity);
+        //        return new BaseResponse<bool>(result);
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        return new BaseResponse<bool>("Deleting_Error");
+        //    }
+
+
+        //}
+
+        //public async Task<BaseResponse<bool>> SetPassiveAsync(Expression<Func<Dto, bool>> exp)
+        //{
+        //    return await _repository.SetPassiveAsync(exp);
+        //}
+
+
+
+
         //public async Task<BaseResponse<IEnumerable<Dto>>> GetActive(string[] includes)
         //{
         //    return await _repository.GetActive(includes);

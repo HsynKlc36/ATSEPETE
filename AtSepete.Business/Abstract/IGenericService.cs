@@ -1,4 +1,5 @@
-﻿using AtSepete.Entities.Base;
+﻿
+using AtSepete.Entities.BaseMessage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +11,15 @@ namespace AtSepete.Business.Abstract
 {
     public interface IGenericService<Dto,T> 
     {
-        Task<BaseResponse<Dto>> GetById(Guid id);
-        Task<BaseResponse<Dto>> GetByDefault(Expression<Func<Dto, bool>> exp);
-        Task<BaseResponse<IEnumerable<Dto>>> GetDefault(Expression<Func<Dto, bool>> exp);
-        Task<BaseResponse<IEnumerable<Dto>>> GetAll();
-        Task<BaseResponse<bool>> Add(Dto item);
-        Task<BaseResponse<bool>> SetPassive(Guid id);
-        Task<BaseResponse<bool>> SetPassive(Expression<Func<Dto, bool>> exp);
-        Task<BaseResponse<bool>> Remove(Dto item);
-        Task<BaseResponse<bool>> Activate(Guid id);
-        Task<BaseResponse<bool>> Update(Dto item);
-        Task<BaseResponse<bool>> Update(IEnumerable<Dto> items);
+        Task<BaseResponse<Dto>> GetByIdAsync(Guid id);
+        Task<BaseResponse<Dto>> GetByDefaultAsync(Expression<Func<Dto, bool>> exp);
+        Task<BaseResponse<IEnumerable<Dto>>> GetDefaultAsync(Expression<Func<Dto, bool>> exp);
+        Task<BaseResponse<IEnumerable<Dto>>> GetAllAsync();
+        Task<BaseResponse<bool>> SetPassiveAsync(Guid id);
+        Task<BaseResponse<bool>> SetPassiveAsync(Expression<Func<Dto, bool>> exp);
+        Task<BaseResponse<bool>> RemoveAsync(Guid id);
+        Task<BaseResponse<bool>> ActivateAsync(Guid id);
+
         //Task<BaseResponse<IEnumerable<Dto>>> GetAll(string[] includes);
         //Task<BaseResponse<IEnumerable<Dto>>> GetActive(string[] includes);
     }
