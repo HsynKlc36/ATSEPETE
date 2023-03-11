@@ -18,5 +18,6 @@ namespace AtSepete.Repositories.Concrete
            
         }
 
+       
     }
 }

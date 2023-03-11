@@ -15,7 +15,7 @@ namespace AtSepete.Repositories.Concrete
     public class GenericRepository<T>:IGenericRepository<T> where T:Base
     {
         protected readonly AtSepeteDbContext _context;
-        private DbSet<T> _db;
+        protected DbSet<T> _db;
 
         public GenericRepository(AtSepeteDbContext Context)
         {
@@ -45,6 +45,7 @@ namespace AtSepete.Repositories.Concrete
         public async Task<T> GetByIdAsync(Guid id)
         {
             return _db.Find(id);
+            
         }
 
         public async Task<IEnumerable<T>> GetDefaultAsync(Expression<Func<T, bool>> exp)

@@ -16,8 +16,8 @@ namespace AtSepete.Business.Concrete
 {
     public class GenericManager<Dto, T> : IGenericService<Dto, T> where T : Base
     {
-        private readonly IGenericRepository<T> _repository;
-        private readonly IMapper _mapper;
+        protected readonly IGenericRepository<T> _repository;
+        protected readonly IMapper _mapper;
 
         public GenericManager(IGenericRepository<T> repository, IMapper mapper)
         {

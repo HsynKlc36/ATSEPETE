@@ -7,20 +7,15 @@ using AutoMapper;
 
 namespace AtSepete.Business.Concrete
 {
-    public class CategoryManager:GenericManager<CategoryDto, Category> ,ICategoryService
+    public class CategoryManager: GenericManager<CategoryDto, Category> ,ICategoryService
     {
-        private readonly ICategoryRepository _repository;
-       
-        private readonly IMapper _mapper;
 
+        private readonly ICategoryRepository _categoryRepository;
 
-        public CategoryManager(ICategoryRepository repository ,IMapper mapper):base(repository,mapper)
+        public CategoryManager( ICategoryRepository categoryRepo,IGenericRepository<Category> repo , IMapper mapper):base(repo, mapper) 
         {
-            _repository = repository;
-            _mapper = mapper;
+           _categoryRepository= categoryRepo;           
         }
-
-
         public async Task<BaseResponse<bool>> AddAsync(CategoryDto item)
         {
             try

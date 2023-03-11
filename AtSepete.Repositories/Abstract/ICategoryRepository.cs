@@ -9,6 +9,6 @@ namespace AtSepete.Repositories.Abstract
 {
     public interface ICategoryRepository : IGenericRepository<Category>
     {
-        
+      
     }
 }
