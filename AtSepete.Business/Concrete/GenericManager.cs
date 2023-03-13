@@ -33,7 +33,9 @@ namespace AtSepete.Business.Concrete
             {
                 return new BaseResponse<bool>("NoData");
             }
-            var result = await _repository.ActivateAsync(id);
+            tempEntity.IsActive= true;
+            tempEntity.ModifiedDate = DateTime.Now;
+            var result = await _repository.UpdateAsync(tempEntity);
             return new BaseResponse<bool>(result);
 
         }
@@ -50,9 +52,7 @@ namespace AtSepete.Business.Concrete
         public async Task<BaseResponse<Dto>> GetByIdAsync(Guid id)
         {
             var tempEntity = await _repository.GetByIdAsync(id);
-            // Mapping Entity to Resource
             var result = _mapper.Map<T, Dto>(tempEntity);
-
             return new BaseResponse<Dto>(result);
 
         }
@@ -60,12 +60,14 @@ namespace AtSepete.Business.Concrete
 
         public async Task<BaseResponse<bool>> SetPassiveAsync(Guid id)
         {
-
-            if (GetByIdAsync(id) is null)
+            var tempEntity = await _repository.GetByIdAsync(id);
+            if (tempEntity is null)
             {
                 return new BaseResponse<bool>("NoData"); ;
             }
-            var result = await _repository.SetPassiveAsync(id);
+            tempEntity.IsActive=false;
+            tempEntity.ModifiedDate= DateTime.Now;
+            var result = await _repository.UpdateAsync(tempEntity);
             return new BaseResponse<bool>(result);
 
 
@@ -93,8 +95,23 @@ namespace AtSepete.Business.Concrete
 
         }
 
-      
+        //public async Task<BaseResponse<Dto>> GetByDefaultAsync(Expression<Func<T, bool>> exp)
+        //{
+        //    var tempEntity=await _repository.GetByDefaultAsync(exp);          
+        //    var mapped=_mapper.Map<T,Dto>(tempEntity);
+        //    return new BaseResponse<Dto>(mapped);
+        //}
 
+        //public async Task<BaseResponse<IEnumerable<Dto>>> GetDefaultAsync(Expression<Func<T, bool>> exp)
+        //{
+        //    var tempEntity=await _repository.GetDefaultAsync(exp);
+        //    var mapped = _mapper.Map<IEnumerable<T>,IEnumerable<Dto>>(tempEntity);
+        //    return new BaseResponse<IEnumerable<Dto>>(mapped);
+        //}
 
+        //public Task<BaseResponse<bool>> SetPassiveAsync(Expression<Func<T, bool>> exp)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

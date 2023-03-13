@@ -17,6 +17,10 @@ namespace AtSepete.Business.Abstract
         Task<BaseResponse<bool>> RemoveAsync(Guid id);
         Task<BaseResponse<bool>> ActivateAsync(Guid id);
 
-     
+        //Task<BaseResponse<Dto>> GetByDefaultAsync(Expression<Func<T, bool>> exp);
+        //Task<BaseResponse<IEnumerable<Dto>>> GetDefaultAsync(Expression<Func<T, bool>> exp);
+        //Task<BaseResponse<bool>> SetPassiveAsync(Expression<Func<T, bool>> exp);
+
+
     }
 }

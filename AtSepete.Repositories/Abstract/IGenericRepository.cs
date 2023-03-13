@@ -1,4 +1,5 @@
 ﻿using AtSepete.Entities.BaseData;
+using AtSepete.Entities.BaseMessage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,17 @@ namespace AtSepete.Repositories.Abstract
     public interface IGenericRepository<T> where T : Base
     {
        Task <T> GetByIdAsync(Guid id);
-       Task <T> GetByDefaultAsync(Expression<Func<T, bool>> exp);
-       Task <IEnumerable<T>> GetDefaultAsync(Expression<Func<T, bool>> exp);
        Task <IEnumerable<T>> GetAllAsync();
        Task <bool> AddAsync(T item);       
-       Task <bool> SetPassiveAsync(Guid id);
-       Task <bool> SetPassiveAsync(Expression<Func<T, bool>> exp);
        Task <bool> RemoveAsync(T item);
-       Task <bool> ActivateAsync(Guid id);
        Task <bool> UpdateAsync(T item);
        Task <bool> UpdateAsync(IEnumerable<T> items);
        Task <bool> Save();
-        IEnumerable<T> Where(Expression<Func<T, bool>> where);
-       //Task <IEnumerable<T>> GetAllAsync(string[] includes);
-       //Task <IEnumerable<T>> GetActiveAsync(string[] includes);
+       Task<IEnumerable<T>> Where(Expression<Func<T, bool>> exp);
+       Task <T> GetByDefaultAsync(Expression<Func<T, bool>> exp);
+       Task <IEnumerable<T>> GetDefaultAsync(Expression<Func<T, bool>> exp);
+    
+       Task<bool> SetPassiveAsync(Expression<Func<T, bool>> exp);
+
     }
 }
