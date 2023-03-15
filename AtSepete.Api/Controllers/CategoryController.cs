@@ -1,25 +1,35 @@
 ﻿using AtSepete.Business.Abstract;
+using AtSepete.Dtos.Dto;
+using AtSepete.Entities.BaseMessage;
 using AtSepete.Entities.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AtSepete.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("AtSepeteApi/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly IGenericService<Category> _categoryService;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(IGenericService<Category> CategoryService)
+
+        public CategoryController(ICategoryService CategoryService)
         {
             _categoryService = CategoryService;
+
         }
-        [HttpPost]
+        [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> CreateCategory([FromBody]Category Category)
+        public async Task<BaseResponse<IEnumerable<CategoryDto>>> GetAllCategory()
         {
-            return Ok(await _categoryService.Add(Category));
+            return await _categoryService.GetAllAsync();
         }
+        //[HttpPost]
+        //[Route("[action]")]
+        //public async Task<IActionResult> CreateCategory([FromBody]CategoryDto Category)
+        //{
+        //    return Ok(await _categoryService.AddAsync(Category));
+        //}
     }
 }

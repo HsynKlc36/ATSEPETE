@@ -1,4 +1,6 @@
-﻿using AtSepete.Entities.BaseMessage;
+﻿using AtSepete.Dtos.Dto;
+using AtSepete.Entities.BaseMessage;
+using AtSepete.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,18 +10,10 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Business.Abstract
 {
-    public interface IProductService<ProductDto,Product>
+    public interface IProductService : IGenericService<ProductDto, Product>
     {
-        Task<BaseResponse<ProductDto>> GetById(Guid id);
-        Task<BaseResponse<ProductDto>> GetByDefault(Expression<Func<ProductDto, bool>> exp);
-        Task<BaseResponse<IEnumerable<ProductDto>>> GetDefault(Expression<Func<ProductDto, bool>> exp);
-        Task<BaseResponse<IEnumerable<ProductDto>>> GetAll();
-        Task<BaseResponse<bool>> Add(ProductDto item);
-        Task<BaseResponse<bool>> SetPassive(Guid id);
-        Task<BaseResponse<bool>> SetPassive(Expression<Func<ProductDto, bool>> exp);
-        Task<BaseResponse<bool>> Remove(ProductDto item);
-        Task<BaseResponse<bool>> Activate(Guid id);
-        Task<BaseResponse<bool>> Update(ProductDto item);
-        Task<BaseResponse<bool>> Update(IEnumerable<ProductDto> items);
+        Task<BaseResponse<bool>> AddAsync(ProductDto item);
+        Task<BaseResponse<bool>> UpdateAsync(Guid id, ProductDto item);
+        Task<BaseResponse<bool>> UpdateAsync(IEnumerable<ProductDto> items);
     }
 }

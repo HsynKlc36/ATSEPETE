@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Business.Concrete
 {
-    public class GenericManager<Dto, T> : IGenericService<Dto, T> where T : Base
+    public abstract class GenericManager<Dto, T> : IGenericService<Dto, T> where T : Base
     {
         protected readonly IGenericRepository<T> _repository;
         protected readonly IMapper _mapper;

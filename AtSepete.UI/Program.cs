@@ -10,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddTransient(typeof(IGenericService<>), typeof(GenericManager<>));
+builder.Services.AddTransient(typeof(IGenericService<,>), typeof(GenericManager<,>));
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<ICategoryService, CategoryManager>();
 builder.Services.AddDbContext<AtSepeteDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("AtSepete"));

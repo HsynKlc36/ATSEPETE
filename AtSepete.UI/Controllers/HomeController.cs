@@ -1,4 +1,5 @@
-﻿using AtSepete.UI.Models;
+﻿using AtSepete.Repositories.Abstract;
+using AtSepete.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,14 +8,17 @@ namespace AtSepete.UI.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,ICategoryRepository categoryRepository)
         {
             _logger = logger;
+            _categoryRepository = categoryRepository;
         }
 
         public IActionResult Index()
         {
+            ViewBag.Category = _categoryRepository.GetAllAsync();
             return View();
         }
 

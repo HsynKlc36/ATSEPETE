@@ -5,12 +5,13 @@ using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
 using AutoMapper;
+using SendGrid;
 using System.Data;
 using System.Linq.Expressions;
 
 namespace AtSepete.Business.Concrete
 {
-    public class CategoryManager : GenericManager<CategoryDto, Category>, ICategoryService
+    public class CategoryManager: GenericManager<CategoryDto, Category>, ICategoryService
     {
 
         private readonly ICategoryRepository _categoryRepository;
@@ -59,17 +60,36 @@ namespace AtSepete.Business.Concrete
             }
         }
 
-        //public async Task<BaseResponse<bool>> UpdateAsync(IEnumerable<CategoryDto> categoryDtos)
-        //{
 
-        //    IEnumerable<Category> tempEntities = await _categoryRepository.GetDefaultAsync(x => x.CategoryId == categoryDtos.)
-        //    if (categoryDtos is null)
-        //    {
-        //        return new BaseResponse<bool>("NoData");
-        //    }
-        //    var entity = _mapper.Map(categoryDtos, tempEntity);
-        //    return await _repository.UpdateAsync(items);
-        //}
+        public async Task<BaseResponse<bool>> UpdateAsync(IEnumerable<CategoryDto> categoryDtos)
+        {
+            try
+            {
+
+                foreach (var categoryDto in categoryDtos)
+                {
+                    var tempEntity = await _categoryRepository.GetByIdAsync(categoryDto.CategoryId);
+
+                    if (tempEntity is null)
+                    {
+                        return new BaseResponse<bool>("NoData");
+                    }
+
+                    var mappedEntity = _mapper.Map(categoryDto, tempEntity);
+
+                    await _categoryRepository.UpdateAsync(mappedEntity);
+                }
+
+                return new BaseResponse<bool>(true);
+
+            }
+            catch (Exception)
+            {
+                return new BaseResponse<bool>("Updating_Error");
+            }
+
+
+        }
 
 
 
