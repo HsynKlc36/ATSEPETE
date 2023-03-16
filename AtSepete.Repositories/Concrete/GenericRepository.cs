@@ -31,7 +31,7 @@ namespace AtSepete.Repositories.Concrete
 
         public async Task<T> GetByIdAsync(Guid id)
         {
-            return _db.Find(id);
+            return await _db.FindAsync(id);
             
         }
         public async Task<T> GetByDefaultAsync(Expression<Func<T, bool>> exp)

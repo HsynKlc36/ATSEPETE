@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Repositories.Abstract
 {
-    public interface ICategoryRepository : IGenericRepository<Category>
+    public interface ICategoryRepository 
     {
       
     }

@@ -19,6 +19,7 @@ namespace AtSepete.Business.Concrete
         public CategoryManager(ICategoryRepository categoryRepo, IGenericRepository<Category> repo, IMapper mapper) : base(repo, mapper)
         {
             _categoryRepository = categoryRepo;
+           
         }
         public async Task<BaseResponse<bool>> AddAsync(CategoryDto categoryDto)
         {

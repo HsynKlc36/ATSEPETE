@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Repositories.Concrete
 {
-    public class UserRepository:GenericRepository<User>,IUserRepository
+    public class UserRepository
     {
         public UserRepository(AtSepeteDbContext Context):base(Context)
         {

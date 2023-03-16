@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Repositories.Abstract
 {
-    public interface IUserRepository:IGenericRepository<User>
+    public interface IUserRepository
     {
 
     }

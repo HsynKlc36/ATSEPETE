@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Repositories.Concrete
 {
-    public class MarketRepository:GenericRepository<Market>,IMarketRepository
+    public class MarketRepository
     {
         public MarketRepository(AtSepeteDbContext Context):base(Context)
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Repositories.Abstract
 {
-    public interface IOrderRepository:IGenericRepository<Order>
+    public interface IOrderRepository
     {
     }
 }

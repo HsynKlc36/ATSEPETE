@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Repositories.Concrete
 {
-    public class CategoryRepository:GenericRepository<Category>,ICategoryRepository
+    public class CategoryRepository
     {
         public CategoryRepository(AtSepeteDbContext Context):base(Context) 
         {

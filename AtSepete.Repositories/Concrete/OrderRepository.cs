@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Repositories.Concrete
 {
-    public class OrderRepository:GenericRepository<Order>,IOrderRepository
+    public class OrderRepository
     {
         public OrderRepository(AtSepeteDbContext Context):base(Context) 
         {
