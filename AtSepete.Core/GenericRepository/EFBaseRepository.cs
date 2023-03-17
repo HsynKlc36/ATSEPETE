@@ -1,18 +1,19 @@
 ﻿using AtSepete.Core.CoreInterfaces;
 using AtSepete.Entities.BaseData;
-using AtSepete.Repositories.Context;
-using Microsoft.EntityFrameworkCore;
+
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using AtSepete.DataAccess.Context;
 
-namespace AtSepete.Core.EntityFramework
+namespace AtSepete.Core.GenericRepository
 {
-    public abstract class EFBaseRepository<T> : IAsyncDeleteableRepository<T>, IAsyncFindableRepository<T>, IAsyncInsertableRepository<T>, IAsyncOrderableRepository<T>, IAsyncQueryableRepository<T>, IAsyncTransactionRepository, IRepository, IAsyncRepository,  IAsyncUpdateableRepository<T> where T : Base
+    public abstract class EFBaseRepository<T> : IAsyncDeleteableRepository<T>, IAsyncFindableRepository<T>, IAsyncInsertableRepository<T>, IAsyncOrderableRepository<T>, IAsyncQueryableRepository<T>, IAsyncTransactionRepository, IRepository, IAsyncRepository, IAsyncUpdateableRepository<T> where T : Base
     {
         protected readonly AtSepeteDbContext _context;
         protected readonly DbSet<T> _table;
@@ -61,12 +62,12 @@ namespace AtSepete.Core.EntityFramework
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return  await _table.ToListAsync();
+            return await _table.ToListAsync();
         }
 
         public async Task<T?> GetByDefaultAsync(Expression<Func<T, bool>> exp)
         {
-            return  await _table.FirstOrDefaultAsync(exp);
+            return await _table.FirstOrDefaultAsync(exp);
         }
 
         public async Task<T?> GetByIdAsync(Guid id)
@@ -86,7 +87,7 @@ namespace AtSepete.Core.EntityFramework
 
         public Task<int> SaveChangesAsync()
         {
-           return _context.SaveChangesAsync();
+            return _context.SaveChangesAsync();
         }
 
         public async Task<T> UpdateAsync(T entity)
@@ -96,7 +97,7 @@ namespace AtSepete.Core.EntityFramework
         }
 
         public async Task<IEnumerable<T>> Where(Expression<Func<T, bool>> exp)
-        { 
+        {
             return _table.Where(exp).AsQueryable();
         }
         protected IQueryable<T> GetAllActives()

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AtSepete.DataAccess\AtSepete.DataAccess.csproj" />
     <ProjectReference Include="..\AtSepete.Entities\AtSepete.Entities.csproj" />
   </ItemGroup>
 

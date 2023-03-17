@@ -1,6 +1,8 @@
-﻿using AtSepete.Entities.Data;
+﻿using AtSepete.Core.GenericRepository;
+using AtSepete.DataAccess.Context;
+using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
-using AtSepete.Repositories.Context;
+
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Repositories.Concrete
 {
-    public class MarketRepository
+    public class MarketRepository:EFBaseRepository<Market>, IMarketRepository
     {
         public MarketRepository(AtSepeteDbContext Context):base(Context)
         {
