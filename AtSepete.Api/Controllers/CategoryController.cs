@@ -2,6 +2,7 @@
 using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
+using AtSepete.Results.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,9 +22,15 @@ namespace AtSepete.Api.Controllers
         }
         [HttpGet]
         [Route("[action]")]
-        public async Task<IDataResult<List<CategoryDto>>> GetAllCategory()
+        public async Task<DataResult<List<CategoryDto>>> GetAllCategory()
         {
-            return  await _categoryService.GetAllAsync();
+            return await _categoryService.GetAllAsync();
+        }
+        [HttpGet]
+        [Route("[action]/{id:Guid}")]
+        public async Task<IDataResult<CategoryDto>> GetByDefaultCategory([FromRoute]Guid id)
+        {
+            return await _categoryService.GetByDefaultAsync(id); ;
         }
         //[HttpPost]
         //[Route("[action]")]

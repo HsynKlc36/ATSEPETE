@@ -22,7 +22,7 @@ namespace AtSepete.DataAccess.Extensions
                         10,
                         TimeSpan.FromSeconds(10),
                         null));
-                options.UseLazyLoadingProxies();
+                //options.UseLazyLoadingProxies();
             });
 
             return services;

@@ -1,6 +1,7 @@
 using AtSepete.Business.Abstract;
 using AtSepete.Business.Concrete;
 using AtSepete.Business.Extensions;
+using AtSepete.Business.Mapper;
 using AtSepete.DataAccess.Extensions;
 using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
@@ -16,7 +17,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 builder.Services.AddRepositoriesServices()
     .AddBusinessServices()

@@ -8,6 +8,7 @@ namespace AtSepete.Business.Abstract
     public interface ICategoryService
     {
         Task<IDataResult<List<CategoryDto>>> GetAllAsync();
+        Task<IDataResult<CategoryDto>> GetByDefaultAsync(Guid id);
         //Task<BaseResponse<Dto>> GetByIdAsync(Guid id);
         //Task<BaseResponse<bool>> SetPassiveAsync(Guid id);
         //Task<BaseResponse<bool>> RemoveAsync(Guid id);

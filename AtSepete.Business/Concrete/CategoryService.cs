@@ -24,8 +24,16 @@ namespace AtSepete.Business.Concrete
             _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
-
-        public async Task<IDataResult<List<CategoryDto>>> GetAllAsync()
+        public async Task<IDataResult<CategoryDto>> GetByDefaultAsync(Guid id)
+        {
+            var category = await _categoryRepository.GetByDefaultAsync(x => x.CategoryId == id);
+            if (category is null)
+            {
+                return new ErrorDataResult<CategoryDto>("Not Found");
+            }
+            return new SuccessDataResult<CategoryDto>(_mapper.Map<CategoryDto>(category), "Listeleme is Success");
+        }
+        public async Task<DataResult<List<CategoryDto>>> GetAllAsync()
         {
             var tempEntity = await _categoryRepository.GetAllAsync();
             var result = _mapper.Map<IEnumerable<Category>, List<CategoryDto>>(tempEntity);
