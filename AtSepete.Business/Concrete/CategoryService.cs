@@ -32,8 +32,9 @@ namespace AtSepete.Business.Concrete
                 return new ErrorDataResult<CategoryDto>("Not Found");
             }
             return new SuccessDataResult<CategoryDto>(_mapper.Map<CategoryDto>(category), "Listeleme is Success");
+
         }
-        public async Task<DataResult<List<CategoryDto>>> GetAllAsync()
+        public async Task<IDataResult<List<CategoryDto>>> GetAllAsync()
         {
             var tempEntity = await _categoryRepository.GetAllAsync();
             var result = _mapper.Map<IEnumerable<Category>, List<CategoryDto>>(tempEntity);
