@@ -22,6 +22,7 @@ namespace AtSepete.Core.GenericRepository
         {
             _context = context;
             _table = _context.Set<T>();
+
         }
         public async Task<T> AddAsync(T entity)
         {
