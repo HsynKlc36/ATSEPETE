@@ -1,10 +1,13 @@
 using AtSepete.Business.Abstract;
 using AtSepete.Business.Concrete;
+using AtSepete.Business.Extensions;
+using AtSepete.DataAccess.Extensions;
 using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
-using AtSepete.Repositories.Context;
+
+using AtSepete.Repositories.Extensions;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -15,25 +18,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddRepositoriesServices()
+    .AddBusinessServices()
+    .AddDataAccessServices(builder.Configuration);
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "AtSepeteApi", Version = "v1" });
 });
 
-builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddTransient(typeof(IGenericService<,>), typeof(GenericManager<,>));
-builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
-builder.Services.AddTransient<ICategoryService, CategoryManager>();
-builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IUserService, UserManager>();
 
-builder.Services.AddDbContext<AtSepeteDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AtSepete"));
-});
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

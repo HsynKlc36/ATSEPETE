@@ -2,21 +2,15 @@ using AtSepete.Business.Abstract;
 using AtSepete.Business.Concrete;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
-using AtSepete.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
+using AtSepete.DataAccess.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddTransient(typeof(IGenericService<,>), typeof(GenericManager<,>));
-builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
-builder.Services.AddTransient<ICategoryService, CategoryManager>();
-builder.Services.AddDbContext<AtSepeteDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AtSepete"));
-});
+
+builder.Services.AddDataAccessServices(builder.Configuration);
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

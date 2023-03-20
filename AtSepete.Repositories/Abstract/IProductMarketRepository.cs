@@ -1,4 +1,5 @@
-﻿using AtSepete.Entities.Data;
+﻿using AtSepete.Core.CoreInterfaces;
+using AtSepete.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Repositories.Abstract
 {
-    public interface IProductMarketRepository
+    public interface IProductMarketRepository : IAsyncDeleteableRepository<ProductMarket>, IAsyncFindableRepository<ProductMarket>, IAsyncInsertableRepository<ProductMarket>, IAsyncOrderableRepository<ProductMarket>, IAsyncQueryableRepository<ProductMarket>, IAsyncTransactionRepository, IRepository, IAsyncRepository, IAsyncUpdateableRepository<ProductMarket>
     {
     }
 }

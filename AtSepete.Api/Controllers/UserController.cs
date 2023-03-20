@@ -17,18 +17,18 @@ namespace AtSepete.Api.Controllers
           
             _userService = userService;
         }
-        [HttpGet]
-        [Route("[action]")]
-        public async Task<IActionResult> GetAllUser()
-        {
-            return Ok(await _userService.GetAllAsync());
-        }
-        [HttpGet]
-        [Route("[action]/{id}")]
-        public async Task<IActionResult> GetByUser(Guid id)
-        {
-            return Ok(await _userService.GetByIdAsync(id));
-        }
+        //[HttpGet]
+        //[Route("[action]")]
+        //public async Task<IActionResult> GetAllUser()
+        //{
+        //    return Ok(await _userService.GetAllAsync());
+        //}
+        //[HttpGet]
+        //[Route("[action]/{id}")]
+        //public async Task<IActionResult> GetByUser(Guid id)
+        //{
+        //    return Ok(await _userService.GetByIdAsync(id));
+        //}
         //[HttpGet]
         //[Route("[action]")]
         //public async Task<IActionResult> GetAllActiveUser()
