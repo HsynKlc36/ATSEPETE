@@ -2,7 +2,6 @@
 using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
-using AtSepete.Results.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +21,7 @@ namespace AtSepete.Api.Controllers
         }
         [HttpGet]
         [Route("[action]")]
-        public async Task<DataResult<List<CategoryDto>>> GetAllCategory()
+        public async Task<IDataResult<List<CategoryDto>>> GetAllCategory()
         {
             return await _categoryService.GetAllAsync();
         }
