@@ -86,9 +86,10 @@ namespace AtSepete.Core.GenericRepository
             return _context.SaveChanges();
         }
 
-        public Task<int> SaveChangesAsync()
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken=default)
         {
-            return _context.SaveChangesAsync();
+            _context.ChangeTracker.AutoDetectChangesEnabled = false;
+            return _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<T> UpdateAsync(T entity)

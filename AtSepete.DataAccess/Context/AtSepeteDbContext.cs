@@ -1,4 +1,5 @@
-﻿using AtSepete.Entities.Data;
+﻿using AtSepete.Entities.BaseData;
+using AtSepete.Entities.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -29,6 +30,8 @@ namespace AtSepete.DataAccess.Context
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductMarket> ProductMarkets { get; set; }
+
+       
     }
 
 }

@@ -1,4 +1,5 @@
 ﻿using AtSepete.Business.Abstract;
+using AtSepete.Business.Constants;
 using AtSepete.Core.CoreInterfaces;
 using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
@@ -24,63 +25,81 @@ namespace AtSepete.Business.Concrete
             _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
-        public async Task<IDataResult<CategoryDto>> GetByDefaultAsync(Guid id)
+        public async Task<IDataResult<CategoryDto>> GetByIdCategoryAsync(Guid id)
         {
             var category = await _categoryRepository.GetByDefaultAsync(x => x.CategoryId == id);
             if (category is null)
             {
-                return new ErrorDataResult<CategoryDto>("Not Found");
+                return new ErrorDataResult<CategoryDto>(Messages.CategoryNotFound);
             }
-            return new SuccessDataResult<CategoryDto>(_mapper.Map<CategoryDto>(category), "Listeleme is Success");
+            return new SuccessDataResult<CategoryDto>(_mapper.Map<CategoryDto>(category), Messages.CategoryFoundSuccess);
 
         }
-        public async Task<IDataResult<List<CategoryDto>>> GetAllAsync()
+        public async Task<IDataResult<List<CategoryListDto>>> GetAllCategoryAsync()
         {
             var tempEntity = await _categoryRepository.GetAllAsync();
-            var result = _mapper.Map<IEnumerable<Category>, List<CategoryDto>>(tempEntity);
-            return new SuccessDataResult<List<CategoryDto>>(result,"Listeleme başarılı");
+            var result = _mapper.Map<IEnumerable<Category>, List<CategoryListDto>>(tempEntity);
+            return new SuccessDataResult<List<CategoryListDto>>(result,Messages.ListedSuccess);
 
             
         }
-        //public async Task<BaseResponse<bool>> AddAsync(CategoryDto categoryDto)
-        //{
-        //    try
-        //    {
-        //        if (categoryDto is null)
-        //        {
-        //            return new BaseResponse<bool>("NoData"); ;
-        //        }
-        //        var tempEntity = _mapper.Map<CategoryDto, Category>(categoryDto);
-        //        var result = await _repository.AddAsync(tempEntity);
-        //        return new BaseResponse<bool>(result);
-        //    }
-        //    catch (Exception)
-        //    {
 
-        //        return new BaseResponse<bool>("Saving_Error");
-        //    }
-        //}
+        public async Task<IDataResult<CreateCategoryDto>> AddCategoryAsync(CreateCategoryDto entity)
+        {
+            try
+            {
+                if (entity is null)
+                {
+                    return new ErrorDataResult<CreateCategoryDto>(Messages.ObjectNotValid); ;
+                }
 
-        //public async Task<BaseResponse<bool>> UpdateAsync(Guid id, CategoryDto categoryDto)
-        //{
-        //    try
-        //    {
+                if (true)
+                {
 
-        //        var tempEntity = await _categoryRepository.GetByIdAsync(id);
-        //        if (tempEntity is null)
-        //        {
-        //            return new BaseResponse<bool>("NoData");
-        //        }
-        //        var entity = _mapper.Map(categoryDto, tempEntity);
-        //        var result = await _repository.UpdateAsync(entity);
-        //        return new BaseResponse<bool>(result);
-        //    }
-        //    catch (Exception)
-        //    {
+                }
+                Category category = _mapper.Map<CreateCategoryDto, Category>(entity);
+                var result = await _categoryRepository.AddAsync(category);
+                await _categoryRepository.SaveChangesAsync();
 
-        //        return new BaseResponse<bool>("Updating_Error");
-        //    }
-        //}
+                CreateCategoryDto createCategoryDto =_mapper.Map<Category, CreateCategoryDto>(result);
+                return new SuccessDataResult<CreateCategoryDto>(createCategoryDto, Messages.AddSuccess);
+            }
+            catch (Exception)
+            {
+
+                return new ErrorDataResult<CreateCategoryDto>(Messages.AddFail);
+            }
+        }
+
+
+        public async Task<IDataResult<UpdateCategoryDto>> UpdateCategoryAsync(Guid id, UpdateCategoryDto updateCategoryDto)
+        {
+            try
+            {
+
+                var category = await _categoryRepository.GetByIdAsync(id);
+                if (category is null)
+                {
+                    return new ErrorDataResult<UpdateCategoryDto>(Messages.CategoryNotFound);
+                }
+                var hasCategory = await _categoryRepository.AnyAsync(c => c.Name.Trim().ToLower() == updateCategoryDto.Name.Trim().ToLower() && c.Description.Trim().ToLower() == updateCategoryDto.Description.Trim().ToLower());
+                //çalıştırılınca ve den sonrası silinip denenecek!
+
+                if (hasCategory)
+                {
+                    return new ErrorDataResult<UpdateCategoryDto>(Messages.AddFailAlreadyExists);
+                }
+                var updateCategory = _mapper.Map(updateCategoryDto, category);
+                await _categoryRepository.UpdateAsync(updateCategory);
+                await _categoryRepository.SaveChangesAsync();
+                return new SuccessDataResult<UpdateCategoryDto>(_mapper.Map<Category,UpdateCategoryDto>(updateCategory),Messages.UpdateSuccess);
+            }
+            catch (Exception)
+            {
+
+                return new ErrorDataResult<UpdateCategoryDto>(Messages.UpdateFail);
+            }
+        }
 
 
         //public async Task<BaseResponse<bool>> UpdateAsync(IEnumerable<CategoryDto> categoryDtos)

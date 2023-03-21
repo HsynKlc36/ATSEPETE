@@ -15,6 +15,12 @@ namespace AtSepete.Business.Mapper
         {
             CreateMap<Category, CategoryDto>();
             CreateMap<CategoryDto, Category>();
+            CreateMap<Category, CategoryListDto>();
+            CreateMap<CategoryListDto, Category>();
+            CreateMap<Category, CreateCategoryDto>();
+            CreateMap<CreateCategoryDto, Category>();
+            CreateMap<Category, UpdateCategoryDto>();
+            CreateMap<UpdateCategoryDto, Category>();
         }
 
     }

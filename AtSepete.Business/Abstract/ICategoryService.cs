@@ -7,9 +7,11 @@ namespace AtSepete.Business.Abstract
 {
     public interface ICategoryService
     {
-        Task<IDataResult<List<CategoryDto>>> GetAllAsync();
-        Task<IDataResult<CategoryDto>> GetByDefaultAsync(Guid id);
-        //Task<BaseResponse<Dto>> GetByIdAsync(Guid id);
+        Task<IDataResult<List<CategoryListDto>>> GetAllCategoryAsync();
+        Task<IDataResult<CategoryDto>> GetByIdCategoryAsync(Guid id);
+        Task<IDataResult<CreateCategoryDto>> AddCategoryAsync(CreateCategoryDto entity);
+        Task<IDataResult<UpdateCategoryDto>> UpdateCategoryAsync(Guid id, UpdateCategoryDto updateCategoryDto);
+
         //Task<BaseResponse<bool>> SetPassiveAsync(Guid id);
         //Task<BaseResponse<bool>> RemoveAsync(Guid id);
         //Task<BaseResponse<bool>> ActivateAsync(Guid id);

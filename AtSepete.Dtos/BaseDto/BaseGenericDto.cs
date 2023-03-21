@@ -8,9 +8,9 @@ namespace AtSepete.Dtos.BaseDto
 {
     public class BaseGenericDto
     {
-        public DateTime? CreatedDate { get; set; } 
-        public DateTime? ModifiedDate { get; set; }
-        public DateTime? DeletedDate { get; set; }
+        public virtual DateTime? CreatedDate { get; set; }
+        public virtual DateTime? ModifiedDate { get; set; }
+        public virtual DateTime? DeletedDate { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }

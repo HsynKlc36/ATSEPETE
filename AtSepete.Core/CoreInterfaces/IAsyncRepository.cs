@@ -8,6 +8,6 @@ namespace AtSepete.Core.CoreInterfaces
 {
     public interface IAsyncRepository
     {
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken=default);
     }
 }

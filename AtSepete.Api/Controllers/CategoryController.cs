@@ -21,21 +21,28 @@ namespace AtSepete.Api.Controllers
         }
         [HttpGet]
         [Route("[action]")]
-        public async Task<IDataResult<List<CategoryDto>>> GetAllCategory()
+        public async Task<IDataResult<List<CategoryListDto>>> GetAllCategory()
         {
-            return await _categoryService.GetAllAsync();
+            return await _categoryService.GetAllCategoryAsync();
         }
         [HttpGet]
         [Route("[action]/{id:Guid}")]
-        public async Task<IDataResult<CategoryDto>> GetByDefaultCategory([FromRoute]Guid id)
+        public async Task<IDataResult<CategoryDto>> GetByIdCategory([FromRoute]Guid id)
         {
-            return await _categoryService.GetByDefaultAsync(id); ;
+            return await _categoryService.GetByIdCategoryAsync(id); ;
         }
-        //[HttpPost]
-        //[Route("[action]")]
-        //public async Task<IActionResult> CreateCategory([FromBody]CategoryDto Category)
-        //{
-        //    return Ok(await _categoryService.AddAsync(Category));
-        //}
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IDataResult<CreateCategoryDto>> AddCategory([FromBody] CreateCategoryDto createCategoryDto)
+        {
+            return await _categoryService.AddCategoryAsync(createCategoryDto); ;
+        }
+        [HttpPut]
+        [Route("[action]/{id:Guid}")]
+        public async Task<IDataResult<UpdateCategoryDto>> UpdateCategory([FromRoute] Guid id, [FromBody] UpdateCategoryDto updateCategoryDto)
+        {
+            return await _categoryService.UpdateCategoryAsync(id, updateCategoryDto); ;
+        }
+
     }
 }
