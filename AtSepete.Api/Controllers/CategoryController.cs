@@ -1,7 +1,9 @@
-﻿using AtSepete.Business.Abstract;
+﻿using AtSepete.Api.Jwt;
+using AtSepete.Business.Abstract;
 using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,20 +11,21 @@ namespace AtSepete.Api.Controllers
 {
     [Route("AtSepeteApi/[controller]")]
     [ApiController]
+
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-
+ 
 
         public CategoryController(ICategoryService CategoryService)
         {
             _categoryService = CategoryService;
-
+        
         }
         [HttpGet]
         [Route("[action]")]
         public async Task<IDataResult<List<CategoryListDto>>> GetAllCategory()
-        {
+        {           
             return await _categoryService.GetAllCategoryAsync();
         }
         [HttpGet]
@@ -35,7 +38,7 @@ namespace AtSepete.Api.Controllers
         [Route("[action]")]
         public async Task<IDataResult<CreateCategoryDto>> AddCategory([FromBody] CreateCategoryDto createCategoryDto)
         {
-            return await _categoryService.AddCategoryAsync(createCategoryDto); ;
+            return await _categoryService.AddCategoryAsync(createCategoryDto);
         }
         [HttpPut]
         [Route("[action]/{id:Guid}")]

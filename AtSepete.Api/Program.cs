@@ -1,3 +1,4 @@
+using AtSepete.Api.Extensions;
 using AtSepete.Business.Abstract;
 using AtSepete.Business.Concrete;
 using AtSepete.Business.Extensions;
@@ -21,7 +22,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 builder.Services.AddRepositoriesServices()
     .AddBusinessServices()
-    .AddDataAccessServices(builder.Configuration);
+    .AddDataAccessServices(builder.Configuration)
+    .AddApiServices(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -45,7 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

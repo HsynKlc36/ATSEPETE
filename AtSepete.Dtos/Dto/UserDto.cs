@@ -1,5 +1,4 @@
-﻿using AtSepete.Dtos.BaseDto;
-using AtSepete.Entities.Enums;
+﻿using AtSepete.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Dtos.Dto
 {
-    public class UserDto:BaseGenericDto
+    public class UserDto
     {
         public Guid UserId { get; set; }
         public string FirstName { get; set; }
@@ -22,7 +21,9 @@ namespace AtSepete.Dtos.Dto
         public string Adress { get; set; }
         public DateTime BirthDate { get; set; }
         public string PhoneNumber { get; set; }
-      
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public DateTime? DeletedDate { get; set; }
         public bool IsActive { get; set; } 
     }
 }
