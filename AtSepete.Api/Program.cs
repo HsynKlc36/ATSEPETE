@@ -97,7 +97,7 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<Mid>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.UseExceptionHandler("/error");
+
 
 app.MapControllers();
 
