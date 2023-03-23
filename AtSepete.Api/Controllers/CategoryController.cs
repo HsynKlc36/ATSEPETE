@@ -15,17 +15,18 @@ namespace AtSepete.Api.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
- 
+       
 
         public CategoryController(ICategoryService CategoryService)
         {
             _categoryService = CategoryService;
-        
+         
         }
         [HttpGet]
         [Route("[action]")]
         public async Task<IDataResult<List<CategoryListDto>>> GetAllCategory()
-        {           
+        {
+            
             return await _categoryService.GetAllCategoryAsync();
         }
         [HttpGet]
