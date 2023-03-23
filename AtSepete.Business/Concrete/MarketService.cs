@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Business.Concrete
 {
-    public class MarketService :IMarketService
+    public class MarketService : IMarketService
     {
         private readonly IMarketRepository _marketRepository;
         private readonly IMapper _mapper;
@@ -76,23 +76,34 @@ namespace AtSepete.Business.Concrete
         {
             try
             {
-
                 var market = await _marketRepository.GetByIdAsync(id);
                 if (market is null)
                 {
                     return new ErrorDataResult<UpdateMarketDto>(Messages.MarketNotFound);
                 }
-                var hasMarket = await _marketRepository.AnyAsync(c => c.MarketName.Trim().ToLower() == updateMarketDto.MarketName.Trim().ToLower() && c.Description.Trim().ToLower() == updateMarketDto.Description.Trim().ToLower());
-                //çalıştırılınca ve den sonrası silinip denenecek!
+                if (updateMarketDto.MarketName == market.MarketName)
+                {
+
+                    var updateMarket = _mapper.Map(updateMarketDto, market);
+                    await _marketRepository.UpdateAsync(updateMarket);
+                    await _marketRepository.SaveChangesAsync();
+                    return new SuccessDataResult<UpdateMarketDto>(_mapper.Map<Market, UpdateMarketDto>(updateMarket), Messages.UpdateSuccess);
+                }
+
+                var hasMarket = await _marketRepository.AnyAsync(c => c.MarketName.Trim().ToLower() == updateMarketDto.MarketName.Trim().ToLower());
 
                 if (hasMarket)
                 {
                     return new ErrorDataResult<UpdateMarketDto>(Messages.AddFailAlreadyExists);
                 }
-                var updateMarket = _mapper.Map(updateMarketDto, market);
-                await _marketRepository.UpdateAsync(updateMarket);
-                await _marketRepository.SaveChangesAsync();
-                return new SuccessDataResult<UpdateMarketDto>(_mapper.Map<Market, UpdateMarketDto>(updateMarket), Messages.UpdateSuccess);
+                else
+                {
+                    var updateMarket = _mapper.Map(updateMarketDto, market);
+                    await _marketRepository.UpdateAsync(updateMarket);
+                    await _marketRepository.SaveChangesAsync();
+                    return new SuccessDataResult<UpdateMarketDto>(_mapper.Map<Market, UpdateMarketDto>(updateMarket), Messages.UpdateSuccess);
+                }
+
             }
             catch (Exception)
             {
@@ -125,6 +136,7 @@ namespace AtSepete.Business.Concrete
             else if (Market.IsActive == true)
             {
                 Market.IsActive = false;
+                Market.DeletedDate= DateTime.Now;
                 await _marketRepository.UpdateAsync(Market);
                 await _marketRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.DeleteSuccess);

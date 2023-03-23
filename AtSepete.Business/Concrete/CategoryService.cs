@@ -125,6 +125,7 @@ namespace AtSepete.Business.Concrete
             else if (category.IsActive==true)
             {
             category.IsActive = false;
+            category.DeletedDate = DateTime.Now;
             await _categoryRepository.UpdateAsync(category);
             await _categoryRepository.SaveChangesAsync();
             return new SuccessResult(Messages.DeleteSuccess);               

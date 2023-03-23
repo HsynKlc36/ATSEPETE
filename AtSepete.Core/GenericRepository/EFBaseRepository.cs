@@ -63,17 +63,22 @@ namespace AtSepete.Core.GenericRepository
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _table.ToListAsync();
+            return await GetAllActives().ToListAsync();
         }
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> exp)
+        {
+            return await GetAllActives().Where(exp).ToListAsync();
+        }
+
 
         public async Task<T?> GetByDefaultAsync(Expression<Func<T, bool>> exp)
         {
-            return await _table.FirstOrDefaultAsync(exp);
+            return await GetAllActives().FirstOrDefaultAsync(exp);
         }
 
         public async Task<T?> GetByIdAsync(Guid id)
         {
-            return await _table.FindAsync(id);
+            return await _table.FindAsync(id);// buraya sabah bakılacak!!
         }
 
         public async Task<IEnumerable<T>> GetDefaultAsync(Expression<Func<T, bool>> exp)
