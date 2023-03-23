@@ -18,7 +18,7 @@ namespace AtSepete.Api.Controllers
         [HttpPost]
         public IActionResult Login(string userName, string password)
         {
-            if (userName == "Nuray" && password == "Marhan")
+            if (userName == "N" && password == "M")
             {
                 var token = _tokenHandler.CreateAccessToken(15);
 

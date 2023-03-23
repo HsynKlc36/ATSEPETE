@@ -15,7 +15,7 @@
             {
                 if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase))
                 {
-                    var token = Guid.Parse(authHeader.Substring(6).Trim());
+                    var token = authHeader.Substring(6).Trim();
                 }
                 else if (context.Request.Path.Value.Contains("/api/Auth"))
                 {

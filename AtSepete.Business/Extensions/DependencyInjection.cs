@@ -17,6 +17,7 @@ namespace AtSepete.Business.Extensions
         public static IServiceCollection AddBusinessServices(this IServiceCollection services)
         {
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IMarketService, MarketService>();
             return services;
         }
     }

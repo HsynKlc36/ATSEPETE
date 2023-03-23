@@ -4,5 +4,6 @@
     {
         public string AccessToken { get; set; }
         public DateTime Expirition { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

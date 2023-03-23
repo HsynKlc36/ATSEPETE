@@ -21,8 +21,8 @@ namespace AtSepete.Entities.Data
         public string? SecondLastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        //public string RefreshToken { get; set; }
-        //public DateTime RefreshTokenEndDate { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenEndDate { get; set; }
         public Role Role { get; set; }
         public string GetFullNameShort()
         {

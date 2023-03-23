@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Dtos.Dto
 {
-    public class MarketDto
+    public class MarketListDto
     {
         public Guid MarketId { get; set; }
         public string MarketName { get; set; }

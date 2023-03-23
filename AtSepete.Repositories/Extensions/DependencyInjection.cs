@@ -15,6 +15,7 @@ namespace AtSepete.Repositories.Extensions
         public static IServiceCollection AddRepositoriesServices(this IServiceCollection services)
         {
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IMarketRepository, MarketRepository>();
             return services;
         }
     }

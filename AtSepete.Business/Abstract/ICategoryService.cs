@@ -11,7 +11,8 @@ namespace AtSepete.Business.Abstract
         Task<IDataResult<CategoryDto>> GetByIdCategoryAsync(Guid id);
         Task<IDataResult<CreateCategoryDto>> AddCategoryAsync(CreateCategoryDto entity);
         Task<IDataResult<UpdateCategoryDto>> UpdateCategoryAsync(Guid id, UpdateCategoryDto updateCategoryDto);
-
+        Task<IResult> HardDeleteCategoryAsync(Guid id);
+        Task<IResult> SoftDeleteCategoryAsync(Guid id);
         //Task<BaseResponse<bool>> SetPassiveAsync(Guid id);
         //Task<BaseResponse<bool>> RemoveAsync(Guid id);
         //Task<BaseResponse<bool>> ActivateAsync(Guid id);

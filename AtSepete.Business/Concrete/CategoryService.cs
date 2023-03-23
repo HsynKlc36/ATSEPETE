@@ -50,12 +50,12 @@ namespace AtSepete.Business.Concrete
             {
                 if (entity is null)
                 {
-                    return new ErrorDataResult<CreateCategoryDto>(Messages.ObjectNotValid); ;
+                    return new ErrorDataResult<CreateCategoryDto>(Messages.ObjectNotValid); 
                 }
-
-                if (true)
+                var hasCategory = await _categoryRepository.AnyAsync(c => c.Name.Trim().ToLower() == entity.Name.Trim().ToLower() );
+                if (hasCategory)
                 {
-
+                    return new ErrorDataResult<CreateCategoryDto>(Messages.AddFailAlreadyExists);
                 }
                 Category category = _mapper.Map<CreateCategoryDto, Category>(entity);
                 var result = await _categoryRepository.AddAsync(category);
@@ -99,6 +99,37 @@ namespace AtSepete.Business.Concrete
 
                 return new ErrorDataResult<UpdateCategoryDto>(Messages.UpdateFail);
             }
+        }
+
+        public async Task<IResult> HardDeleteCategoryAsync(Guid id)
+        {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category is null)
+            {
+                return new ErrorResult(Messages.CategoryNotFound);
+            }
+
+            await _categoryRepository.DeleteAsync(category);
+            await _categoryRepository.SaveChangesAsync();
+
+            return new SuccessResult(Messages.DeleteSuccess);
+        }
+
+        public async  Task<IResult> SoftDeleteCategoryAsync(Guid id)
+        {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category is null)
+            {
+                return new ErrorResult(Messages.CategoryNotFound);
+            }
+            else if (category.IsActive==true)
+            {
+            category.IsActive = false;
+            await _categoryRepository.UpdateAsync(category);
+            await _categoryRepository.SaveChangesAsync();
+            return new SuccessResult(Messages.DeleteSuccess);               
+            }
+            return new ErrorResult(Messages.DeleteFail);
         }
 
 

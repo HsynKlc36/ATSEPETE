@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace AtSepete.Api.Jwt
@@ -27,12 +28,20 @@ namespace AtSepete.Api.Jwt
                 notBefore: DateTime.UtcNow,
                 signingCredentials: signingCredentials
                 );
-
+               
             //token oluşturucu sınıfından örnek alalım
             JwtSecurityTokenHandler tokenHandler = new();
                 token.AccessToken=tokenHandler.WriteToken(securityToken);
-
+            token.RefreshToken = CreateRefreshToken();
             return token;
+        }
+
+        public string CreateRefreshToken()
+        {
+            byte[] number=new byte[32];
+            using  RandomNumberGenerator random=RandomNumberGenerator.Create();
+            random.GetBytes(number);
+            return Convert.ToBase64String(number);
         }
     }
 }

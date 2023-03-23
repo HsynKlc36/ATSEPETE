@@ -6,21 +6,23 @@ using AtSepete.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using IResult = AtSepete.Results.IResult;
 
 namespace AtSepete.Api.Controllers
 {
     [Route("AtSepeteApi/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-       
+        
 
         public CategoryController(ICategoryService CategoryService)
         {
             _categoryService = CategoryService;
-         
+
         }
         [HttpGet]
         [Route("[action]")]
@@ -46,6 +48,18 @@ namespace AtSepete.Api.Controllers
         public async Task<IDataResult<UpdateCategoryDto>> UpdateCategory([FromRoute] Guid id, [FromBody] UpdateCategoryDto updateCategoryDto)
         {
             return await _categoryService.UpdateCategoryAsync(id, updateCategoryDto); ;
+        }
+        [HttpDelete]
+        [Route("[Action]/{id:Guid}")]
+        public async Task<IResult> HardDeleteCategory([FromRoute] Guid id)
+        {
+            return await _categoryService.HardDeleteCategoryAsync(id); 
+        }
+        [HttpDelete]
+        [Route("[Action]/{id:Guid}")]
+        public async Task<IResult> SoftDeleteCategory([FromRoute] Guid id)
+        {
+            return await _categoryService.SoftDeleteCategoryAsync(id);
         }
 
     }
