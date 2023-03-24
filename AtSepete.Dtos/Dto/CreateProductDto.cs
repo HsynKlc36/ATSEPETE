@@ -21,7 +21,6 @@ namespace AtSepete.Dtos.Dto
 
         public IFormFile? Photo { get; set; }
         public string? PhotoPath { get; set; }
-        [ForeignKey("Category")]
         public Guid CategoryId { get; set; }
         public DateTime? CreatedDate { get; set; } = DateTime.Now;// bunlar tüm dto lar da olacak mı yoksa servislerde mi verilmeli sonradan bak!
     }

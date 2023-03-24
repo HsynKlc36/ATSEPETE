@@ -20,8 +20,11 @@ namespace AtSepete.Dtos.Dto
         public IFormFile? Photo { get; set; }
         public string? PhotoPath { get; set; }
         public string Title { get; set; }
-        [ForeignKey("Category")]
         public Guid CategoryId { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public DateTime? DeletedDate { get; set; }
+        public bool IsActive { get; set; }
 
     }
 }

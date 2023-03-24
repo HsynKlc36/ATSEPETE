@@ -79,7 +79,7 @@ namespace AtSepete.Business.Concrete
                 var product = await _productRepository.GetByIdAsync(id);
                 if (product is null)
                 {
-                    return new ErrorDataResult<UpdateProductDto>(Messages.MarketNotFound);
+                    return new ErrorDataResult<UpdateProductDto>(Messages.ProductNotFound);
                 }
                 if (updateProductDto.Barcode == product.Barcode&&updateProductDto.Id==product.Id)
                 {
