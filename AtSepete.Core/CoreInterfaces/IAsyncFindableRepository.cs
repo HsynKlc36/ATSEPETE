@@ -11,6 +11,7 @@ namespace AtSepete.Core.CoreInterfaces
     public interface IAsyncFindableRepository<T>:IAsyncQueryableRepository<T>,IAsyncRepository where T : Base
     {
         Task<T?> GetByIdAsync(Guid id);
+        Task<T?> GetByIdActiveOrPassiveAsync(Guid id);
 
         Task<T?> GetByDefaultAsync(Expression<Func<T, bool>> exp);
   

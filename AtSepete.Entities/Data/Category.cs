@@ -11,9 +11,7 @@ namespace AtSepete.Entities.Data
 {
     public class Category :Base
     {
-        [Key]
-        [Column(Order = 0)]
-        public Guid CategoryId { get; set; }
+
         public string Name { get; set; }
         public string Description { get; set; }
         //navigation property

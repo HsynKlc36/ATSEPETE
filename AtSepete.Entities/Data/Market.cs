@@ -10,8 +10,7 @@ namespace AtSepete.Entities.Data
 {
     public class Market:Base
     {
-        [Key]
-        public Guid MarketId { get; set; }
+
         public string MarketName { get; set; }
         public string Description { get; set; }
         public string Adress { get; set; }

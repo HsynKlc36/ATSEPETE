@@ -12,6 +12,12 @@ namespace AtSepete.Business.Abstract
 {
     public interface IProductService 
     {
+        Task<IDataResult<List<ProductListDto>>> GetAllProductAsync();
+        Task<IDataResult<ProductDto>> GetByIdProductAsync(Guid id);
+        Task<IDataResult<CreateProductDto>> AddProductAsync(CreateProductDto entity);
+        Task<IDataResult<UpdateProductDto>> UpdateProductAsync(Guid id, UpdateProductDto updateProductDto);
+        Task<IResult> HardDeleteProductAsync(Guid id);
+        Task<IResult> SoftDeleteProductAsync(Guid id);
         //Task<IDataResult<List<ProductDto>>> GetAllAsync();
         //Task<BaseResponse<Dto>> GetByIdAsync(Guid id);
         //Task<BaseResponse<bool>> SetPassiveAsync(Guid id);

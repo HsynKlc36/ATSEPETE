@@ -11,8 +11,7 @@ namespace AtSepete.Entities.Data
 {
     public class OrderDetail:Base
     {
-        [Key]
-        public int Id { get; set; }
+
         [ForeignKey("ProductInOrder")]
         public Guid OrderId { get; set; }
         [ForeignKey("OrderInProduct")]

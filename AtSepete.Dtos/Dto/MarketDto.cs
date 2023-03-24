@@ -8,7 +8,7 @@ namespace AtSepete.Dtos.Dto
 {
     public class MarketDto
     {
-        public Guid MarketId { get; set; }
+        public Guid Id { get; set; }
         public string MarketName { get; set; }
         public string Description { get; set; }
         public string Adress { get; set; }

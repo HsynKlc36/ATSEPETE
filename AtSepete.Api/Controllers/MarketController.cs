@@ -12,47 +12,47 @@ namespace AtSepete.Api.Controllers
     [ApiController]
     public class MarketController : ControllerBase
     {
-        private readonly IMarketService _marketService;
+        private readonly IMarketService _productService;
 
         public MarketController(IMarketService marketService)
         {
-            _marketService = marketService;
+            _productService = marketService;
         }
         [HttpGet]
         [Route("[action]")]
         public async Task<IDataResult<List<MarketListDto>>> GetAllMarket()
         {
-            return await _marketService.GetAllMarketAsync();
+            return await _productService.GetAllMarketAsync();
         }
         [HttpGet]
         [Route("[action]/{id:Guid}")]
         public async Task<IDataResult<MarketDto>> GetByIdMarket([FromRoute] Guid id)
         {
-            return await _marketService.GetByIdMarketAsync(id); ;
+            return await _productService.GetByIdMarketAsync(id); ;
         }
         [HttpPost]
         [Route("[action]")]
         public async Task<IDataResult<CreateMarketDto>> AddMarket([FromBody] CreateMarketDto createMarketDto)
         {
-            return await _marketService.AddMarketAsync(createMarketDto);
+            return await _productService.AddMarketAsync(createMarketDto);
         }
         [HttpPut]
         [Route("[action]/{id:Guid}")]
         public async Task<IDataResult<UpdateMarketDto>> UpdateMarket([FromRoute] Guid id, [FromBody] UpdateMarketDto updateMarketDto)
         {
-            return await _marketService.UpdateMarketAsync(id, updateMarketDto); ;
+            return await _productService.UpdateMarketAsync(id, updateMarketDto); ;
         }
         [HttpDelete]
         [Route("[Action]/{id:Guid}")]
         public async Task<IResult> HardDeleteMarket([FromRoute] Guid id)
         {
-            return await _marketService.HardDeleteMarketAsync(id);
+            return await _productService.HardDeleteMarketAsync(id);
         }
         [HttpDelete]
         [Route("[Action]/{id:Guid}")]
         public async Task<IResult> SoftDeleteMarket([FromRoute] Guid id)
         {
-            return await _marketService.SoftDeleteMarketAsync(id);
+            return await _productService.SoftDeleteMarketAsync(id);
         }
     }
 }

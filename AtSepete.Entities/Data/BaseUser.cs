@@ -10,11 +10,9 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Entities.Data
 {
-    public class BaseUser:Base
+    public abstract class BaseUser:Base
     {
-        [Key]
-        [Column(Order =0)]
-        public Guid UserId { get; set; }
+        
         public string FirstName { get; set; }
         public string? SecondName { get; set; }
         public string LastName { get; set; }

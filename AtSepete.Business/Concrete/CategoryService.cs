@@ -27,7 +27,7 @@ namespace AtSepete.Business.Concrete
         }
         public async Task<IDataResult<CategoryDto>> GetByIdCategoryAsync(Guid id)
         {
-            var category = await _categoryRepository.GetByDefaultAsync(x => x.CategoryId == id);
+            var category = await _categoryRepository.GetByDefaultAsync(x => x.Id == id);
             if (category is null)
             {
                 return new ErrorDataResult<CategoryDto>(Messages.CategoryNotFound);
@@ -103,7 +103,7 @@ namespace AtSepete.Business.Concrete
 
         public async Task<IResult> HardDeleteCategoryAsync(Guid id)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
+            var category = await _categoryRepository.GetByIdActiveOrPassiveAsync(id);
             if (category is null)
             {
                 return new ErrorResult(Messages.CategoryNotFound);
@@ -122,7 +122,7 @@ namespace AtSepete.Business.Concrete
             {
                 return new ErrorResult(Messages.CategoryNotFound);
             }
-            else if (category.IsActive==true)
+            else 
             {
             category.IsActive = false;
             category.DeletedDate = DateTime.Now;
@@ -130,7 +130,7 @@ namespace AtSepete.Business.Concrete
             await _categoryRepository.SaveChangesAsync();
             return new SuccessResult(Messages.DeleteSuccess);               
             }
-            return new ErrorResult(Messages.DeleteFail);
+        
         }
 
 
