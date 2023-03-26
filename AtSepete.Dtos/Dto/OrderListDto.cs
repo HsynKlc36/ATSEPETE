@@ -8,5 +8,8 @@ namespace AtSepete.Dtos.Dto
 {
     public class OrderListDto
     {
+        public Guid Id { get; set; }
+        public Guid CustomerId { get; set; }
+        public Guid MarketId { get; set; }
     }
 }

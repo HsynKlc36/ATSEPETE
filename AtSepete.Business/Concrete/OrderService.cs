@@ -52,7 +52,7 @@ namespace AtSepete.Business.Concrete
                 {
                     return new ErrorDataResult<CreateOrderDto>(Messages.ObjectNotValid); ;
                 }
-                var hasCategory = await _orderRepository.AnyAsync(x =>x.Customer.Id == entity.CustomerId&& x.Market.Id==entity.MarketId);
+                var hasCategory = await _orderRepository.AnyAsync(x =>x.Customer.Id.Equals(entity.CustomerId)&& x.Market.Id.Equals(entity.MarketId));
                 if (!hasCategory)
                 {
                     return new ErrorDataResult<CreateOrderDto>(Messages.AddFail);
@@ -76,7 +76,9 @@ namespace AtSepete.Business.Concrete
         {
             try
             {
+
                 var order = await _orderRepository.GetByIdAsync(id);
+   
                 if (order is null)
                 {
                     return new ErrorDataResult<UpdateOrderDto>(Messages.OrderNotFound);

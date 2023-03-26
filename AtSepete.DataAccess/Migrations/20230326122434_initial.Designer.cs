@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AtSepete.DataAccess.Migrations
 {
     [DbContext(typeof(AtSepeteDbContext))]
-    [Migration("20230324140803_init")]
-    partial class init
+    [Migration("20230326122434_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
