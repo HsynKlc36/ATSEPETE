@@ -20,6 +20,7 @@ namespace AtSepete.Business.Concrete
         {
             _userRepository = userRepository;
 
+
         }
 
         

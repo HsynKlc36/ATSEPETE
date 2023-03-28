@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace AtSepete.Business.Concrete
 {
@@ -33,6 +34,7 @@ namespace AtSepete.Business.Concrete
                 return new ErrorDataResult<ProductDto>(Messages.ProductNotFound);
             }
             return new SuccessDataResult<ProductDto>(_mapper.Map<ProductDto>(product), Messages.ProductFoundSuccess);
+           
 
         }
         public async Task<IDataResult<List<ProductListDto>>> GetAllProductAsync()

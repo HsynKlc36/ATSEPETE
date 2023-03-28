@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Castle.Core.Resource;
 
 namespace AtSepete.Business.Concrete
 {
@@ -83,9 +84,11 @@ namespace AtSepete.Business.Concrete
                 {
                     return new ErrorDataResult<UpdateOrderDto>(Messages.OrderNotFound);
                 }
-                if (updateOrderDto.CustomerId == order.Customer.Id && updateOrderDto.MarketId == order.Market.Id&&order.Id==updateOrderDto.Id)
-                {
 
+                var hasCategory = await _orderRepository.AnyAsync(x => x.Customer.Id.Equals(updateOrderDto.CustomerId) && x.Market.Id.Equals(updateOrderDto.MarketId) && x.Id.Equals(updateOrderDto.Id));
+
+                if (hasCategory)
+                {
                     var updateOrder = _mapper.Map(updateOrderDto, order);
                     await _orderRepository.UpdateAsync(updateOrder);
                     await _orderRepository.SaveChangesAsync();
@@ -95,20 +98,6 @@ namespace AtSepete.Business.Concrete
                 {
                     return new ErrorDataResult<UpdateOrderDto>(Messages.ObjectNotValid);
                 }
-
-                //var hasProduct = await _orderRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == updateOrderDto.Barcode.Trim().ToLower());
-
-                //if (hasProduct)
-                //{
-                //    return new ErrorDataResult<UpdateOrderDto>(Messages.ProductNotFound);
-                //}
-                //else
-                //{
-                //    var updateProduct = _mapper.Map(updateOrderDto, product);
-                //    await _orderRepository.UpdateAsync(updateProduct);
-                //    await _orderRepository.SaveChangesAsync();
-                //    return new SuccessDataResult<UpdateOrderDto>(_mapper.Map<Product, UpdateOrderDto>(updateProduct), Messages.UpdateSuccess);
-                //}
 
             }
             catch (Exception)

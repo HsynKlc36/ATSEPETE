@@ -18,6 +18,7 @@ namespace AtSepete.Repositories.Extensions
             services.AddScoped<IMarketRepository, MarketRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IProductMarketRepository, ProductMarketRepository>();
             return services;
         }
     }

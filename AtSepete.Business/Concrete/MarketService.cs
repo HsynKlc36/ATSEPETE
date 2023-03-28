@@ -19,11 +19,13 @@ namespace AtSepete.Business.Concrete
     {
         private readonly IMarketRepository _productRepository;
         private readonly IMapper _mapper;
+        private readonly IProductMarketService _productMarketService;
 
-        public MarketService(IMarketRepository marketRepository, IMapper mapper)
+        public MarketService(IMarketRepository marketRepository, IMapper mapper,IProductMarketService productMarketService)
         {
             _productRepository = marketRepository;
             _mapper = mapper;
+            _productMarketService = productMarketService;
         }
         public async Task<IDataResult<MarketDto>> GetByIdMarketAsync(Guid id)
         {

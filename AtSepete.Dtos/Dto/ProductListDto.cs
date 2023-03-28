@@ -21,7 +21,6 @@ namespace AtSepete.Dtos.Dto
         public IFormFile? Photo { get; set; }
         public string? PhotoPath { get; set; }
         public string Title { get; set; }
-        [ForeignKey("Category")]
         public Guid CategoryId { get; set; }
     }
 }
