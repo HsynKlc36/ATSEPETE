@@ -9,8 +9,6 @@ namespace AtSepete.Dtos.Dto
     public class UpdateProductMarketDto
     {
         public Guid Id { get; set; }
-        public Guid ProductId { get; set; }
-        public Guid MarketId { get; set; }
         public int Stock { get; set; }
         public decimal Price { get; set; }
         public bool IsActive { get; set; }

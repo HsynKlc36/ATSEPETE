@@ -53,8 +53,8 @@ namespace AtSepete.Business.Concrete
                 {
                     return new ErrorDataResult<CreateOrderDto>(Messages.ObjectNotValid); ;
                 }
-                var hasCategory = await _orderRepository.AnyAsync(x =>x.Customer.Id.Equals(entity.CustomerId)&& x.Market.Id.Equals(entity.MarketId));
-                if (!hasCategory)
+                var hasOrder = await _orderRepository.AnyAsync(x =>x.Customer.Id.Equals(entity.CustomerId)&& x.Market.Id.Equals(entity.MarketId));
+                if (!hasOrder)
                 {
                     return new ErrorDataResult<CreateOrderDto>(Messages.AddFail);
                 }
@@ -85,9 +85,9 @@ namespace AtSepete.Business.Concrete
                     return new ErrorDataResult<UpdateOrderDto>(Messages.OrderNotFound);
                 }
 
-                var hasCategory = await _orderRepository.AnyAsync(x => x.Customer.Id.Equals(updateOrderDto.CustomerId) && x.Market.Id.Equals(updateOrderDto.MarketId) && x.Id.Equals(updateOrderDto.Id));
+                var hasOrder= await _orderRepository.AnyAsync(x => x.Customer.Id.Equals(updateOrderDto.CustomerId) && x.Market.Id.Equals(updateOrderDto.MarketId) && x.Id.Equals(updateOrderDto.Id));
 
-                if (hasCategory)
+                if (hasOrder)
                 {
                     var updateOrder = _mapper.Map(updateOrderDto, order);
                     await _orderRepository.UpdateAsync(updateOrder);
