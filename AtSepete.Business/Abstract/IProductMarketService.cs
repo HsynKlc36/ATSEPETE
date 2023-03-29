@@ -13,11 +13,15 @@ namespace AtSepete.Business.Abstract
     public interface IProductMarketService 
     {
         Task<IDataResult<List<ProductMarketListDto>>> GetAllProductMarketAsync();
+        Task<IDataResult<List<ProductMarketListDto>>> GetAllPricesByPrduct(Guid id);
+    
         Task<IDataResult<ProductMarketDto>> GetByIdProductMarketAsync(Guid id);
         Task<IDataResult<CreateProductMarketDto>> AddProductMarketAsync(CreateProductMarketDto entity);
         Task<IDataResult<UpdateProductMarketDto>> UpdateProductMarketAsync(Guid id, UpdateProductMarketDto updateProductMarketDto);
         Task<IResult> HardDeleteProductMarketAsync(Guid id);
         Task<IResult> SoftDeleteProductMarketAsync(Guid id);
+
+
         //Task<BaseResponse<Dto>> GetByIdAsync(Guid id);
         //Task<BaseResponse<bool>> SetPassiveAsync(Guid id);
         //Task<BaseResponse<bool>> RemoveAsync(Guid id);

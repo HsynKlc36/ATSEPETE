@@ -37,6 +37,10 @@ public class Messages
     public const string MarketNotFound = "Market_Not_Found";
 
     public const string ObjectNotValid = "Object_Not_Valid";
+    public const string ProductMarketNotFound = "ProductMarket_Not_Found";
+    public const string HardDeleteFail = "Hard_Delete_Fail";
+
+
 
 
 

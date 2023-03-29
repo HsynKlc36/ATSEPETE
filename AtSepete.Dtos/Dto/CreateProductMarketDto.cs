@@ -13,7 +13,7 @@ namespace AtSepete.Dtos.Dto
         public Guid MarketId { get; set; }
         public int Stock { get; set; }
         public decimal Price { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         public DateTime? CreatedDate { get; set; } = DateTime.Now;
 
     }

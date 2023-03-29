@@ -15,14 +15,14 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Business.Concrete
 {
-    public class ProductMarketService :IProductMarketService
+    public class ProductMarketService : IProductMarketService
     {
         private readonly IProductMarketRepository _productMarketRepository;
         private readonly IMapper _mapper;
         private readonly IMarketRepository _marketRepository;
         private readonly IProductRepository _productRepository;
 
-        public ProductMarketService(IProductMarketRepository productMarketRepository,IMapper mapper,IMarketRepository marketRepository,IProductRepository productRepository)
+        public ProductMarketService(IProductMarketRepository productMarketRepository, IMapper mapper, IMarketRepository marketRepository, IProductRepository productRepository)
         {
             _productMarketRepository = productMarketRepository;
             _mapper = mapper;
@@ -47,9 +47,7 @@ namespace AtSepete.Business.Concrete
             var result = _mapper.Map<IEnumerable<ProductMarket>, List<ProductMarketListDto>>(tempEntity);
             return new SuccessDataResult<List<ProductMarketListDto>>(result, Messages.ListedSuccess);
 
-
         }
-
         public async Task<IDataResult<CreateProductMarketDto>> AddProductMarketAsync(CreateProductMarketDto entity)
         {
             try
@@ -58,133 +56,104 @@ namespace AtSepete.Business.Concrete
                 var market = await _marketRepository.GetByIdAsync(entity.MarketId);
                 if (market is null)
                 {
-                    return new ErrorDataResult<CreateProductMarketDto>(Messages.AddFailAlreadyExists);
+                    return new ErrorDataResult<CreateProductMarketDto>(Messages.MarketNotFound);
                 }
-
                 var product = await _productRepository.GetByIdAsync(entity.ProductId);
+
                 if (product is null)
                 {
-                    return new ErrorDataResult<CreateProductMarketDto>(Messages.AddFailAlreadyExists);
+                    return new ErrorDataResult<CreateProductMarketDto>(Messages.ProductNotFound);
                 }
-
-                var productMarket = new ProductMarket
+                var hasProductMarket = await _productMarketRepository.AnyAsync(x => x.ProductId.Equals(entity.ProductId) && x.MarketId.Equals(entity.MarketId));
+                if (hasProductMarket)
                 {
-                    
-                    ProductId=entity.ProductId,
-                    MarketId=entity.MarketId ,
-                    Price=entity.Price,
-                    Stock=entity.Stock
-                    
-                };
+                    return new ErrorDataResult<CreateProductMarketDto>(Messages.AddFailAlreadyExists);
 
-                await _productMarketRepository.AddAsync(productMarket);
-                await _productMarketRepository.SaveChangesAsync();              
+                }
+                var productMarket = _mapper.Map<CreateProductMarketDto, ProductMarket>(entity);
 
-                return new SuccessDataResult<CreateProductMarketDto>(Messages.AddSuccess);
+                var result = await _productMarketRepository.AddAsync(productMarket);
+                await _productMarketRepository.SaveChangesAsync();
 
+                return new SuccessDataResult<CreateProductMarketDto>(_mapper.Map<ProductMarket, CreateProductMarketDto>(result), Messages.AddSuccess);
+                #region Control+K+S
+                //    var hasMarket = await _marketRepository.AnyAsync(market => market.Id == entity.MarketId);
+                //    if (hasMarket)
+                //    {
+                //        return new ErrorDataResult<CreateProductMarketDto>(Messages.AddFailAlreadyExists);
+                //    }
 
-
-
-
-
-
-
+                //    var market = _mapper.Map<Market>(entity);
+                //    await _marketRepository.AddAsync(market);
 
 
 
-            //    var hasMarket = await _marketRepository.AnyAsync(market => market.Id == entity.MarketId);
-            //    if (hasMarket)
-            //    {
-            //        return new ErrorDataResult<CreateProductMarketDto>(Messages.AddFailAlreadyExists);
-            //    }
-
-            //    var market = _mapper.Map<Market>(entity);
-            //    await _marketRepository.AddAsync(market);
-
-
-
-            //    List<EducationSubject> educationSubjects = new();
-            //    foreach (var SubjectId in educationCreateDto.SubjectId)
-            //    {
-            //        var educationSubject = new EducationSubject
-            //        {
-            //            EducationId = education.Id,
-            //            SubjectId = SubjectId
-            //        };
-            //        educationSubjects.Add(educationSubject);
-            //    }
+                //    List<EducationSubject> educationSubjects = new();
+                //    foreach (var SubjectId in educationCreateDto.SubjectId)
+                //    {
+                //        var educationSubject = new EducationSubject
+                //        {
+                //            EducationId = education.Id,
+                //            SubjectId = SubjectId
+                //        };
+                //        educationSubjects.Add(educationSubject);
+                //    }
 
 
-            //    await _educationsSubjectsRepository.AddRangeAsync(educationSubjects);
-            //    await _educationsSubjectsRepository.SaveChangesAsync();
-            //    return new SuccessDataResult<EducationDto>(_mapper.Map<EducationDto>(education), Messages.AddSuccess);
+                //    await _educationsSubjectsRepository.AddRangeAsync(educationSubjects);
+                //    await _educationsSubjectsRepository.SaveChangesAsync();
+                //    return new SuccessDataResult<EducationDto>(_mapper.Map<EducationDto>(education), Messages.AddSuccess);
 
 
 
 
 
 
-            //    if (entity is null)
-            //    {
-            //        return new ErrorDataResult<CreateProductMarketDto>(Messages.ObjectNotValid); ;
-            //    }
-            //    var hasCategory = await _productMarketRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == entity.Barcode.Trim().ToLower());
-            //    if (hasCategory)
-            //    {
-            //        return new ErrorDataResult<CreateProductMarketDto>(Messages.AddFailAlreadyExists);
-            //    }
-            //    var product = _mapper.Map<CreateProductMarketDto, ProductMarket>(entity);
-            //    var result = await _productMarketRepository.AddAsync(product);
-            //    await _productMarketRepository.SaveChangesAsync();
+                //    if (entity is null)
+                //    {
+                //        return new ErrorDataResult<CreateProductMarketDto>(Messages.ObjectNotValid); ;
+                //    }
+                //    var hasCategory = await _productMarketRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == entity.Barcode.Trim().ToLower());
+                //    if (hasCategory)
+                //    {
+                //        return new ErrorDataResult<CreateProductMarketDto>(Messages.AddFailAlreadyExists);
+                //    }
+                //    var product = _mapper.Map<CreateProductMarketDto, ProductMarket>(entity);
+                //    var result = await _productMarketRepository.AddAsync(product);
+                //    await _productMarketRepository.SaveChangesAsync();
 
-            //    var createProductDto = _mapper.Map<ProductMarket, CreateProductMarketDto>(result);
-            //    return new SuccessDataResult<CreateProductMarketDto>(createProductDto, Messages.AddSuccess);
+                //    var createProductDto = _mapper.Map<ProductMarket, CreateProductMarketDto>(result);
+                //    return new SuccessDataResult<CreateProductMarketDto>(createProductDto, Messages.AddSuccess);
+                #endregion
             }
             catch (Exception)
             {
-
                 return new ErrorDataResult<CreateProductMarketDto>(Messages.AddFail);
             }
 
-
         }
 
-
-        public async Task<IDataResult<UpdateProductMarketDto>> UpdateProductMarketAsync(Guid id, UpdateProductMarketDto updateProductDto)
+        public async Task<IDataResult<UpdateProductMarketDto>> UpdateProductMarketAsync(Guid id, UpdateProductMarketDto updateProductMarketDto)
         {
             try
             {
-                var product = await _productMarketRepository.GetByIdAsync(id);
-                if (product is null)
+                var productMarket = await _productMarketRepository.GetByIdAsync(id);
+                if (productMarket is null)
                 {
-                    return new ErrorDataResult<UpdateProductMarketDto>(Messages.ProductNotFound);
+                    return new ErrorDataResult<UpdateProductMarketDto>(Messages.ProductMarketNotFound);
                 }
-                //if (updateProductDto.Barcode == product.Barcode && updateProductDto.Id == product.Id)
-                //{
-
-                //    var updateProduct = _mapper.Map(updateProductDto, product);
-                //    await _productMarketRepository.UpdateAsync(updateProduct);
-                //    await _productMarketRepository.SaveChangesAsync();
-                //    return new SuccessDataResult<UpdateProductMarketDto>(_mapper.Map<ProductMarket, UpdateProductMarketDto>(updateProduct), Messages.UpdateSuccess);
-                //}
-                else
+                var hasProductMarket = await _productMarketRepository.AnyAsync(x => x.Id.Equals(updateProductMarketDto.Id));
+                if (hasProductMarket)
                 {
                     return new ErrorDataResult<UpdateProductMarketDto>(Messages.ObjectNotValid);
                 }
+                var updateProductMarket = _mapper.Map(updateProductMarketDto, productMarket);
 
-                //var hasProduct = await _productRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == updateProductDto.Barcode.Trim().ToLower());
+                var result = await _productMarketRepository.UpdateAsync(updateProductMarket);
+                await _productMarketRepository.SaveChangesAsync();
 
-                //if (hasProduct)
-                //{
-                //    return new ErrorDataResult<UpdateProductDto>(Messages.ProductNotFound);
-                //}
-                //else
-                //{
-                //    var updateProduct = _mapper.Map(updateProductDto, product);
-                //    await _productRepository.UpdateAsync(updateProduct);
-                //    await _productRepository.SaveChangesAsync();
-                //    return new SuccessDataResult<UpdateProductDto>(_mapper.Map<Product, UpdateProductDto>(updateProduct), Messages.UpdateSuccess);
-                //}
+                return new SuccessDataResult<UpdateProductMarketDto>(_mapper.Map<ProductMarket, UpdateProductMarketDto>(result), Messages.UpdateSuccess);
+
 
             }
             catch (Exception)
@@ -192,38 +161,81 @@ namespace AtSepete.Business.Concrete
 
                 return new ErrorDataResult<UpdateProductMarketDto>(Messages.UpdateFail);
             }
+
+
         }
 
         public async Task<IResult> HardDeleteProductMarketAsync(Guid id)
         {
-            var product = await _productMarketRepository.GetByIdActiveOrPassiveAsync(id);
-            if (product is null)
+            try
             {
-                return new ErrorResult(Messages.ProductNotFound);
+
+                var productMarket = await _productMarketRepository.GetByIdActiveOrPassiveAsync(id);
+                if (productMarket is null)
+                {
+                    return new ErrorResult(Messages.ProductMarketNotFound);
+                }
+
+                await _productMarketRepository.DeleteAsync(productMarket);
+                await _productMarketRepository.SaveChangesAsync();
+
+                return new SuccessResult(Messages.DeleteSuccess);
             }
 
-            await _productMarketRepository.DeleteAsync(product);
-            await _productMarketRepository.SaveChangesAsync();
+            catch (Exception)
+            {
 
-            return new SuccessResult(Messages.DeleteSuccess);
+                return new ErrorResult(Messages.DeleteFail);
+            }
+
         }
 
         public async Task<IResult> SoftDeleteProductMarketAsync(Guid id)
         {
-            var product = await _productMarketRepository.GetByIdAsync(id);
-            if (product is null)
+            try
             {
-                return new ErrorResult(Messages.ProductNotFound);
+                var productMarket = await _productMarketRepository.GetByIdAsync(id);
+                if (productMarket is null)
+                {
+                    return new ErrorResult(Messages.ProductMarketNotFound);
+                }
+                else
+                {
+                    productMarket.IsActive = false;
+                    productMarket.DeletedDate = DateTime.Now;
+                    await _productMarketRepository.UpdateAsync(productMarket);
+                    await _productMarketRepository.SaveChangesAsync();
+                    return new SuccessResult(Messages.DeleteSuccess);
+                }
             }
-            else
+            catch (Exception)
             {
-                product.IsActive = false;
-                product.DeletedDate = DateTime.Now;
-                await _productMarketRepository.UpdateAsync(product);
-                await _productMarketRepository.SaveChangesAsync();
-                return new SuccessResult(Messages.DeleteSuccess);
+
+                return new ErrorResult(Messages.DeleteFail);
             }
 
+        }
+
+        public async Task<IDataResult<List<ProductMarketPriceListDto>>> GetAllPricesByPrduct(Guid id)
+        {
+            var productMarket = await _productMarketRepository.GetByIdAsync(id);
+            if (productMarket is null)
+            {
+                return new ErrorDataResult<List<ProductMarketPriceListDto>>(Messages.ProductMarketNotFound);
+            }
+          
+            var getMarkets = await _productMarketRepository.GetAllAsync();
+            var priceList = from pm in getMarkets
+                        where pm.ProductId == productMarket.ProductId
+                        select new
+                        {
+                            MarketName = pm.MarketInProduct.MarketName,
+                            Price = pm.Price
+                        };
+            
+            var result = _mapper.Map<List<ProductMarket>, List<ProductMarketPriceListDto>>(priceList);
+
+            return new SuccessDataResult<List<ProductMarketPriceListDto>>(priceList, Messages.ListedSuccess);
         }
     }
 }
