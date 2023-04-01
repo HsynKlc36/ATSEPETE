@@ -65,7 +65,7 @@ namespace AtSepete.Api.Controllers
 
         [HttpDelete]
         [Route("[Action]/{id:Guid}")]
-        public async Task<IResult> SoftDeleteCategory([FromRoute] Guid id)
+        public async Task<IResult> SoftDeleteProductMarket([FromRoute] Guid id)
         {
             return await _productMarketService.SoftDeleteProductMarketAsync(id);
         }
