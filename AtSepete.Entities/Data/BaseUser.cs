@@ -37,7 +37,7 @@ namespace AtSepete.Entities.Data
             }
             return string.Join(" ", FirstName, nameShort, LastName, lastNameShort);
         }
-        public string GetFullName()
+        public override string GetFullName()
         {
             return string.Join(" ", FirstName, SecondName, LastName, SecondLastName);
         }

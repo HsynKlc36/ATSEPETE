@@ -30,6 +30,10 @@ namespace AtSepete.Entities.Data
         virtual public IEnumerable<ProductMarket>? ProductMarkets { get; set; }
         virtual public IEnumerable<OrderDetail>? OrderDetails { get; set; }
 
+        public override string GetFullName()
+        {
+            return string.Join(" ", Title, ProductName, Quantity, Unit);
+        }
 
 
     }

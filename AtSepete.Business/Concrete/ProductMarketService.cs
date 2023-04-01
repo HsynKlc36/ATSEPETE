@@ -39,14 +39,12 @@ namespace AtSepete.Business.Concrete
             }
             return new SuccessDataResult<ProductMarketDto>(_mapper.Map<ProductMarketDto>(product), Messages.ProductFoundSuccess);
 
-
         }
         public async Task<IDataResult<List<ProductMarketListDto>>> GetAllProductMarketAsync()
         {
             var tempEntity = await _productMarketRepository.GetAllAsync();
             var result = _mapper.Map<IEnumerable<ProductMarket>, List<ProductMarketListDto>>(tempEntity);
             return new SuccessDataResult<List<ProductMarketListDto>>(result, Messages.ListedSuccess);
-
         }
         public async Task<IDataResult<CreateProductMarketDto>> AddProductMarketAsync(CreateProductMarketDto entity)
         {
@@ -216,26 +214,20 @@ namespace AtSepete.Business.Concrete
 
         }
 
-        public async Task<IDataResult<List<ProductMarketPriceListDto>>> GetAllPricesByPrduct(Guid id)
+        public async Task<IDataResult<List<ProductMarketListDto>>> GetAllPricesByProduct(Guid productId)
         {
-            var productMarket = await _productMarketRepository.GetByIdAsync(id);
-            if (productMarket is null)
-            {
-                return new ErrorDataResult<List<ProductMarketPriceListDto>>(Messages.ProductMarketNotFound);
-            }
-          
-            var getMarkets = await _productMarketRepository.GetAllAsync();
-            var priceList = from pm in getMarkets
-                        where pm.ProductId == productMarket.ProductId
-                        select new
-                        {
-                            MarketName = pm.MarketInProduct.MarketName,
-                            Price = pm.Price
-                        };
-            
-            var result = _mapper.Map<List<ProductMarket>, List<ProductMarketPriceListDto>>(priceList);
 
-            return new SuccessDataResult<List<ProductMarketPriceListDto>>(priceList, Messages.ListedSuccess);
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product is null)
+            {
+                return new ErrorDataResult<List<ProductMarketListDto>>(Messages.ProductMarketNotFound);
+            }
+            IEnumerable<ProductMarket> productList =await _productMarketRepository.Where(x => x.ProductId == productId);
+            var sortedProductList= productList.AsQueryable().OrderByDescending(x => x.Price).ToList();
+
+            var result = _mapper.Map<IEnumerable<ProductMarket>, List<ProductMarketListDto>>(sortedProductList);
+
+            return new SuccessDataResult<List<ProductMarketListDto>>(result, Messages.ListedSuccess);
         }
     }
 }

@@ -18,5 +18,9 @@ namespace AtSepete.Entities.BaseData
         public DateTime? ModifiedDate { get; set; }
         public DateTime? DeletedDate { get; set; }
         public bool  IsActive { get; set; }=true; //buradaki değerler kaldırılcak servis tarafında  verilecek
+        public virtual string GetFullName()
+        {
+            return string.Join("","");
+        }
     }
 }

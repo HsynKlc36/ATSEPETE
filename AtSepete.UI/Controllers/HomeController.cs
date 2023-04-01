@@ -1,6 +1,9 @@
-﻿using AtSepete.Repositories.Abstract;
+﻿using AtSepete.Entities.BaseData;
+using AtSepete.Entities.Data;
+using AtSepete.Repositories.Abstract;
 using AtSepete.UI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace AtSepete.UI.Controllers
@@ -8,18 +11,26 @@ namespace AtSepete.UI.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ICategoryRepository _categoryRepository;
 
-        public HomeController(ILogger<HomeController> logger,ICategoryRepository categoryRepository)
+
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            _categoryRepository = categoryRepository;
+           
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            ViewBag.Category = _categoryRepository.GetAllAsync();
-            return View();
+            var products=new Product();
+            using (var httpClient = new HttpClient())//api ile localhosttan bağlantı kurarak istekleri yönetir.
+            {
+                using (var answer = await httpClient.GetAsync("https://localhost:7286/AtSepeteApi/Product/GetAllProduct"))
+                {
+                    string apiAnswer = await answer.Content.ReadAsStringAsync();
+                    products = JsonConvert.DeserializeObject<Product>(apiAnswer);
+                }
+            }
+            return View(products);
         }
 
         public IActionResult Privacy()
