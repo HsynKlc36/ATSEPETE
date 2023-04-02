@@ -33,12 +33,20 @@ public class Messages
     public const string OrderFoundSuccess = "Order_Found_Success";
     public const string OrderNotFound = "Order_Not_Found";
 
+    public const string OrderDetailFoundSuccess = "OrderDetail_Found_Success";
+    public const string OrderDetailNotFound = "OrderDetail_Not_Found";
+
     public const string MarketFoundSuccess = "Market_Found_Success";
     public const string MarketNotFound = "Market_Not_Found";
 
-    public const string ObjectNotValid = "Object_Not_Valid";
     public const string ProductMarketNotFound = "ProductMarket_Not_Found";
+    public const string ProductMarketFoundSuccess = "ProductMarket_Found_Success";
+
+    public const string ObjectNotValid = "Object_Not_Valid";
     public const string HardDeleteFail = "Hard_Delete_Fail";
+    public const string HardDeleteSuccess = "Hard_Delete_Success";
+    public const string SoftDeleteFail = "Soft_Delete_Fail";
+    public const string SoftDeleteSuccess = "Soft_Delete_Success";
 
 
 

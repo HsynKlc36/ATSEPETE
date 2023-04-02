@@ -21,6 +21,7 @@ namespace AtSepete.Business.Mapper
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<Category, UpdateCategoryDto>();
             CreateMap<UpdateCategoryDto, Category>();
+            //
             CreateMap<Market, MarketDto>();
             CreateMap<MarketDto, Market>();
             CreateMap<Market, MarketListDto>();
@@ -29,6 +30,7 @@ namespace AtSepete.Business.Mapper
             CreateMap<CreateMarketDto, Market>();
             CreateMap<Market, UpdateMarketDto>();
             CreateMap<UpdateMarketDto, Market>();
+            //
             CreateMap<Product, ProductDto>();
             CreateMap<ProductDto, Product>();
             CreateMap<Product, ProductListDto>();
@@ -46,6 +48,15 @@ namespace AtSepete.Business.Mapper
             CreateMap<CreateOrderDto, Order>();
             CreateMap<Order, UpdateOrderDto>();
             CreateMap<UpdateOrderDto, Order>();
+            //
+            CreateMap<OrderDetail, OrderDetailDto>();
+            CreateMap<OrderDetailDto, OrderDetail>();
+            CreateMap<OrderDetail, OrderDetailListDto>();
+            CreateMap<OrderDetailListDto, OrderDetail>();
+            CreateMap<OrderDetail, CreateOrderDetailDto>();
+            CreateMap<CreateOrderDetailDto, OrderDetail>();
+            CreateMap<OrderDetail, UpdateOrderDetailDto>();
+            CreateMap<UpdateOrderDetailDto, OrderDetail>();
             //
             CreateMap<ProductMarket, ProductMarketDto>();
             CreateMap<ProductMarketDto, ProductMarket>();

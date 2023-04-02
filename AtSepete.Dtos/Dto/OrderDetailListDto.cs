@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AtSepete.Dtos.Dto
 {
-    public class OrderDetailDto
+    public class OrderDetailListDto
     {
         public Guid Id { get; set; }
-        public Guid OrderId { get; set; } 
+        public Guid OrderId { get; set; }
         public Guid ProductId { get; set; }
         public int Amount { get; set; }
         public DateTime? CreatedDate { get; set; }

@@ -140,8 +140,8 @@ namespace AtSepete.Business.Concrete
                 {
                     return new ErrorDataResult<UpdateProductMarketDto>(Messages.ProductMarketNotFound);
                 }
-                var hasProductMarket = await _productMarketRepository.AnyAsync(x => x.Id.Equals(updateProductMarketDto.Id));
-                if (hasProductMarket)
+
+                if (productMarket.Id != updateProductMarketDto.Id)
                 {
                     return new ErrorDataResult<UpdateProductMarketDto>(Messages.ObjectNotValid);
                 }

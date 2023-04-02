@@ -13,7 +13,6 @@ namespace AtSepete.Api.Extensions
         public static IServiceCollection AddApiServices(this IServiceCollection services,IConfiguration configuration)
         {
             services.AddScoped<ITokenHandler, AtSepete.Api.Jwt.TokenHandler>();
-            services.AddScoped<ICategoryService, CategoryService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

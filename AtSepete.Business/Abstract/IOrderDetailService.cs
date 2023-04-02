@@ -12,19 +12,13 @@ namespace AtSepete.Business.Abstract
 {
     public interface IOrderDetailService
     {
-        //Task<IDataResult<List<OrderDetailDto>>> GetAllAsync();
-        //Task<BaseResponse<Dto>> GetByIdAsync(Guid id);
-        //Task<BaseResponse<bool>> SetPassiveAsync(Guid id);
-        //Task<BaseResponse<bool>> RemoveAsync(Guid id);
-        //Task<BaseResponse<bool>> ActivateAsync(Guid id);
-        //Task<BaseResponse<bool>> AddAsync(CategoryDto item);
-        //Task<BaseResponse<bool>> UpdateAsync(Guid id,CategoryDto item);
-        //Task<BaseResponse<bool>> UpdateAsync(IEnumerable<CategoryDto> items);
-        //Task<BaseResponse<CategoryDto>> GetByIdentityAsync(string Identity);
-        //Task<BaseResponse<CategoryDto>> GetByDateAsync(DateTime date);
-        //Task<BaseResponse<IEnumerable<CategoryDto>>> GetIdentityAsync(string Identity);
-        //Task<BaseResponse<IEnumerable<CategoryDto>>> GetDateAsync(DateTime date);
-        //Task<BaseResponse<bool>> SetPassiveAsync(string Identity);
-        //Task<BaseResponse<bool>> SetPassiveAsync(DateTime date);
+        Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetailAsync();
+
+        Task<IDataResult<OrderDetailDto>> GetByIdOrderDetailAsync(Guid id);
+        Task<IDataResult<CreateOrderDetailDto>> AddOrderDetailAsync(CreateOrderDetailDto entity);
+        Task<IDataResult<UpdateOrderDetailDto>> UpdateOrderDetailAsync(Guid id, UpdateOrderDetailDto updateOrderDetailDto);
+        Task<IResult> HardDeleteOrderDetailAsync(Guid id);
+        Task<IResult> SoftDeleteOrderDetailAsync(Guid id);
+        
     }
 }
