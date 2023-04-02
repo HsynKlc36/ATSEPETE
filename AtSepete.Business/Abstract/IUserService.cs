@@ -16,11 +16,11 @@ namespace AtSepete.Business.Abstract
 {
     public interface IUserService 
     {
-        Task SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null);
-         Task SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null);//İkinci parametre olan authenticationProperties özelliği, kullanıcının kimlik doğrulaması işleminin niteliklerini içeren bir nesnedir. Bu nesne, kullanıcının kimlik doğrulama işlemleri sırasında taşıyabileceği ek bilgileri içerir. Örneğin, bu nesne kullanıcının dil ayarlarını, kimlik doğrulama işlemi sırasında kullanabileceği bir token'ı veya diğer kullanıcı bilgilerini içerebilir.Son parametre olan authenticationMethod özelliği, kullanıcının kimlik doğrulama yöntemini belirler.Varsayılan olarak null'dır. Ancak, özel kimlik doğrulama yöntemleri kullanmak isterseniz, bu parametre kullanılabilir.
-        Task PasswordSignInAsync(UserDto user, string password, bool isPersistent, bool lockoutOnFailure);//kullanıcı doğrulama,3.parametre sürekli oturumu açık bırakır,4. parametre ise hatalı girişlerde kullanıcıyı kitler
-        Task PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure);// kullanıcı doğrulama,3.parametre sürekli oturumu açık bırakır,4. parametre ise hatalı girişlerde kullanıcıyı kitler
-        Task SignOutAsync();
+        Task<IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null);
+         Task<IResult> SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null);//İkinci parametre olan authenticationProperties özelliği, kullanıcının kimlik doğrulaması işleminin niteliklerini içeren bir nesnedir. Bu nesne, kullanıcının kimlik doğrulama işlemleri sırasında taşıyabileceği ek bilgileri içerir. Örneğin, bu nesne kullanıcının dil ayarlarını, kimlik doğrulama işlemi sırasında kullanabileceği bir token'ı veya diğer kullanıcı bilgilerini içerebilir.Son parametre olan authenticationMethod özelliği, kullanıcının kimlik doğrulama yöntemini belirler.Varsayılan olarak null'dır. Ancak, özel kimlik doğrulama yöntemleri kullanmak isterseniz, bu parametre kullanılabilir.
+        Task<IResult> PasswordSignInAsync(UserDto user, string password, bool isPersistent, bool lockoutOnFailure);//kullanıcı doğrulama,3.parametre sürekli oturumu açık bırakır,4. parametre ise hatalı girişlerde kullanıcıyı kitler
+        Task<IResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure);// kullanıcı doğrulama,3.parametre sürekli oturumu açık bırakır,4. parametre ise hatalı girişlerde kullanıcıyı kitler
+        Task<IResult> SignOutAsync();
         //yukarıdaki satırlar giriş ve çıkış işlemleri için kullanılır
         Task<IDataResult<List<UserDto>>> GetAllUserAsync();//tüm user'ları getirir
         Task<IDataResult<UserDto>> FindUserByIdAsync(Guid id);// id ye göre user getirir
