@@ -28,7 +28,7 @@ namespace AtSepete.Business.Abstract
         Task<IDataResult<UserDto>> FindUserByEmailAsync(string email);//maile göre user getirir
         Task<IDataResult<UserDto>> AddToRoleAsync(UserDto user, string role);//user ekler
         Task<IDataResult<List<UserDto>>> FindUsersByRoleAsync(string roleName);//role gore user'ları getirir
-        Task<IDataResult<UserDto>> AddUserAsync(UserDto entity);//user ekleme
+        Task<IDataResult<CreateUserDto>> AddUserAsync(CreateUserDto entity);//user ekleme
         Task<IDataResult<UserDto>> UpdateUserAsync(Guid id, UserDto userDto);//user güncelleme
         Task<IResult> ChangePasswordAsync(UserDto user, string currentPassword, string newPassword);//user parolasını değiştirmek
         Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword);//user parolasını sıfırlamak

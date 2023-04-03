@@ -52,7 +52,7 @@ namespace AtSepete.Business.Concrete
             {
                 if (entity is null)
                 {
-                    return new ErrorDataResult<CreateProductDto>(Messages.ObjectNotValid); ;
+                    return new ErrorDataResult<CreateProductDto>(Messages.ObjectNotValid); 
                 }
                 var hasCategory = await _productRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == entity.Barcode.Trim().ToLower());
                 if (hasCategory)

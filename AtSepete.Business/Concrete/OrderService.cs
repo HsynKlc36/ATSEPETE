@@ -16,14 +16,18 @@ using Castle.Core.Resource;
 
 namespace AtSepete.Business.Concrete
 {
-    public class OrderService :IOrderService
+    public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IMarketRepository _marketRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public OrderService(IOrderRepository orderRepository, IMapper mapper) 
+        public OrderService(IOrderRepository orderRepository, IMarketRepository marketRepository, IUserRepository userRepository, IMapper mapper)
         {
             _orderRepository = orderRepository;
+            _marketRepository = marketRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
         public async Task<IDataResult<OrderDto>> GetByIdOrderAsync(Guid id)
@@ -53,10 +57,16 @@ namespace AtSepete.Business.Concrete
                 {
                     return new ErrorDataResult<CreateOrderDto>(Messages.ObjectNotValid); ;
                 }
-                var hasOrder = await _orderRepository.AnyAsync(x =>x.Customer.Id.Equals(entity.CustomerId)&& x.Market.Id.Equals(entity.MarketId));
-                if (!hasOrder)
+                var market = await _marketRepository.GetByIdAsync(entity.MarketId);
+                if (market is null)
                 {
-                    return new ErrorDataResult<CreateOrderDto>(Messages.AddFail);
+                    return new ErrorDataResult<CreateOrderDto>(Messages.MarketNotFound);
+                }
+                var customer = await _userRepository.GetByIdAsync(entity.CustomerId);
+
+                if (customer is null)
+                {
+                    return new ErrorDataResult<CreateOrderDto>(Messages.UserNotFound);
                 }
                 var product = _mapper.Map<CreateOrderDto, Order>(entity);
                 var result = await _orderRepository.AddAsync(product);
@@ -79,25 +89,33 @@ namespace AtSepete.Business.Concrete
             {
 
                 var order = await _orderRepository.GetByIdAsync(id);
-   
+
                 if (order is null)
                 {
                     return new ErrorDataResult<UpdateOrderDto>(Messages.OrderNotFound);
                 }
-
-                var hasOrder= await _orderRepository.AnyAsync(x => x.Customer.Id.Equals(updateOrderDto.CustomerId) && x.Market.Id.Equals(updateOrderDto.MarketId) && x.Id.Equals(updateOrderDto.Id));
-
-                if (hasOrder)
+                //
+                var customer = await _userRepository.GetByIdAsync(updateOrderDto.CustomerId);
+                if (customer is null)
                 {
-                    var updateOrder = _mapper.Map(updateOrderDto, order);
-                    await _orderRepository.UpdateAsync(updateOrder);
-                    await _orderRepository.SaveChangesAsync();
-                    return new SuccessDataResult<UpdateOrderDto>(_mapper.Map<Order, UpdateOrderDto>(updateOrder), Messages.UpdateSuccess);
+                    return new ErrorDataResult<UpdateOrderDto>(Messages.UserNotFound);
                 }
-                else
+                var market = await _marketRepository.GetByIdAsync(updateOrderDto.MarketId);
+
+                if (market is null)
+                {
+                    return new ErrorDataResult<UpdateOrderDto>(Messages.MarketNotFound);
+                }
+
+                if (order.Id != updateOrderDto.Id)
                 {
                     return new ErrorDataResult<UpdateOrderDto>(Messages.ObjectNotValid);
                 }
+
+                var updateOrder = _mapper.Map(updateOrderDto, order);
+                await _orderRepository.UpdateAsync(updateOrder);
+                await _orderRepository.SaveChangesAsync();
+                return new SuccessDataResult<UpdateOrderDto>(_mapper.Map<Order, UpdateOrderDto>(updateOrder), Messages.UpdateSuccess);
 
             }
             catch (Exception)
