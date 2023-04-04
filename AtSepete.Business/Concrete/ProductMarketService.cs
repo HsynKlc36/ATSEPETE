@@ -1,6 +1,6 @@
 ﻿using AtSepete.Business.Abstract;
 using AtSepete.Business.Constants;
-using AtSepete.Dtos.Dto;
+using AtSepete.Dtos.Dto.ProductMarkets;
 using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;

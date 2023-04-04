@@ -22,6 +22,7 @@ namespace AtSepete.Business.Extensions
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IProductMarketService, ProductMarketService>();
             services.AddScoped<IOrderDetailService, OrderDetailService>();
+            services.AddScoped<IUserService, UserService>();
             return services;
         }
     }

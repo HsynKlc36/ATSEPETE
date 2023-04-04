@@ -1,7 +1,7 @@
 ﻿using AtSepete.Business.Abstract;
 using AtSepete.Business.Constants;
 using AtSepete.Core.CoreInterfaces;
-using AtSepete.Dtos.Dto;
+using AtSepete.Dtos.Dto.Categories;
 using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;

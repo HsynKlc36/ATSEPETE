@@ -1,4 +1,4 @@
-﻿using AtSepete.Dtos.Dto;
+﻿using AtSepete.Dtos.Dto.Categories;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
 using System.Linq.Expressions;

@@ -1,4 +1,4 @@
-﻿using AtSepete.Dtos.Dto;
+﻿using AtSepete.Dtos.Dto.Users;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
 using Microsoft.AspNetCore.Authentication;
@@ -26,15 +26,17 @@ namespace AtSepete.Business.Abstract
         Task<IDataResult<UserDto>> FindUserByIdAsync(Guid id);// id ye göre user getirir
         Task<UserDto> GetUserAsync(ClaimsPrincipal principal);// login olan kullanıcıyı getirir
         Task<IDataResult<UserDto>> FindUserByEmailAsync(string email);//maile göre user getirir
-        Task<IDataResult<UserDto>> AddToRoleAsync(UserDto user, string role);//user ekler
         Task<IDataResult<List<UserDto>>> FindUsersByRoleAsync(string roleName);//role gore user'ları getirir
         Task<IDataResult<CreateUserDto>> AddUserAsync(CreateUserDto entity);//user ekleme
         Task<IDataResult<UserDto>> UpdateUserAsync(Guid id, UserDto userDto);//user güncelleme
-        Task<IResult> ChangePasswordAsync(UserDto user, string currentPassword, string newPassword);//user parolasını değiştirmek
+        Task<IDataResult<ChangePasswordDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto);//user parolasını değiştirmek
         Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword);//user parolasını sıfırlamak
         Task<IResult> HardDeleteUserAsync(Guid id);//veritabanından siler
         Task<IResult> SoftDeleteUserAsync(Guid id);//IsActive false' a çeker
-       Task<IResult> CheckPasswordAsync(UserDto user, string password);//user'ın şifresini kontrol eder!
+        Task<IResult> CheckPasswordAsync(CheckPasswordDto checkPasswordDto);//user'ın şifresini kontrol eder!
+        Task<string> PasswordHashAsync(string password);//user'ın şifresini Hashler!
+        Task UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate);//user login olunca verilecek refresh tokenı belirler.dto ya RefreshToken ve süresi parametreleri eklenmeli!!
+
 
         //public virtual Task<IdentityResult> AddClaimAsync(TUser user, Claim claim);
 

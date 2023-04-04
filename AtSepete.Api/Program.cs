@@ -3,7 +3,7 @@ using AtSepete.Api.Middlewares;
 using AtSepete.Business.Abstract;
 using AtSepete.Business.Concrete;
 using AtSepete.Business.Extensions;
-using AtSepete.Business.Mapper;
+using AtSepete.Business.Mapper.Profiles;
 using AtSepete.DataAccess.Extensions;
 using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
@@ -18,12 +18,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());//o an yürütülen mapper'ý kendisi tanýr
 builder.Services.AddControllers();
 builder.Services.AddRepositoriesServices()
     .AddBusinessServices()

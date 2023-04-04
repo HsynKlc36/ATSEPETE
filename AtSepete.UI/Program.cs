@@ -4,13 +4,14 @@ using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
 using Microsoft.EntityFrameworkCore;
 using AtSepete.DataAccess.Extensions;
-using AtSepete.Business.Mapper;
+using AtSepete.Business.Mapper.Profiles;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());//o an yürütülen mapper'ý kendisi tanýr
 builder.Services.AddControllers();
 
 builder.Services.AddDataAccessServices(builder.Configuration);

@@ -1,6 +1,5 @@
 ﻿using AtSepete.Business.Abstract;
 using AtSepete.Business.Constants;
-using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
@@ -12,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AtSepete.Dtos.Dto.OrderDetails;
 
 namespace AtSepete.Business.Concrete
 {

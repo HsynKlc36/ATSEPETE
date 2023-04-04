@@ -1,6 +1,6 @@
 ﻿using AtSepete.Api.Jwt;
 using AtSepete.Business.Abstract;
-using AtSepete.Dtos.Dto;
+using AtSepete.Dtos.Dto.Categories;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
 using Microsoft.AspNetCore.Authorization;

@@ -1,5 +1,5 @@
 ﻿using AtSepete.Business.Abstract;
-using AtSepete.Dtos.Dto;
+using AtSepete.Dtos.Dto.OrderDetails;
 using AtSepete.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
