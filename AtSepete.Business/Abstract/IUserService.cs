@@ -24,7 +24,7 @@ namespace AtSepete.Business.Abstract
         //yukarıdaki satırlar giriş ve çıkış işlemleri için kullanılır
         Task<IDataResult<List<UserDto>>> GetAllUserAsync();//tüm user'ları getirir
         Task<IDataResult<UserDto>> FindUserByIdAsync(Guid id);// id ye göre user getirir
-        Task<UserDto> GetUserAsync(ClaimsPrincipal principal);// login olan kullanıcıyı getirir
+        Task<IDataResult<UserDto>> GetUserAsync(ClaimsPrincipal principal);// login olan kullanıcıyı getirir
         Task<IDataResult<UserDto>> FindUserByEmailAsync(string email);//maile göre user getirir
         Task<IDataResult<List<UserDto>>> FindUsersByRoleAsync(string roleName);//role gore user'ları getirir
         Task<IDataResult<CreateUserDto>> AddUserAsync(CreateUserDto entity);//user ekleme

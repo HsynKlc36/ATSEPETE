@@ -23,6 +23,7 @@ using IResult = AtSepete.Results.IResult;
 
 namespace AtSepete.Business.Concrete
 {
+    // hatalar ve data dönülmeye gerek olmayan tüm resultları kontrol et düzenle!!
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
@@ -133,56 +134,132 @@ namespace AtSepete.Business.Concrete
 
         public async Task<IResult> CheckPasswordAsync(CheckPasswordDto checkPasswordDto)
         {
-            if (checkPasswordDto == null)
+            try
             {
-                return new ErrorResult(Messages.ObjectNotFound);
+                if (checkPasswordDto == null)
+                {
+                    return new ErrorResult(Messages.ObjectNotFound);
+                }
+                var currentUser = await _userRepository.GetByDefaultAsync(x => x.Email == checkPasswordDto.Email);
+                if (currentUser is null)
+                {
+
+                    return new ErrorResult(Messages.UserNotFound);
+                }
+                var passhased = currentUser.Password;
+                byte[] hashBytes = Convert.FromBase64String(passhased);
+                byte[] salt = new byte[16];
+                Array.Copy(hashBytes, 0, salt, 0, 16);
+                var pbkdf2 = new Rfc2898DeriveBytes(checkPasswordDto.Password, salt, 100000);
+                byte[] hash = pbkdf2.GetBytes(20);
+
+                for (int i = 0; i < 20; i++)
+                {
+                    if (hashBytes[i + 16] != hash[i])
+                        return new ErrorResult(Messages.CheckPasswordNotValid);
+                }
+                return new SuccessResult(Messages.CheckPasswordValid);
             }
-            var currentUser = await _userRepository.GetByDefaultAsync(x => x.Email == checkPasswordDto.Email);
-            if (currentUser is null)
+            catch (Exception)
             {
 
-                return new ErrorResult(Messages.UserNotFound);
+                return new ErrorDataResult<CheckPasswordDto>(Messages.CheckPasswordFail);
             }
-            var passhased = currentUser.Password;
-            byte[] hashBytes = Convert.FromBase64String(passhased);
-            byte[] salt = new byte[16];
-            Array.Copy(hashBytes, 0, salt, 0, 16);
-            var pbkdf2 = new Rfc2898DeriveBytes(checkPasswordDto.Password, salt, 100000);
-            byte[] hash = pbkdf2.GetBytes(20);
 
-            for (int i = 0; i < 20; i++)
+        }
+        public async Task<IDataResult<UserDto>> FindUserByEmailAsync(string email)
+        {
+            try
             {
-                if (hashBytes[i + 16] != hash[i])
-                    return new ErrorResult(Messages.CheckPasswordNotValid);
+                var user = await _userRepository.GetByDefaultAsync(x => x.Email == email);
+                if (user is null)
+                {
+                    return new ErrorDataResult<UserDto>(Messages.UserNotFound);
+                }
+                var userDto = _mapper.Map<User, UserDto>(user);
+                return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
             }
-            return new SuccessResult(Messages.CheckPasswordValid);
-        }
-        public Task<IDataResult<UserDto>> FindUserByEmailAsync(string email)
-        {
-            throw new NotImplementedException();
+            catch (Exception)
+            {
+
+                return new ErrorDataResult<UserDto>(Messages.UserFoundFail);
+            }
+
+
         }
 
-        public Task<IDataResult<UserDto>> FindUserByIdAsync(Guid id)
+        public async Task<IDataResult<UserDto>> FindUserByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetByDefaultAsync(x => x.Id == id);
+                if (user is null)
+                {
+                    return new ErrorDataResult<UserDto>(Messages.UserNotFound);
+                }
+                var userDto = _mapper.Map<User, UserDto>(user);
+                return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
+            }
+            catch (Exception)
+            {
+
+                return new ErrorDataResult<UserDto>(Messages.UserFoundFail);
+            }
+
         }
 
-        public Task<IDataResult<List<UserDto>>> FindUsersByRoleAsync(string roleName)
+        public async Task<IDataResult<List<UserDto>>> FindUsersByRoleAsync(string roleName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var users = await _userRepository.GetDefaultAsync(x => x.Role.ToString().Trim().ToLower() == roleName.Trim().ToLower());//buradaki rol int mi gelecek yoksa string mi dene !!
+                if (!users.Any())
+                {
+                    return new ErrorDataResult<List<UserDto>>(Messages.UsersNotFound);
+                }
+                var userDto = _mapper.Map<List<User>, List<UserDto>>(users.ToList());
+                return new SuccessDataResult<List<UserDto>>(userDto, Messages.UsersFoundSuccess);
+            }
+            catch (Exception)
+            {
+
+                return new ErrorDataResult<List<UserDto>>(Messages.UserFoundFail);
+            }
+
         }
 
-        public Task<IDataResult<List<UserDto>>> GetAllUserAsync()
+        public async Task<IDataResult<List<UserDto>>> GetAllUserAsync()
         {
-            throw new NotImplementedException();
+            var users = await _userRepository.GetAllAsync();
+            if (!users.Any())
+            {
+                return new ErrorDataResult<List<UserDto>>(Messages.UsersNotFound);
+            }
+            var usersDto = _mapper.Map<List<User>, List<UserDto>>(users.ToList());
+            return new SuccessDataResult<List<UserDto>>(usersDto, Messages.UsersFoundSuccess);
         }
 
-        public Task<UserDto> GetUserAsync(ClaimsPrincipal principal)
+        public async Task<IDataResult<UserDto>> GetUserAsync(ClaimsPrincipal principal)
         {
-            throw new NotImplementedException();
+            var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return new ErrorDataResult<UserDto>(Messages.UserNotFound);
+            }
+
+            // Veritabanından kullanıcıyı bulmak için UserRepository kullanılır
+            var user = await _userRepository.GetByIdAsync(Guid.Parse(userId));
+            if (user == null)
+            {
+                return new ErrorDataResult<UserDto>(Messages.UserNotFound);
+            }
+
+            // UserDto nesnesine çevirme yapılır ve sonuç döndürülür
+            var userDto = _mapper.Map<UserDto>(user);
+            return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
         }
 
-        public Task<Results.IResult> HardDeleteUserAsync(Guid id)
+        public Task<IResult> HardDeleteUserAsync(Guid id)
         {
             throw new NotImplementedException();
         }
@@ -200,37 +277,37 @@ namespace AtSepete.Business.Concrete
             return savedPasswordHash;
         }
 
-        public Task<Results.IResult> PasswordSignInAsync(UserDto user, string password, bool isPersistent, bool lockoutOnFailure)
+        public Task<IResult> PasswordSignInAsync(UserDto user, string password, bool isPersistent, bool lockoutOnFailure)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Results.IResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
+        public Task<IResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Results.IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
+        public Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Results.IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null)
+        public Task<IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Results.IResult> SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
+        public Task<IResult> SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Results.IResult> SignOutAsync()
+        public Task<IResult> SignOutAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<Results.IResult> SoftDeleteUserAsync(Guid id)
+        public Task<IResult> SoftDeleteUserAsync(Guid id)
         {
             throw new NotImplementedException();
         }

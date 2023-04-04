@@ -9,8 +9,11 @@ public class Messages
 
     public const string EmailDuplicate = "Email_Duplicate";
     public const string UserNotFound = "User_Not_Found";
+    public const string UsersNotFound = "Users_Not_Found";
     public const string AddUserSuccess = "Add_User_Success";
     public const string UserFoundSuccess = "User_Found_Success";
+    public const string UserFoundFail = "User_Found_Fail";
+    public const string UsersFoundSuccess = "Users_Found_Success";
     public const string FoundSuccess = "Found_Successfully";
 
     public const string AddSuccess = "Add_Success";
@@ -55,6 +58,7 @@ public class Messages
     public const string ChangePasswordFail = "Change_Password_Fail";
     public const string CheckPasswordNotValid = "Check_Password_Not_Valid";
     public const string CheckPasswordValid = "Check_Password_Valid";
+    public const string CheckPasswordFail = "Check_Password_Fail";
 
 
 

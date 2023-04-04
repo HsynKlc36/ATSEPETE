@@ -3,11 +3,7 @@
     public class Result : IResult
     {
         public bool IsSuccess { get; }
-
         public string Message { get; }
-
-        
-
         public Result()
         {
             IsSuccess = false;
