@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AtSepete.DataAccess.Migrations
 {
     [DbContext(typeof(AtSepeteDbContext))]
-    [Migration("20230326122434_initial")]
+    [Migration("20230406110014_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -270,6 +270,9 @@ namespace AtSepete.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(0);
 
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("Adress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -300,6 +303,12 @@ namespace AtSepete.DataAccess.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");

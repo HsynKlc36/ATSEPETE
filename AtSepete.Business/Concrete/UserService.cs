@@ -20,6 +20,7 @@ using System.Security.Cryptography;
 using AtSepete.Entities.Enums;
 using AtSepete.Dtos.Dto.Users;
 using IResult = AtSepete.Results.IResult;
+using AtSepete.Repositories.Concrete;
 
 namespace AtSepete.Business.Concrete
 {
@@ -259,9 +260,17 @@ namespace AtSepete.Business.Concrete
             return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
         }
 
-        public Task<IResult> HardDeleteUserAsync(Guid id)
+        public async Task<IResult> HardDeleteUserAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetByIdActiveOrPassiveAsync(id);
+            if (user is null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+            await _userRepository.DeleteAsync(user);
+            await _userRepository.SaveChangesAsync();
+
+            return new SuccessResult(Messages.DeleteSuccess);
         }
 
         public async Task<string> PasswordHashAsync(string password)
@@ -287,9 +296,49 @@ namespace AtSepete.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
+        public async Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
         {
-            throw new NotImplementedException();
+            var currentUser = await _userRepository.GetByDefaultAsync(x => x.Id == user.Id);
+
+            string uniqueName = $"{Guid.NewGuid().ToString().ToLower()}";
+
+
+
+            if (currentUser is not null)
+            {
+                var fromAddress = new MailAddress("i_am_hr@outlook.com");
+                var toAddress = new MailAddress(user.Email);
+                var Link = "Şifrenizi Yenilemek İçin Linki Tıklayınız<a href= " + user.Email + ">Buraya Tıklayınız</a>.";
+                //Email yerine Guid veya token ile değişiklik yapılacak
+                string resetPass = "Şifre Yenileme Bağlantınız";
+                using (var smtp = new SmtpClient
+                {
+                    Host = "smtp-mail.outlook.com",
+                    /**/
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+
+
+                    Credentials = new NetworkCredential(fromAddress.Address, "ik-123456")
+                }) ;
+                    //try
+                    //{
+                    //    {
+                    //        using (var message = new MailMessage(fromAddress, toAddress) { Subject = resetPass, Body = Link, IsBodyHtml = true })
+                    //        {
+                    //            smtp.Send(message);
+                    //        }
+                    //    }
+                    //    ViewBag.Sonuc = "Mail Başarıyla Gönderildi.";
+                    //}
+                    //catch (Exception)
+                    //{
+                    //    ViewBag.Sonuc = "Mail Gönderiminde Hata Oluştu.";
+                    //}
+            }
+            return new SuccessResult(Messages.DeleteSuccess);
         }
 
         public Task<IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null)
@@ -304,12 +353,24 @@ namespace AtSepete.Business.Concrete
 
         public Task<IResult> SignOutAsync()
         {
-            throw new NotImplementedException();
+           
         }
 
-        public Task<IResult> SoftDeleteUserAsync(Guid id)
+        public async Task<IResult> SoftDeleteUserAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user is null)
+            {
+                return new ErrorResult(Messages.ProductNotFound);
+            }
+            else
+            {
+                user.IsActive = false;
+                user.DeletedDate = DateTime.Now;
+                await _userRepository.UpdateAsync(user);
+                await _userRepository.SaveChangesAsync();
+                return new SuccessResult(Messages.DeleteSuccess);
+            }
         }
 
         public Task UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate)

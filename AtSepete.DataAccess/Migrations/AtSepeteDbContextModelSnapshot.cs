@@ -268,6 +268,9 @@ namespace AtSepete.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(0);
 
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("Adress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -298,6 +301,12 @@ namespace AtSepete.DataAccess.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
