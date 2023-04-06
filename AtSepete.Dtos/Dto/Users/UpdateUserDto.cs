@@ -15,8 +15,6 @@ namespace AtSepete.Dtos.Dto.Users
         public string LastName { get; set; }
         public string? SecondLastName { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
-        //public Role Role { get; set; }
         public Gender Gender { get; set; }
         public string Adress { get; set; }
         public DateTime BirthDate { get; set; }

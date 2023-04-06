@@ -21,6 +21,9 @@ using AtSepete.Entities.Enums;
 using AtSepete.Dtos.Dto.Users;
 using IResult = AtSepete.Results.IResult;
 using AtSepete.Repositories.Concrete;
+using Microsoft.AspNetCore.Identity;
+using AtSepete.Dtos.Dto.OrderDetails;
+
 
 namespace AtSepete.Business.Concrete
 {
@@ -29,11 +32,13 @@ namespace AtSepete.Business.Concrete
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper,IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -117,6 +122,10 @@ namespace AtSepete.Business.Concrete
                 {
 
                     return new ErrorDataResult<ChangePasswordDto>(Messages.UserNotFound);
+                }
+                if (currentUser.Password!=changePasswordDto.CurrentPassword)
+                {
+                    //buraya bakılacak!!
                 }
                 changePasswordDto.NewPassword = await PasswordHashAsync(changePasswordDto.NewPassword);
                 var userMap = _mapper.Map<ChangePasswordDto, User>(changePasswordDto);
@@ -351,9 +360,27 @@ namespace AtSepete.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<IResult> SignOutAsync()
+        public async Task<IResult> SignOutAsyncA()
         {
-           
+            await SignOutAsyncMethod(IdentityConstants.ApplicationScheme);
+
+            return new SuccessResult(result);
+        }
+        protected  async Task SignOutAsyncMethod(string scheme)
+        {
+            var result = await _httpContextAccessor.HttpContext.AuthenticateAsync(scheme);
+            if (result?.Principal != null)
+            {
+                
+                var properties = result.Properties;
+                var options =  SchemeOptions.Get(scheme);
+                if (options?.Events != null)
+                {
+                    await options.Events.SigningOut(new AuthenticationProperties(properties), Context.Request.HttpContext);
+                    properties = new AuthenticationProperties(options.Cookie);
+                }
+                await Context.SignOutAsync(scheme, properties);
+            }
         }
 
         public async Task<IResult> SoftDeleteUserAsync(Guid id)
@@ -372,15 +399,58 @@ namespace AtSepete.Business.Concrete
                 return new SuccessResult(Messages.DeleteSuccess);
             }
         }
-
-        public Task UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate)
+        /// <summary>
+        ///login olan kullanıcı token oluşturduktan sonra Updaterefreshtoken metodu ile refresh token üretir
+        /// </summary>
+        /// <param name="refreshToken">token.RefreshToken</param>
+        /// <param name="userDto">user</param>
+        /// <param name="accessTokenDate">token.Expiration</param>
+        /// <param name="AddOnAccessTokenDate">accessToken'a eklenecek süre yani refresh token süresi</param>
+        /// <returns></returns>
+        public async Task<IResult> UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate)
         {
-            throw new NotImplementedException();
+           if (userDto is not null)
+            {
+                userDto.RefreshToken = refreshToken;
+                userDto.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
+                var userMap= _mapper.Map<UserDto, User>(userDto);
+                await _userRepository.UpdateAsync(userMap);
+                await _userRepository.SaveChangesAsync();
+                return new SuccessResult();
+            }
+           return new ErrorResult();
         }
 
-        public Task<IDataResult<UserDto>> UpdateUserAsync(Guid id, UserDto userDto)
+        public async Task<IDataResult<UpdateUserDto>> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(id);
+                if (user is null)
+                {
+                    return new ErrorDataResult<UpdateUserDto>(Messages.UserNotFound);
+                }
+
+                if (user.Id != updateUserDto.Id)
+                {
+                    return new ErrorDataResult<UpdateUserDto>(Messages.ObjectNotValid);
+                }
+
+                var updateUser = _mapper.Map(updateUserDto, user);
+
+                var result = await _userRepository.UpdateAsync(updateUser);
+                await _userRepository.SaveChangesAsync();
+
+                return new SuccessDataResult<UpdateUserDto>(_mapper.Map<User, UpdateUserDto>(result), Messages.UpdateSuccess);
+
+
+            }
+            catch (Exception)
+            {
+
+                return new ErrorDataResult<UpdateUserDto>(Messages.UpdateFail);
+            }
+
         }
 
 
