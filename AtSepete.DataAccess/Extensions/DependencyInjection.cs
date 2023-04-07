@@ -1,4 +1,5 @@
 ﻿using AtSepete.DataAccess.Context;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ namespace AtSepete.DataAccess.Extensions
     {
         public static IServiceCollection AddDataAccessServices(this IServiceCollection services, IConfiguration configuration)
         {
+           
             services.AddDbContext<AtSepeteDbContext>(options =>
             {
                 options.UseSqlServer(

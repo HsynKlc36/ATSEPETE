@@ -33,9 +33,10 @@ namespace AtSepete.Business.Concrete
             var category = await _categoryRepository.GetByDefaultAsync(x => x.Id == id);
             if (category is null)
             {
-                
+                _loggerService.LogWarning(Messages.CategoryNotFound);
                 return new ErrorDataResult<CategoryDto>(Messages.CategoryNotFound);
             }
+            _loggerService.LogInfo(Messages.CategoryFoundSuccess);
             return new SuccessDataResult<CategoryDto>(_mapper.Map<CategoryDto>(category), Messages.CategoryFoundSuccess);
 
         }
@@ -44,10 +45,12 @@ namespace AtSepete.Business.Concrete
           
             var tempEntity = await _categoryRepository.GetAllAsync();
             if (!tempEntity.Any())
-            {              
+            {
+                _loggerService.LogWarning(Messages.ObjectNotFound);
                 return new ErrorDataResult<List<CategoryListDto>>(Messages.ObjectNotFound);
             }
             var result = _mapper.Map<IEnumerable<Category>, List<CategoryListDto>>(tempEntity);
+            _loggerService.LogInfo(Messages.ListedSuccess);
             return new SuccessDataResult<List<CategoryListDto>>(result,Messages.ListedSuccess);
   
         }
@@ -58,11 +61,14 @@ namespace AtSepete.Business.Concrete
             {
                 if (entity is null)
                 {
+                    _loggerService.LogWarning(Messages.ObjectNotValid);
                     return new ErrorDataResult<CreateCategoryDto>(Messages.ObjectNotValid); 
                 }
                 var hasCategory = await _categoryRepository.AnyAsync(c => c.Name.Trim().ToLower() == entity.Name.Trim().ToLower() );
                 if (hasCategory)
                 {
+
+                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
                     return new ErrorDataResult<CreateCategoryDto>(Messages.AddFailAlreadyExists);
                 }
                 Category category = _mapper.Map<CreateCategoryDto, Category>(entity);
@@ -70,11 +76,12 @@ namespace AtSepete.Business.Concrete
                 await _categoryRepository.SaveChangesAsync();
 
                 CreateCategoryDto createCategoryDto =_mapper.Map<Category, CreateCategoryDto>(result);
+                _loggerService.LogInfo(Messages.AddSuccess);
                 return new SuccessDataResult<CreateCategoryDto>(createCategoryDto, Messages.AddSuccess);
             }
             catch (Exception)
             {
-                
+                _loggerService.LogError(Messages.AddFail);
                 return new ErrorDataResult<CreateCategoryDto>(Messages.AddFail);
             }
         }
@@ -88,6 +95,7 @@ namespace AtSepete.Business.Concrete
                 var category = await _categoryRepository.GetByIdAsync(id);
                 if (category is null)
                 {
+                    _loggerService.LogWarning(Messages.CategoryNotFound);
                     return new ErrorDataResult<UpdateCategoryDto>(Messages.CategoryNotFound);
                 }
                 var hasCategory = await _categoryRepository.AnyAsync(c => c.Name.Trim().ToLower() == updateCategoryDto.Name.Trim().ToLower() && c.Description.Trim().ToLower() == updateCategoryDto.Description.Trim().ToLower());
@@ -95,16 +103,18 @@ namespace AtSepete.Business.Concrete
 
                 if (hasCategory)
                 {
+                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
                     return new ErrorDataResult<UpdateCategoryDto>(Messages.AddFailAlreadyExists);
                 }
                 var updateCategory = _mapper.Map(updateCategoryDto, category);
                 await _categoryRepository.UpdateAsync(updateCategory);
                 await _categoryRepository.SaveChangesAsync();
+                _loggerService.LogInfo(Messages.UpdateSuccess);
                 return new SuccessDataResult<UpdateCategoryDto>(_mapper.Map<Category,UpdateCategoryDto>(updateCategory),Messages.UpdateSuccess);
             }
             catch (Exception)
             {
-
+                _loggerService.LogError(Messages.UpdateFail);
                 return new ErrorDataResult<UpdateCategoryDto>(Messages.UpdateFail);
             }
         }
@@ -114,12 +124,14 @@ namespace AtSepete.Business.Concrete
             var category = await _categoryRepository.GetByIdActiveOrPassiveAsync(id);
             if (category is null)
             {
+                _loggerService.LogWarning(Messages.CategoryNotFound);
                 return new ErrorResult(Messages.CategoryNotFound);
             }
 
             await _categoryRepository.DeleteAsync(category);
             await _categoryRepository.SaveChangesAsync();
 
+            _loggerService.LogInfo(Messages.DeleteSuccess);
             return new SuccessResult(Messages.DeleteSuccess);
         }
 
@@ -128,80 +140,21 @@ namespace AtSepete.Business.Concrete
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category is null)
             {
+
+                _loggerService.LogWarning(Messages.CategoryNotFound);
                 return new ErrorResult(Messages.CategoryNotFound);
             }
-            else 
-            {
+
             category.IsActive = false;
             category.DeletedDate = DateTime.Now;
             await _categoryRepository.UpdateAsync(category);
             await _categoryRepository.SaveChangesAsync();
+
+            _loggerService.LogInfo(Messages.DeleteSuccess);
             return new SuccessResult(Messages.DeleteSuccess);               
-            }
-        
+
         }
 
 
-        //public async Task<BaseResponse<bool>> UpdateAsync(IEnumerable<CategoryDto> categoryDtos)
-        //{
-        //    try
-        //    {
-
-        //        foreach (var categoryDto in categoryDtos)
-        //        {
-        //            var tempEntity = await _categoryRepository.GetByIdAsync(categoryDto.CategoryId);
-
-        //            if (tempEntity is null)
-        //            {
-        //                return new BaseResponse<bool>("NoData");
-        //            }
-
-        //            var mappedEntity = _mapper.Map(categoryDto, tempEntity);
-
-        //            await _categoryRepository.UpdateAsync(mappedEntity);
-        //        }
-
-        //        return new BaseResponse<bool>(true);
-
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return new BaseResponse<bool>("Updating_Error");
-        //    }
-
-
-        //}
-
-
-
-        //public async Task<BaseResponse<CategoryDto>> GetByCategoryNameAsync(string Identity)
-        //{
-        //    var entity=_categoryRepository.GetByDefaultAsync(x=>x.Description==Identity)
-        //    var result = _mapper.Map<IEnumerable<T>, IEnumerable<Dto>>(tempEntity);
-        //    _categoryRepository.GetByDefaultAsync(x=>)
-        //}
-
-        //public async Task<BaseResponse<CategoryDto>> GetByCategoryDateAsync(DateTime date)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public async Task<BaseResponse<IEnumerable<CategoryDto>>> GetIdentityAsync(string Identity)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public async Task<BaseResponse<IEnumerable<CategoryDto>>> GetDateAsync(DateTime date)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public async Task<BaseResponse<bool>> SetPassiveAsync(string Identity)
-        //{
-        //    return await _repository.SetPassiveAsync(x => x.);
-        //}
-        //public async Task<BaseResponse<bool>> SetPassiveAsync(DateTime date)
-        //{
-        //    return await _repository.SetPassiveAsync(x => x.);
-        //}
     }
 }

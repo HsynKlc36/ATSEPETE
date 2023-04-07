@@ -3,8 +3,11 @@ using AtSepete.Business.Abstract;
 using AtSepete.Business.Concrete;
 using AtSepete.Business.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
+using NLog.Extensions.Logging;
 using System.Text;
 
 namespace AtSepete.Api.Extensions
@@ -14,6 +17,7 @@ namespace AtSepete.Api.Extensions
       
         public static IServiceCollection AddApiServices(this IServiceCollection services,IConfiguration configuration)
         {
+            
             LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));//loglama
             services.AddScoped<ITokenHandler, AtSepete.Api.Jwt.TokenHandler>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
