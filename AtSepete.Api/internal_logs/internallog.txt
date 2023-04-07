@@ -1,0 +1,27 @@
+2023-04-07 02:14:28.5241 Info Message Template Auto Format enabled
+2023-04-07 02:14:28.6695 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2023-04-07 02:14:28.7110 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-07 02:14:51.3816 Info Message Template Auto Format enabled
+2023-04-07 02:14:51.4640 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2023-04-07 02:14:51.4912 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-07 02:26:57.2896 Info Message Template Auto Format enabled
+2023-04-07 02:26:57.3827 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2023-04-07 02:26:57.4180 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-07 02:27:49.3944 Info Message Template Auto Format enabled
+2023-04-07 02:27:49.5002 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2023-04-07 02:27:49.5297 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-07 02:28:25.0784 Info Message Template Auto Format enabled
+2023-04-07 02:28:25.1758 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2023-04-07 02:28:25.2034 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-07 02:29:48.4958 Info Message Template Auto Format enabled
+2023-04-07 02:29:48.6398 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2023-04-07 02:29:48.6892 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-07 02:33:35.9157 Info Message Template Auto Format enabled
+2023-04-07 02:33:36.0091 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2023-04-07 02:33:36.0403 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-07 02:38:07.2096 Info Message Template Auto Format enabled
+2023-04-07 02:38:07.3061 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2023-04-07 02:38:07.3342 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-07 02:42:48.4620 Info Message Template Auto Format enabled
+2023-04-07 02:42:48.5547 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2023-04-07 02:42:48.5929 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config

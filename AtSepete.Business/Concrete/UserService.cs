@@ -23,7 +23,9 @@ using IResult = AtSepete.Results.IResult;
 using AtSepete.Repositories.Concrete;
 using Microsoft.AspNetCore.Identity;
 using AtSepete.Dtos.Dto.OrderDetails;
-
+using System.Web;
+using CloudinaryDotNet;
+using Newtonsoft.Json;
 
 namespace AtSepete.Business.Concrete
 {
@@ -34,7 +36,7 @@ namespace AtSepete.Business.Concrete
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUserRepository userRepository, IMapper mapper,IHttpContextAccessor httpContextAccessor)
+        public UserService(IUserRepository userRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -123,9 +125,11 @@ namespace AtSepete.Business.Concrete
 
                     return new ErrorDataResult<ChangePasswordDto>(Messages.UserNotFound);
                 }
-                if (currentUser.Password!=changePasswordDto.CurrentPassword)
+                changePasswordDto.CurrentPassword = await PasswordHashAsync(changePasswordDto.CurrentPassword);
+                if (currentUser.Password != changePasswordDto.CurrentPassword)
                 {
-                    //buraya bakılacak!!
+                    return new ErrorDataResult<ChangePasswordDto>(Messages.PasswordNotMatch);
+                    //hashlenmiş şifreler foreach ile dönülüp index index kontrol edilebilir!!
                 }
                 changePasswordDto.NewPassword = await PasswordHashAsync(changePasswordDto.NewPassword);
                 var userMap = _mapper.Map<ChangePasswordDto, User>(changePasswordDto);
@@ -135,14 +139,12 @@ namespace AtSepete.Business.Concrete
             }
             catch (Exception)
             {
-
                 return new ErrorDataResult<ChangePasswordDto>(Messages.ChangePasswordFail);
             }
 
-
         }
 
-        public async Task<IResult> CheckPasswordAsync(CheckPasswordDto checkPasswordDto)
+        public async Task<IResult> CheckPasswordAsync(CheckPasswordDto checkPasswordDto)//login olurken şifre kontrolü
         {
             try
             {
@@ -249,8 +251,9 @@ namespace AtSepete.Business.Concrete
             return new SuccessDataResult<List<UserDto>>(usersDto, Messages.UsersFoundSuccess);
         }
 
-        public async Task<IDataResult<UserDto>> GetUserAsync(ClaimsPrincipal principal)
+        public async Task<IDataResult<UserDto>> GetUserAsync(ClaimsPrincipal principal)//login olan kullanıcıyı getirir!!
         {
+            //login Taskında login olan kullanıcıya claims ataması yapılmalı ki burası düzgün bir şekilde çalışşın!!
             var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
@@ -304,101 +307,168 @@ namespace AtSepete.Business.Concrete
         {
             throw new NotImplementedException();
         }
+        #region Şifremi unuttum deneme
+//        [HttpPost]
+//        public async Task<IResult> SifremiUnuttum(string email)
+//        {
+//            //apideki send mail metoduna ui dan ailınan mail adresi gönderme işlemi yapılır
+//            sendMailForRestPass(email); //apinin restpass metoduna eamili gönder
+//        }
+//        public async Task sendMailForRestPass(string email)//apinin mail gönderme metodu
+//        {
+//            //burada bana ui tarafından mail adresi gelir ben token üretirim mail adresiyle tokenı karıştırır kullanıcıya mail atarım ki şiğfresini değiştirebilsimn
+//            var token = handlerToken();
+//            //kullanıcıya mail gönder(mailin url'inde token olacak kullanıcının mail adresi olacak)
+//            //burada url üzerinden nesne olarak email ve token gönderilecek.
+//        }
+//        [HttpGet]
+//        public async Task şifremiDeğiştir(string email, string token)//UI controller
+//        {
+//            ///kullanıcı mail adresindeki linke tıklar bana gelir ben sayfanın arka planında mail adresi ve token bilgilkerini tutarım ben bir ui controlleryım
 
-        public async Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
-        {
-            var currentUser = await _userRepository.GetByDefaultAsync(x => x.Id == user.Id);
+//        }
+//        [HttpPost]
+//        public async Task şifremiDeğiştir(string email, string token, string pass1, string pass2)//uı controller
+//        {//bende bir ui controlrıyım getten gelen bilgilerle birlikte kullanıcının yeni şifresini alrım
 
-            string uniqueName = $"{Guid.NewGuid().ToString().ToLower()}";
-
-
-
-            if (currentUser is not null)
-            {
-                var fromAddress = new MailAddress("i_am_hr@outlook.com");
-                var toAddress = new MailAddress(user.Email);
-                var Link = "Şifrenizi Yenilemek İçin Linki Tıklayınız<a href= " + user.Email + ">Buraya Tıklayınız</a>.";
-                //Email yerine Guid veya token ile değişiklik yapılacak
-                string resetPass = "Şifre Yenileme Bağlantınız";
-                using (var smtp = new SmtpClient
-                {
-                    Host = "smtp-mail.outlook.com",
-                    /**/
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
+//            ///buraya api ile bağlanmak içiçn bir kod yazarım kullanıcın yeni şifresini mail adresini token bilgisini api ye gönderirim ben bir ui controllerıyım
+//            using (var httpClient = new HttpClient())//api ile localhosttan bağlantı kurarak istekleri yönetir.
+//            {
+//                using (var answer = await httpClient.GetAsync("https://localhost:7286/AtSepeteApi/user/apiresetpass"))
+//                {
+//                    string apiAnswer = await
+////post et apiye email token pnewwpass
+//answer.Content.ReadAsStringAsync();
+//                    products = JsonConvert.DeserializeObject<Product>(apiAnswer);
+//                }
 
 
-                    Credentials = new NetworkCredential(fromAddress.Address, "ik-123456")
-                }) ;
-                    //try
-                    //{
-                    //    {
-                    //        using (var message = new MailMessage(fromAddress, toAddress) { Subject = resetPass, Body = Link, IsBodyHtml = true })
-                    //        {
-                    //            smtp.Send(message);
-                    //        }
-                    //    }
-                    //    ViewBag.Sonuc = "Mail Başarıyla Gönderildi.";
-                    //}
-                    //catch (Exception)
-                    //{
-                    //    ViewBag.Sonuc = "Mail Gönderiminde Hata Oluştu.";
-                    //}
-            }
-            return new SuccessResult(Messages.DeleteSuccess);
-        }
+//            }
+//        }
+//        public async Task apicontroller(string email, string token, string pass1, string pass2)
+//        {
+//            _userservice.apiResetPass(string email, string token, string pass1, string pass2)// burada aşağıdaki servis metoduna bağlanacak
+//        }
+//        public async Task apiResetPass(string email, string token, string pass1, string pass2)//user apiservis metodu
+//        {
+//            ///ben bir api servisiyimapi contollerımdan gelen kullanıcı mail adresi token ı şifresini burda kontrol eder ve değiştiritim
+//            ///
+//            AppUser user = await _userManager.FindByEmailAsync(vm.Email);
+//            user.UpdateDate = DateTime.Now;
+//            string decodedtoken = HttpUtility.UrlDecode(vm.Token); // Encode edilen token decode ediliyor
+//            IdentityResult passwordChangeResult = await _userManager.ResetPasswordAsync(user, decodedtoken, vm.Password);
+//            if (passwordChangeResult.Succeeded)
+//            {
+//                await _userManager.UpdateSecurityStampAsync(user);
+//                TempData["Message"] = "Şifreniz Değiştirildi";
+//            }
+//            else
+//            {
+//                TempData["Message2"] = "Şifreniz Değiştirilemedi";
+//            }
+//            return RedirectToAction("Login");
+//        }
+        #endregion
 
-        public Task<IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<IResult> SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
-        {
-            throw new NotImplementedException();
-        }
+        //public async Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)//unutulan şifreyi sıfırlama
+        //{
+        //    var currentUser = await _userRepository.GetByDefaultAsync(x => x.Id == user.Id);
 
-        public async Task<IResult> SignOutAsyncA()
-        {
-            await SignOutAsyncMethod(IdentityConstants.ApplicationScheme);
+        //    string uniqueName = $"{Guid.NewGuid().ToString().ToLower()}";
 
-            return new SuccessResult(result);
-        }
-        protected  async Task SignOutAsyncMethod(string scheme)
-        {
-            var result = await _httpContextAccessor.HttpContext.AuthenticateAsync(scheme);
-            if (result?.Principal != null)
-            {
-                
-                var properties = result.Properties;
-                var options =  SchemeOptions.Get(scheme);
-                if (options?.Events != null)
-                {
-                    await options.Events.SigningOut(new AuthenticationProperties(properties), Context.Request.HttpContext);
-                    properties = new AuthenticationProperties(options.Cookie);
-                }
-                await Context.SignOutAsync(scheme, properties);
-            }
-        }
 
-        public async Task<IResult> SoftDeleteUserAsync(Guid id)
-        {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user is null)
-            {
-                return new ErrorResult(Messages.ProductNotFound);
-            }
-            else
-            {
-                user.IsActive = false;
-                user.DeletedDate = DateTime.Now;
-                await _userRepository.UpdateAsync(user);
-                await _userRepository.SaveChangesAsync();
-                return new SuccessResult(Messages.DeleteSuccess);
-            }
-        }
+
+        //    if (currentUser is not null)
+        //    {
+        //        var fromAddress = new MailAddress("i_am_hr@outlook.com");
+        //        var toAddress = new MailAddress(user.Email);
+        //        string encodedToken = HttpUtility.UrlEncode(token);
+        //        var Link = $"Merhaba {currentUser.GetFullName()} , <br />" +
+        //                    $"Şifreni yenilemek için linke tıklayabilirsin: " +
+        //                    $"<a href='https://localhost:7286{Url.Action("NewPassword", "Login", new { email = currentUser.Email, token = encodedToken })}'>Şifre Yenile</a> <br />" +
+        //                    $"İyi alışverişler dileriz.. <br /> <br />";
+        //        //Email yerine Guid veya token ile değişiklik yapılacak
+        //        string resetPass = "Şifre Yenileme Bağlantınız";
+        //        using (var smtp = new SmtpClient
+        //        {
+        //            Host = "smtp-mail.outlook.com",
+        //            /**/
+        //            Port = 587,
+        //            EnableSsl = true,
+        //            DeliveryMethod = SmtpDeliveryMethod.Network,
+        //            UseDefaultCredentials = false,
+
+
+        //            Credentials = new NetworkCredential(fromAddress.Address, "ik-123456")
+        //        }) ;
+        //        //try
+        //        //{
+        //        //    {
+        //        //        using (var message = new MailMessage(fromAddress, toAddress) { Subject = resetPass, Body = Link, IsBodyHtml = true })
+        //        //        {
+        //        //            smtp.Send(message);
+        //        //        }
+        //        //    }
+        //        //    ViewBag.Sonuc = "Mail Başarıyla Gönderildi.";
+        //        //}
+        //        //catch (Exception)
+        //        //{
+        //        //    ViewBag.Sonuc = "Mail Gönderiminde Hata Oluştu.";
+        //        //}
+        //    }
+        //    return new SuccessResult(Messages.DeleteSuccess);
+        //}
+
+        //public Task<IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task<IResult> SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public async Task<IResult> SignOutAsyncA()
+        //{
+        //    await SignOutAsyncMethod(IdentityConstants.ApplicationScheme);
+
+        //    return new SuccessResult(result);
+        //}
+        //protected async Task SignOutAsyncMethod(string scheme)
+        //{
+        //    var result = await _httpContextAccessor.HttpContext.AuthenticateAsync(scheme);
+        //    if (result?.Principal != null)
+        //    {
+
+        //        var properties = result.Properties;
+        //        var options = SchemeOptions.Get(scheme);
+        //        if (options?.Events != null)
+        //        {
+        //            await options.Events.SigningOut(new AuthenticationProperties(properties), Context.Request.HttpContext);
+        //            properties = new AuthenticationProperties(options.Cookie);
+        //        }
+        //        await Context.SignOutAsync(scheme, properties);
+        //    }
+        //}
+
+        //public async Task<IResult> SoftDeleteUserAsync(Guid id)
+        //{
+        //    var user = await _userRepository.GetByIdAsync(id);
+        //    if (user is null)
+        //    {
+        //        return new ErrorResult(Messages.ProductNotFound);
+        //    }
+        //    else
+        //    {
+        //        user.IsActive = false;
+        //        user.DeletedDate = DateTime.Now;
+        //        await _userRepository.UpdateAsync(user);
+        //        await _userRepository.SaveChangesAsync();
+        //        return new SuccessResult(Messages.DeleteSuccess);
+        //    }
+        //}
         /// <summary>
         ///login olan kullanıcı token oluşturduktan sonra Updaterefreshtoken metodu ile refresh token üretir
         /// </summary>
@@ -409,16 +479,16 @@ namespace AtSepete.Business.Concrete
         /// <returns></returns>
         public async Task<IResult> UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate)
         {
-           if (userDto is not null)
+            if (userDto is not null)
             {
                 userDto.RefreshToken = refreshToken;
                 userDto.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
-                var userMap= _mapper.Map<UserDto, User>(userDto);
+                var userMap = _mapper.Map<UserDto, User>(userDto);
                 await _userRepository.UpdateAsync(userMap);
                 await _userRepository.SaveChangesAsync();
                 return new SuccessResult();
             }
-           return new ErrorResult();
+            return new ErrorResult();
         }
 
         public async Task<IDataResult<UpdateUserDto>> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)

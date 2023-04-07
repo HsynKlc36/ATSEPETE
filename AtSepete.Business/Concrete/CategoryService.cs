@@ -1,5 +1,6 @@
 ﻿using AtSepete.Business.Abstract;
 using AtSepete.Business.Constants;
+using AtSepete.Business.Logger;
 using AtSepete.Core.CoreInterfaces;
 using AtSepete.Dtos.Dto.Categories;
 using AtSepete.Entities.Data;
@@ -19,17 +20,20 @@ namespace AtSepete.Business.Concrete
 
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
+        private readonly ILoggerService _loggerService;
 
-        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper) 
+        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper ,ILoggerService loggerService) 
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _loggerService = loggerService;
         }
         public async Task<IDataResult<CategoryDto>> GetByIdCategoryAsync(Guid id)
         {
             var category = await _categoryRepository.GetByDefaultAsync(x => x.Id == id);
             if (category is null)
             {
+                
                 return new ErrorDataResult<CategoryDto>(Messages.CategoryNotFound);
             }
             return new SuccessDataResult<CategoryDto>(_mapper.Map<CategoryDto>(category), Messages.CategoryFoundSuccess);
@@ -37,11 +41,15 @@ namespace AtSepete.Business.Concrete
         }
         public async Task<IDataResult<List<CategoryListDto>>> GetAllCategoryAsync()
         {
+          
             var tempEntity = await _categoryRepository.GetAllAsync();
+            if (!tempEntity.Any())
+            {              
+                return new ErrorDataResult<List<CategoryListDto>>(Messages.ObjectNotFound);
+            }
             var result = _mapper.Map<IEnumerable<Category>, List<CategoryListDto>>(tempEntity);
             return new SuccessDataResult<List<CategoryListDto>>(result,Messages.ListedSuccess);
-
-            
+  
         }
 
         public async Task<IDataResult<CreateCategoryDto>> AddCategoryAsync(CreateCategoryDto entity)
@@ -66,7 +74,7 @@ namespace AtSepete.Business.Concrete
             }
             catch (Exception)
             {
-
+                
                 return new ErrorDataResult<CreateCategoryDto>(Messages.AddFail);
             }
         }

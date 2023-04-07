@@ -1,5 +1,6 @@
 ﻿using AtSepete.Business.Abstract;
 using AtSepete.Business.Concrete;
+using AtSepete.Business.Logger;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ namespace AtSepete.Business.Extensions
             services.AddScoped<IProductMarketService, ProductMarketService>();
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddSingleton<ILoggerService, LoggerService>();
             return services;
         }
     }

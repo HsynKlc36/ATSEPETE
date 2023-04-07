@@ -60,6 +60,8 @@ public class Messages
     public const string CheckPasswordValid = "Check_Password_Valid";
     public const string CheckPasswordFail = "Check_Password_Fail";
 
+    public const string PasswordNotMatch = "Password_Not_Match";
+
 
 
 

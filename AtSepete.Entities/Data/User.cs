@@ -16,9 +16,9 @@ namespace AtSepete.Entities.Data
         public string Adress { get; set; }
         public DateTime BirthDate { get; set; }
         public string PhoneNumber { get; set; }
-        public DateTimeOffset? LockoutEnd { get; set; }
-        public bool LockoutEnabled { get; set; }
-        public int AccessFailedCount { get; set; }
+        public DateTimeOffset? LockoutEnd { get; set; }// hesabı ne kadar süreyle kitleyeceğini belirler
+        public bool LockoutEnabled { get; set; }// hesap kilitlensin mi bunu belirler
+        public int AccessFailedCount { get; set; }// kaç kere hatalı girişte hasabın kilitleneceğini belirler
         //navigation property
         virtual public IEnumerable<Order>? Orders { get; set; }
         

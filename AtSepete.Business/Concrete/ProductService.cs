@@ -16,6 +16,7 @@ using AtSepete.Dtos.Dto.Products;
 
 namespace AtSepete.Business.Concrete
 {
+    //fotograflar için kontroller yazılacak!!!unutma
     public class ProductService :IProductService
     {
         private readonly IProductRepository _productRepository;
