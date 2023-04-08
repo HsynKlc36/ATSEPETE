@@ -11,7 +11,7 @@ namespace AtSepete.Entities.Data
 {
     public class User:BaseUser
     {
-     
+
         public Gender Gender { get; set; }
         public string Adress { get; set; }
         public DateTime BirthDate { get; set; }

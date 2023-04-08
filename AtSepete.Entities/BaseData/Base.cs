@@ -20,7 +20,7 @@ namespace AtSepete.Entities.BaseData
         public bool  IsActive { get; set; }=true; //buradaki değerler kaldırılcak servis tarafında  verilecek
         public virtual string GetFullName()
         {
-            return string.Join("","");
+            return string.Join("", "");
         }
     }
 }

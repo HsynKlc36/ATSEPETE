@@ -12,57 +12,76 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AtSepete.Dtos.Dto.OrderDetails;
+using AtSepete.Business.Logger;
 
 namespace AtSepete.Business.Concrete
 {
-    public class OrderDetailService :IOrderDetailService
+    public class OrderDetailService : IOrderDetailService
     {
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
+        private readonly ILoggerService _loggerService;
 
-        public OrderDetailService(IOrderDetailRepository orderDetailRepository,IOrderRepository orderRepository,IProductRepository productRepository,IMapper mapper)
+        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IOrderRepository orderRepository, IProductRepository productRepository, IMapper mapper, ILoggerService loggerService)
         {
             _orderDetailRepository = orderDetailRepository;
             _orderRepository = orderRepository;
             _productRepository = productRepository;
             _mapper = mapper;
+            _loggerService = loggerService;
         }
         public async Task<IDataResult<OrderDetailDto>> GetByIdOrderDetailAsync(Guid id)
         {
             var orderDetail = await _orderDetailRepository.GetByDefaultAsync(x => x.Id == id);
             if (orderDetail is null)
             {
+                _loggerService.LogWarning(Messages.OrderDetailNotFound);
                 return new ErrorDataResult<OrderDetailDto>(Messages.OrderDetailNotFound);
             }
+            _loggerService.LogInfo(Messages.OrderDetailFoundSuccess);
             return new SuccessDataResult<OrderDetailDto>(_mapper.Map<OrderDetailDto>(orderDetail), Messages.OrderDetailFoundSuccess);
 
         }
         public async Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetailAsync()
         {
             var tempEntity = await _orderDetailRepository.GetAllAsync();
+            if (!tempEntity.Any())
+            {
+                _loggerService.LogWarning(Messages.OrderDetailNotFound);
+                return new ErrorDataResult<List<OrderDetailListDto>>(Messages.OrderDetailNotFound);
+            }
             var result = _mapper.Map<IEnumerable<OrderDetail>, List<OrderDetailListDto>>(tempEntity);
+            _loggerService.LogInfo(Messages.ListedSuccess);
             return new SuccessDataResult<List<OrderDetailListDto>>(result, Messages.ListedSuccess);
         }
         public async Task<IDataResult<CreateOrderDetailDto>> AddOrderDetailAsync(CreateOrderDetailDto entity)
         {
             try
             {
+                if (entity is null)
+                {
+                    _loggerService.LogWarning(Messages.ObjectNotFound);
+                    return new ErrorDataResult<CreateOrderDetailDto>(Messages.ObjectNotFound);
+                }
                 var market = await _orderRepository.GetByIdAsync(entity.OrderId);
                 if (market is null)
                 {
+                    _loggerService.LogWarning(Messages.OrderNotFound);
                     return new ErrorDataResult<CreateOrderDetailDto>(Messages.OrderNotFound);
                 }
                 var product = await _productRepository.GetByIdAsync(entity.ProductId);
 
                 if (product is null)
                 {
+                    _loggerService.LogWarning(Messages.ProductNotFound);
                     return new ErrorDataResult<CreateOrderDetailDto>(Messages.ProductNotFound);
                 }
                 var hasOrderDetail = await _orderDetailRepository.AnyAsync(x => x.ProductId.Equals(entity.ProductId) && x.OrderId.Equals(entity.OrderId));
                 if (hasOrderDetail)
                 {
+                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
                     return new ErrorDataResult<CreateOrderDetailDto>(Messages.AddFailAlreadyExists);
 
                 }
@@ -70,7 +89,7 @@ namespace AtSepete.Business.Concrete
 
                 var result = await _orderDetailRepository.AddAsync(OrderDetail);
                 await _orderDetailRepository.SaveChangesAsync();
-
+                _loggerService.LogInfo(Messages.AddSuccess);
                 return new SuccessDataResult<CreateOrderDetailDto>(_mapper.Map<OrderDetail, CreateOrderDetailDto>(result), Messages.AddSuccess);
                 #region Control+K+S
                 //    var hasMarket = await _marketRepository.AnyAsync(market => market.Id == entity.MarketId);
@@ -124,6 +143,7 @@ namespace AtSepete.Business.Concrete
             }
             catch (Exception)
             {
+                _loggerService.LogError(Messages.AddFail);
                 return new ErrorDataResult<CreateOrderDetailDto>(Messages.AddFail);
             }
 
@@ -136,38 +156,38 @@ namespace AtSepete.Business.Concrete
                 var orderDetail = await _orderDetailRepository.GetByIdAsync(id);
                 if (orderDetail is null)
                 {
+                    _loggerService.LogWarning(Messages.OrderDetailNotFound);
                     return new ErrorDataResult<UpdateOrderDetailDto>(Messages.OrderDetailNotFound);
                 }
                 var order = await _orderRepository.GetByIdAsync(updateOrderDetailDto.OrderId);
                 if (order is null)
                 {
+                    _loggerService.LogWarning(Messages.OrderNotFound);
                     return new ErrorDataResult<UpdateOrderDetailDto>(Messages.OrderNotFound);
                 }
                 var product = await _productRepository.GetByIdAsync(updateOrderDetailDto.ProductId);
 
                 if (product is null)
                 {
+                    _loggerService.LogWarning(Messages.ProductNotFound);
                     return new ErrorDataResult<UpdateOrderDetailDto>(Messages.ProductNotFound);
                 }
-               
-                if (orderDetail.Id!=updateOrderDetailDto.Id)
+
+                if (orderDetail.Id != updateOrderDetailDto.Id)
                 {
+                    _loggerService.LogWarning(Messages.ObjectNotValid);
                     return new ErrorDataResult<UpdateOrderDetailDto>(Messages.ObjectNotValid);
                 }
-              
-
                 var updateOrderDetail = _mapper.Map(updateOrderDetailDto, orderDetail);
 
                 var result = await _orderDetailRepository.UpdateAsync(updateOrderDetail);
                 await _orderDetailRepository.SaveChangesAsync();
-
+                _loggerService.LogInfo(Messages.UpdateSuccess);
                 return new SuccessDataResult<UpdateOrderDetailDto>(_mapper.Map<OrderDetail, UpdateOrderDetailDto>(result), Messages.UpdateSuccess);
-
-
             }
             catch (Exception)
             {
-
+                _loggerService.LogError(Messages.UpdateFail);
                 return new ErrorDataResult<UpdateOrderDetailDto>(Messages.UpdateFail);
             }
         }
@@ -180,18 +200,19 @@ namespace AtSepete.Business.Concrete
                 var OrderDetail = await _orderDetailRepository.GetByIdActiveOrPassiveAsync(id);
                 if (OrderDetail is null)
                 {
+                    _loggerService.LogWarning(Messages.OrderDetailNotFound);
                     return new ErrorResult(Messages.OrderDetailNotFound);
                 }
 
                 await _orderDetailRepository.DeleteAsync(OrderDetail);
                 await _orderDetailRepository.SaveChangesAsync();
-
+                _loggerService.LogInfo(Messages.DeleteSuccess);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
 
             catch (Exception)
             {
-
+                _loggerService.LogError(Messages.DeleteFail);
                 return new ErrorResult(Messages.DeleteFail);
             }
         }
@@ -203,25 +224,27 @@ namespace AtSepete.Business.Concrete
                 var OrderDetail = await _orderDetailRepository.GetByIdAsync(id);
                 if (OrderDetail is null)
                 {
+                    _loggerService.LogWarning(Messages.OrderDetailNotFound);
                     return new ErrorResult(Messages.OrderDetailNotFound);
                 }
-                else
-                {
-                    OrderDetail.IsActive = false;
-                    OrderDetail.DeletedDate = DateTime.Now;
-                    await _orderDetailRepository.UpdateAsync(OrderDetail);
-                    await _orderDetailRepository.SaveChangesAsync();
-                    return new SuccessResult(Messages.DeleteSuccess);
-                }
+
+
+                OrderDetail.IsActive = false;
+                OrderDetail.DeletedDate = DateTime.Now;
+                await _orderDetailRepository.UpdateAsync(OrderDetail);
+                await _orderDetailRepository.SaveChangesAsync();
+                _loggerService.LogInfo(Messages.DeleteSuccess);
+                return new SuccessResult(Messages.DeleteSuccess);
+
             }
             catch (Exception)
             {
-
+                _loggerService.LogError(Messages.DeleteFail);
                 return new ErrorResult(Messages.DeleteFail);
             }
         }
 
-       
+
 
 
     }

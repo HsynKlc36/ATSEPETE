@@ -28,5 +28,8 @@ namespace AtSepete.Dtos.Dto.Users
         public DateTime? ModifiedDate { get; set; }
         public DateTime? DeletedDate { get; set; }
         public bool IsActive { get; set; }
+        
+
+       UserDto user=desadlas.jsom(httpsdlkfşsdkfksdfklsdfklsd)
     }
 }

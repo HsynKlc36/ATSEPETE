@@ -15,6 +15,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -24,7 +25,16 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());//o an yürütülen mapper'ý kendisi tanýr
+builder.Services.AddAutoMapper(
+    Assembly.GetExecutingAssembly(),
+    typeof(CategoryProfile).Assembly,
+    typeof(MarketProfile).Assembly,
+    typeof(OrderProfile).Assembly,
+    typeof(OrderDetailProfile).Assembly,
+    typeof(ProductMarketProfile).Assembly,
+    typeof(ProductProfile).Assembly,
+    typeof(UserProfile).Assembly
+);
 builder.Services.AddControllers();
 builder.Services.AddRepositoriesServices()
     .AddBusinessServices()

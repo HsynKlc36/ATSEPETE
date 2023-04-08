@@ -15,14 +15,14 @@ using System.Linq.Expressions;
 
 namespace AtSepete.Business.Concrete
 {
-    public class CategoryService: ICategoryService
+    public class CategoryService : ICategoryService
     {
 
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
         private readonly ILoggerService _loggerService;
 
-        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper ,ILoggerService loggerService) 
+        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper, ILoggerService loggerService)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
@@ -42,7 +42,7 @@ namespace AtSepete.Business.Concrete
         }
         public async Task<IDataResult<List<CategoryListDto>>> GetAllCategoryAsync()
         {
-          
+
             var tempEntity = await _categoryRepository.GetAllAsync();
             if (!tempEntity.Any())
             {
@@ -51,8 +51,8 @@ namespace AtSepete.Business.Concrete
             }
             var result = _mapper.Map<IEnumerable<Category>, List<CategoryListDto>>(tempEntity);
             _loggerService.LogInfo(Messages.ListedSuccess);
-            return new SuccessDataResult<List<CategoryListDto>>(result,Messages.ListedSuccess);
-  
+            return new SuccessDataResult<List<CategoryListDto>>(result, Messages.ListedSuccess);
+
         }
 
         public async Task<IDataResult<CreateCategoryDto>> AddCategoryAsync(CreateCategoryDto entity)
@@ -62,9 +62,9 @@ namespace AtSepete.Business.Concrete
                 if (entity is null)
                 {
                     _loggerService.LogWarning(Messages.ObjectNotValid);
-                    return new ErrorDataResult<CreateCategoryDto>(Messages.ObjectNotValid); 
+                    return new ErrorDataResult<CreateCategoryDto>(Messages.ObjectNotValid);
                 }
-                var hasCategory = await _categoryRepository.AnyAsync(c => c.Name.Trim().ToLower() == entity.Name.Trim().ToLower() );
+                var hasCategory = await _categoryRepository.AnyAsync(c => c.Name.Trim().ToLower() == entity.Name.Trim().ToLower());
                 if (hasCategory)
                 {
 
@@ -75,7 +75,7 @@ namespace AtSepete.Business.Concrete
                 var result = await _categoryRepository.AddAsync(category);
                 await _categoryRepository.SaveChangesAsync();
 
-                CreateCategoryDto createCategoryDto =_mapper.Map<Category, CreateCategoryDto>(result);
+                CreateCategoryDto createCategoryDto = _mapper.Map<Category, CreateCategoryDto>(result);
                 _loggerService.LogInfo(Messages.AddSuccess);
                 return new SuccessDataResult<CreateCategoryDto>(createCategoryDto, Messages.AddSuccess);
             }
@@ -110,7 +110,7 @@ namespace AtSepete.Business.Concrete
                 await _categoryRepository.UpdateAsync(updateCategory);
                 await _categoryRepository.SaveChangesAsync();
                 _loggerService.LogInfo(Messages.UpdateSuccess);
-                return new SuccessDataResult<UpdateCategoryDto>(_mapper.Map<Category,UpdateCategoryDto>(updateCategory),Messages.UpdateSuccess);
+                return new SuccessDataResult<UpdateCategoryDto>(_mapper.Map<Category, UpdateCategoryDto>(updateCategory), Messages.UpdateSuccess);
             }
             catch (Exception)
             {
@@ -121,37 +121,55 @@ namespace AtSepete.Business.Concrete
 
         public async Task<IResult> HardDeleteCategoryAsync(Guid id)
         {
-            var category = await _categoryRepository.GetByIdActiveOrPassiveAsync(id);
-            if (category is null)
+            try
             {
-                _loggerService.LogWarning(Messages.CategoryNotFound);
-                return new ErrorResult(Messages.CategoryNotFound);
+                var category = await _categoryRepository.GetByIdActiveOrPassiveAsync(id);
+                if (category is null)
+                {
+                    _loggerService.LogWarning(Messages.CategoryNotFound);
+                    return new ErrorResult(Messages.CategoryNotFound);
+                }
+
+                await _categoryRepository.DeleteAsync(category);
+                await _categoryRepository.SaveChangesAsync();
+
+                _loggerService.LogInfo(Messages.DeleteSuccess);
+                return new SuccessResult(Messages.DeleteSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(Messages.DeleteFail);
+                return new ErrorResult(Messages.DeleteFail);
             }
 
-            await _categoryRepository.DeleteAsync(category);
-            await _categoryRepository.SaveChangesAsync();
-
-            _loggerService.LogInfo(Messages.DeleteSuccess);
-            return new SuccessResult(Messages.DeleteSuccess);
         }
 
-        public async  Task<IResult> SoftDeleteCategoryAsync(Guid id)
+        public async Task<IResult> SoftDeleteCategoryAsync(Guid id)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
-            if (category is null)
+            try
             {
+                var category = await _categoryRepository.GetByIdAsync(id);
+                if (category is null)
+                {
 
-                _loggerService.LogWarning(Messages.CategoryNotFound);
-                return new ErrorResult(Messages.CategoryNotFound);
+                    _loggerService.LogWarning(Messages.CategoryNotFound);
+                    return new ErrorResult(Messages.CategoryNotFound);
+                }
+
+                category.IsActive = false;
+                category.DeletedDate = DateTime.Now;
+                await _categoryRepository.UpdateAsync(category);
+                await _categoryRepository.SaveChangesAsync();
+
+                _loggerService.LogInfo(Messages.DeleteSuccess);
+                return new SuccessResult(Messages.DeleteSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(Messages.DeleteFail);
+                return new ErrorResult(Messages.DeleteFail);
             }
 
-            category.IsActive = false;
-            category.DeletedDate = DateTime.Now;
-            await _categoryRepository.UpdateAsync(category);
-            await _categoryRepository.SaveChangesAsync();
-
-            _loggerService.LogInfo(Messages.DeleteSuccess);
-            return new SuccessResult(Messages.DeleteSuccess);               
 
         }
 

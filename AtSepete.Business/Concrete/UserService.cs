@@ -26,6 +26,7 @@ using AtSepete.Dtos.Dto.OrderDetails;
 using System.Web;
 using CloudinaryDotNet;
 using Newtonsoft.Json;
+using AtSepete.Business.Logger;
 
 namespace AtSepete.Business.Concrete
 {
@@ -34,13 +35,14 @@ namespace AtSepete.Business.Concrete
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly ILoggerService _loggerService;
         //private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper, ILoggerService loggerService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
-           
+            _loggerService = loggerService;
         }
 
 
@@ -51,22 +53,26 @@ namespace AtSepete.Business.Concrete
             {
                 if (entity == null)
                 {
+                    _loggerService.LogWarning(Messages.ObjectNotFound);
                     return new ErrorDataResult<CreateUserDto>(Messages.ObjectNotFound);
                 }
                 var currentUser = await _userRepository.GetByDefaultAsync(x => x.Email == entity.Email);
                 if (currentUser is not null)
                 {
-
+                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
                     return new ErrorDataResult<CreateUserDto>(Messages.AddFailAlreadyExists);
                 }
                 entity.Password = await PasswordHashAsync(entity.Password);
                 var userMap = _mapper.Map<CreateUserDto, User>(entity);
                 await _userRepository.AddAsync(userMap);
                 await _userRepository.SaveChangesAsync();
+
+                _loggerService.LogInfo(Messages.AddUserFail);
                 return new SuccessDataResult<CreateUserDto>(_mapper.Map<User, CreateUserDto>(userMap), Messages.AddUserSuccess);
             }
             catch (Exception)
             {
+                _loggerService.LogError(Messages.AddUserFail);
                 return new ErrorDataResult<CreateUserDto>(Messages.AddUserFail);
 
             }
@@ -117,17 +123,19 @@ namespace AtSepete.Business.Concrete
             {
                 if (changePasswordDto == null)
                 {
+                    _loggerService.LogWarning(Messages.ObjectNotFound);
                     return new ErrorDataResult<ChangePasswordDto>(Messages.ObjectNotFound);
                 }
                 var currentUser = await _userRepository.GetByDefaultAsync(x => x.Email == changePasswordDto.Email);
                 if (currentUser is null)
                 {
-
+                    _loggerService.LogWarning(Messages.UserNotFound);
                     return new ErrorDataResult<ChangePasswordDto>(Messages.UserNotFound);
                 }
                 changePasswordDto.CurrentPassword = await PasswordHashAsync(changePasswordDto.CurrentPassword);
                 if (currentUser.Password != changePasswordDto.CurrentPassword)
                 {
+                    _loggerService.LogWarning(Messages.PasswordNotMatch);
                     return new ErrorDataResult<ChangePasswordDto>(Messages.PasswordNotMatch);
                     //hashlenmiş şifreler foreach ile dönülüp index index kontrol edilebilir!!
                 }
@@ -135,10 +143,12 @@ namespace AtSepete.Business.Concrete
                 var userMap = _mapper.Map<ChangePasswordDto, User>(changePasswordDto);
                 await _userRepository.UpdateAsync(userMap);
                 await _userRepository.SaveChangesAsync();
+                _loggerService.LogInfo(Messages.ChangePasswordSucces);
                 return new SuccessDataResult<ChangePasswordDto>(_mapper.Map<User, ChangePasswordDto>(userMap), Messages.ChangePasswordSucces);
             }
             catch (Exception)
             {
+                _loggerService.LogError(Messages.ChangePasswordFail);
                 return new ErrorDataResult<ChangePasswordDto>(Messages.ChangePasswordFail);
             }
 
@@ -150,12 +160,13 @@ namespace AtSepete.Business.Concrete
             {
                 if (checkPasswordDto == null)
                 {
+                    _loggerService.LogWarning(Messages.ObjectNotFound);
                     return new ErrorResult(Messages.ObjectNotFound);
                 }
                 var currentUser = await _userRepository.GetByDefaultAsync(x => x.Email == checkPasswordDto.Email);
                 if (currentUser is null)
                 {
-
+                    _loggerService.LogWarning(Messages.UserNotFound);
                     return new ErrorResult(Messages.UserNotFound);
                 }
                 var passhased = currentUser.Password;
@@ -168,124 +179,188 @@ namespace AtSepete.Business.Concrete
                 for (int i = 0; i < 20; i++)
                 {
                     if (hashBytes[i + 16] != hash[i])
+                    {
+                        _loggerService.LogWarning(Messages.CheckPasswordNotValid);
                         return new ErrorResult(Messages.CheckPasswordNotValid);
+                    }
                 }
+                _loggerService.LogInfo(Messages.CheckPasswordValid);
                 return new SuccessResult(Messages.CheckPasswordValid);
             }
             catch (Exception)
             {
-
+                _loggerService.LogError(Messages.CheckPasswordFail);
                 return new ErrorDataResult<CheckPasswordDto>(Messages.CheckPasswordFail);
             }
 
         }
-        public async Task<IDataResult<UserDto>> FindUserByEmailAsync(string email)
+        public async Task<IDataResult<UserDto>> FindUserByEmailAsync(string email)// email ile user getirir
         {
             try
             {
                 var user = await _userRepository.GetByDefaultAsync(x => x.Email == email);
                 if (user is null)
                 {
+                    _loggerService.LogWarning(Messages.UserNotFound);
                     return new ErrorDataResult<UserDto>(Messages.UserNotFound);
                 }
                 var userDto = _mapper.Map<User, UserDto>(user);
+                _loggerService.LogInfo(Messages.UserFoundSuccess);
                 return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
             }
             catch (Exception)
             {
-
+                _loggerService.LogError(Messages.UserFoundFail);
                 return new ErrorDataResult<UserDto>(Messages.UserFoundFail);
             }
-
-
         }
 
-        public async Task<IDataResult<UserDto>> FindUserByIdAsync(Guid id)
+        public async Task<IDataResult<UserDto>> FindUserByIdAsync(Guid id)//ıd ile user getirir
         {
             try
             {
                 var user = await _userRepository.GetByDefaultAsync(x => x.Id == id);
                 if (user is null)
                 {
+                    _loggerService.LogWarning(Messages.UserNotFound);
                     return new ErrorDataResult<UserDto>(Messages.UserNotFound);
                 }
                 var userDto = _mapper.Map<User, UserDto>(user);
+
+                _loggerService.LogInfo(Messages.UserFoundSuccess);
                 return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
             }
             catch (Exception)
             {
-
+                _loggerService.LogError(Messages.UserFoundFail);
                 return new ErrorDataResult<UserDto>(Messages.UserFoundFail);
             }
 
         }
 
-        public async Task<IDataResult<List<UserDto>>> FindUsersByRoleAsync(string roleName)
+        public async Task<IDataResult<List<UserDto>>> FindUsersByRoleAsync(string roleName)//role göre user getirir
         {
             try
             {
                 var users = await _userRepository.GetDefaultAsync(x => x.Role.ToString().Trim().ToLower() == roleName.Trim().ToLower());//buradaki rol int mi gelecek yoksa string mi dene !!
                 if (!users.Any())
                 {
+                    _loggerService.LogWarning(Messages.UserNotFound);
                     return new ErrorDataResult<List<UserDto>>(Messages.UsersNotFound);
                 }
                 var userDto = _mapper.Map<List<User>, List<UserDto>>(users.ToList());
+                _loggerService.LogInfo(Messages.UserFoundSuccess);
                 return new SuccessDataResult<List<UserDto>>(userDto, Messages.UsersFoundSuccess);
             }
             catch (Exception)
             {
-
+                _loggerService.LogError(Messages.UserFoundFail);
                 return new ErrorDataResult<List<UserDto>>(Messages.UserFoundFail);
             }
 
         }
 
-        public async Task<IDataResult<List<UserDto>>> GetAllUserAsync()
+        public async Task<IDataResult<List<UserListDto>>> GetAllUserAsync()//tüm aktif userları getirir
         {
-            var users = await _userRepository.GetAllAsync();
-            if (!users.Any())
+            try
             {
-                return new ErrorDataResult<List<UserDto>>(Messages.UsersNotFound);
+                IEnumerable<User> users = await _userRepository.GetAllAsync();
+                if (!users.Any())
+                {
+                    _loggerService.LogWarning(Messages.UserNotFound);
+                    return new ErrorDataResult<List<UserListDto>>(Messages.UsersNotFound);
+                }
+                var usersDto = _mapper.Map<IEnumerable<User>, List<UserListDto>>(users);
+                _loggerService.LogInfo(Messages.UsersFoundSuccess);
+                return new SuccessDataResult<List<UserListDto>>(usersDto, Messages.UsersFoundSuccess);
             }
-            var usersDto = _mapper.Map<List<User>, List<UserDto>>(users.ToList());
-            return new SuccessDataResult<List<UserDto>>(usersDto, Messages.UsersFoundSuccess);
+            catch (Exception)
+            {
+                _loggerService.LogError(Messages.UserFoundFail);
+                return new ErrorDataResult<List<UserListDto>>(Messages.UserFoundFail);
+            }
+
         }
 
         public async Task<IDataResult<UserDto>> GetUserAsync(ClaimsPrincipal principal)//login olan kullanıcıyı getirir!!
         {
-            //login Taskında login olan kullanıcıya claims ataması yapılmalı ki burası düzgün bir şekilde çalışşın!!
-            var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            try
             {
-                return new ErrorDataResult<UserDto>(Messages.UserNotFound);
+                //login Taskında login olan kullanıcıya claims ataması yapılmalı ki burası düzgün bir şekilde çalışşın!!
+                var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null)
+                {
+                    _loggerService.LogWarning(Messages.UserNotFound);
+                    return new ErrorDataResult<UserDto>(Messages.UserNotFound);
+                }
+                // Veritabanından kullanıcıyı bulmak için UserRepository kullanılır
+                var user = await _userRepository.GetByIdAsync(Guid.Parse(userId));
+                if (user == null)
+                {
+                    _loggerService.LogWarning(Messages.UsersNotFound);
+                    return new ErrorDataResult<UserDto>(Messages.UserNotFound);
+                }
+                // UserDto nesnesine çevirme yapılır ve sonuç döndürülür
+                var userDto = _mapper.Map<UserDto>(user);
+                _loggerService.LogInfo(Messages.UserFoundSuccess);
+                return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(Messages.UserFoundFail);
+                return new ErrorDataResult<UserDto>(Messages.UserFoundFail);
             }
 
-            // Veritabanından kullanıcıyı bulmak için UserRepository kullanılır
-            var user = await _userRepository.GetByIdAsync(Guid.Parse(userId));
-            if (user == null)
-            {
-                return new ErrorDataResult<UserDto>(Messages.UserNotFound);
-            }
-
-            // UserDto nesnesine çevirme yapılır ve sonuç döndürülür
-            var userDto = _mapper.Map<UserDto>(user);
-            return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
         }
 
-        public async Task<IResult> HardDeleteUserAsync(Guid id)
+        public async Task<IResult> HardDeleteUserAsync(Guid id)//tamamen veritabanından siler
         {
-            var user = await _userRepository.GetByIdActiveOrPassiveAsync(id);
-            if (user is null)
+            try
             {
-                return new ErrorResult(Messages.UserNotFound);
+                var user = await _userRepository.GetByIdActiveOrPassiveAsync(id);
+                if (user is null)
+                {
+                    _loggerService.LogWarning(Messages.UserNotFound);
+                    return new ErrorResult(Messages.UserNotFound);
+                }
+                await _userRepository.DeleteAsync(user);
+                await _userRepository.SaveChangesAsync();
+                _loggerService.LogInfo(Messages.DeleteSuccess);
+                return new SuccessResult(Messages.DeleteSuccess);
             }
-            await _userRepository.DeleteAsync(user);
-            await _userRepository.SaveChangesAsync();
+            catch (Exception)
+            {
+                _loggerService.LogError(Messages.DeleteFail);
+                return new ErrorResult(Messages.DeleteFail);
+            }
 
-            return new SuccessResult(Messages.DeleteSuccess);
+        }
+        public async Task<IResult> SoftDeleteUserAsync(Guid id)//sadece inaktife çeker kullanıcıyı
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(id);
+                if (user is null)
+                {
+                    _loggerService.LogWarning(Messages.UserNotFound);
+                    return new ErrorResult(Messages.UserNotFound);
+                }
+
+                user.IsActive = false;
+                user.DeletedDate = DateTime.Now;
+                await _userRepository.UpdateAsync(user);
+                await _userRepository.SaveChangesAsync();
+                _loggerService.LogInfo(Messages.DeleteSuccess);
+                return new SuccessResult(Messages.DeleteSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(Messages.DeleteFail);
+                return new ErrorResult(Messages.DeleteFail);
+            }
         }
 
-        public async Task<string> PasswordHashAsync(string password)
+        protected async Task<string> PasswordHashAsync(string password)//şifre hashlemek için kullanırız sadece burada yazdık o yüzden protected
         {
             byte[] salt;
             new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
@@ -295,6 +370,7 @@ namespace AtSepete.Business.Concrete
             Array.Copy(salt, 0, hashBytes, 0, 16);
             Array.Copy(hash, 0, hashBytes, 16, 20);
             string savedPasswordHash = Convert.ToBase64String(hashBytes);
+            _loggerService.LogInfo("PasswordHash is saved");
             return savedPasswordHash;
         }
 
@@ -307,67 +383,137 @@ namespace AtSepete.Business.Concrete
         {
             throw new NotImplementedException();
         }
+
+        public Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IResult> SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IResult> SignOutAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IResult> UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate)
+        {
+            if (userDto is not null)
+            {
+                userDto.RefreshToken = refreshToken;
+                userDto.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
+                var userMap = _mapper.Map<UserDto, User>(userDto);
+                await _userRepository.UpdateAsync(userMap);
+                await _userRepository.SaveChangesAsync();
+                _loggerService.LogInfo($"Updated refresh token");
+                return new SuccessResult();
+            }
+            _loggerService.LogError("update refresh token is fail");
+            return new ErrorResult();
+        }
+        public async Task<IDataResult<UpdateUserDto>> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(id);
+                if (user is null)
+                {
+                    _loggerService.LogWarning(Messages.UserNotFound);
+                    return new ErrorDataResult<UpdateUserDto>(Messages.UserNotFound);
+                }
+
+                if (user.Id != updateUserDto.Id)
+                {
+                    _loggerService.LogWarning(Messages.ObjectNotValid);
+                    return new ErrorDataResult<UpdateUserDto>(Messages.ObjectNotValid);
+                }
+
+                var updateUser = _mapper.Map(updateUserDto, user);
+
+                var result = await _userRepository.UpdateAsync(updateUser);
+                await _userRepository.SaveChangesAsync();
+                _loggerService.LogInfo(Messages.UpdateSuccess);
+                return new SuccessDataResult<UpdateUserDto>(_mapper.Map<User, UpdateUserDto>(result), Messages.UpdateSuccess);
+
+
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(Messages.UpdateFail);
+                return new ErrorDataResult<UpdateUserDto>(Messages.UpdateFail);
+            }
+
+        }
+      
         #region Şifremi unuttum deneme
-//        [HttpPost]
-//        public async Task<IResult> SifremiUnuttum(string email)
-//        {
-//            //apideki send mail metoduna ui dan ailınan mail adresi gönderme işlemi yapılır
-//            sendMailForRestPass(email); //apinin restpass metoduna eamili gönder
-//        }
-//        public async Task sendMailForRestPass(string email)//apinin mail gönderme metodu
-//        {
-//            //burada bana ui tarafından mail adresi gelir ben token üretirim mail adresiyle tokenı karıştırır kullanıcıya mail atarım ki şiğfresini değiştirebilsimn
-//            var token = handlerToken();
-//            //kullanıcıya mail gönder(mailin url'inde token olacak kullanıcının mail adresi olacak)
-//            //burada url üzerinden nesne olarak email ve token gönderilecek.
-//        }
-//        [HttpGet]
-//        public async Task şifremiDeğiştir(string email, string token)//UI controller
-//        {
-//            ///kullanıcı mail adresindeki linke tıklar bana gelir ben sayfanın arka planında mail adresi ve token bilgilkerini tutarım ben bir ui controlleryım
+        //        [HttpPost]
+        //        public async Task<IResult> SifremiUnuttum(string email)
+        //        {
+        //            //apideki send mail metoduna ui dan ailınan mail adresi gönderme işlemi yapılır
+        //            sendMailForRestPass(email); //apinin restpass metoduna eamili gönder
+        //        }
+        //        public async Task sendMailForRestPass(string email)//apinin mail gönderme metodu
+        //        {
+        //            //burada bana ui tarafından mail adresi gelir ben token üretirim mail adresiyle tokenı karıştırır kullanıcıya mail atarım ki şiğfresini değiştirebilsimn
+        //            var token = handlerToken();
+        //            //kullanıcıya mail gönder(mailin url'inde token olacak kullanıcının mail adresi olacak)
+        //            //burada url üzerinden nesne olarak email ve token gönderilecek.
+        //        }
+        //        [HttpGet]
+        //        public async Task şifremiDeğiştir(string email, string token)//UI controller
+        //        {
+        //            ///kullanıcı mail adresindeki linke tıklar bana gelir ben sayfanın arka planında mail adresi ve token bilgilkerini tutarım ben bir ui controlleryım
 
-//        }
-//        [HttpPost]
-//        public async Task şifremiDeğiştir(string email, string token, string pass1, string pass2)//uı controller
-//        {//bende bir ui controlrıyım getten gelen bilgilerle birlikte kullanıcının yeni şifresini alrım
+        //        }
+        //        [HttpPost]
+        //        public async Task şifremiDeğiştir(string email, string token, string pass1, string pass2)//uı controller
+        //        {//bende bir ui controlrıyım getten gelen bilgilerle birlikte kullanıcının yeni şifresini alrım
 
-//            ///buraya api ile bağlanmak içiçn bir kod yazarım kullanıcın yeni şifresini mail adresini token bilgisini api ye gönderirim ben bir ui controllerıyım
-//            using (var httpClient = new HttpClient())//api ile localhosttan bağlantı kurarak istekleri yönetir.
-//            {
-//                using (var answer = await httpClient.GetAsync("https://localhost:7286/AtSepeteApi/user/apiresetpass"))
-//                {
-//                    string apiAnswer = await
-////post et apiye email token pnewwpass
-//answer.Content.ReadAsStringAsync();
-//                    products = JsonConvert.DeserializeObject<Product>(apiAnswer);
-//                }
+        //            ///buraya api ile bağlanmak içiçn bir kod yazarım kullanıcın yeni şifresini mail adresini token bilgisini api ye gönderirim ben bir ui controllerıyım
+        //            using (var httpClient = new HttpClient())//api ile localhosttan bağlantı kurarak istekleri yönetir.
+        //            {
+        //                using (var answer = await httpClient.GetAsync("https://localhost:7286/AtSepeteApi/user/apiresetpass"))
+        //                {
+        //                    string apiAnswer = await
+        ////post et apiye email token pnewwpass
+        //answer.Content.ReadAsStringAsync();
+        //                    products = JsonConvert.DeserializeObject<Product>(apiAnswer);
+        //                }
 
 
-//            }
-//        }
-//        public async Task apicontroller(string email, string token, string pass1, string pass2)
-//        {
-//            _userservice.apiResetPass(string email, string token, string pass1, string pass2)// burada aşağıdaki servis metoduna bağlanacak
-//        }
-//        public async Task apiResetPass(string email, string token, string pass1, string pass2)//user apiservis metodu
-//        {
-//            ///ben bir api servisiyimapi contollerımdan gelen kullanıcı mail adresi token ı şifresini burda kontrol eder ve değiştiritim
-//            ///
-//            AppUser user = await _userManager.FindByEmailAsync(vm.Email);
-//            user.UpdateDate = DateTime.Now;
-//            string decodedtoken = HttpUtility.UrlDecode(vm.Token); // Encode edilen token decode ediliyor
-//            IdentityResult passwordChangeResult = await _userManager.ResetPasswordAsync(user, decodedtoken, vm.Password);
-//            if (passwordChangeResult.Succeeded)
-//            {
-//                await _userManager.UpdateSecurityStampAsync(user);
-//                TempData["Message"] = "Şifreniz Değiştirildi";
-//            }
-//            else
-//            {
-//                TempData["Message2"] = "Şifreniz Değiştirilemedi";
-//            }
-//            return RedirectToAction("Login");
-//        }
+        //            }
+        //        }
+        //        public async Task apicontroller(string email, string token, string pass1, string pass2)
+        //        {
+        //            _userservice.apiResetPass(string email, string token, string pass1, string pass2)// burada aşağıdaki servis metoduna bağlanacak
+        //        }
+        //        public async Task apiResetPass(string email, string token, string pass1, string pass2)//user apiservis metodu
+        //        {
+        //            ///ben bir api servisiyimapi contollerımdan gelen kullanıcı mail adresi token ı şifresini burda kontrol eder ve değiştiritim
+        //            ///
+        //            AppUser user = await _userManager.FindByEmailAsync(vm.Email);
+        //            user.UpdateDate = DateTime.Now;
+        //            string decodedtoken = HttpUtility.UrlDecode(vm.Token); // Encode edilen token decode ediliyor
+        //            IdentityResult passwordChangeResult = await _userManager.ResetPasswordAsync(user, decodedtoken, vm.Password);
+        //            if (passwordChangeResult.Succeeded)
+        //            {
+        //                await _userManager.UpdateSecurityStampAsync(user);
+        //                TempData["Message"] = "Şifreniz Değiştirildi";
+        //            }
+        //            else
+        //            {
+        //                TempData["Message2"] = "Şifreniz Değiştirilemedi";
+        //            }
+        //            return RedirectToAction("Login");
+        //        }
         #endregion
 
 
@@ -388,13 +534,13 @@ namespace AtSepete.Business.Concrete
         //                    $"Şifreni yenilemek için linke tıklayabilirsin: " +
         //                    $"<a href='https://localhost:7286{Url.Action("NewPassword", "Login", new { email = currentUser.Email, token = encodedToken })}'>Şifre Yenile</a> <br />" +
         //                    $"İyi alışverişler dileriz.. <br /> <br />";
-        //        //Email yerine Guid veya token ile değişiklik yapılacak
-        //        string resetPass = "Şifre Yenileme Bağlantınız";
+        //        //Email yerine Guid veya token ile değişiklik yapılacak
+        //        string resetPass = "Şifre Yenileme Bağlantınız";
         //        using (var smtp = new SmtpClient
         //        {
         //            Host = "smtp-mail.outlook.com",
-        //            /**/
-        //            Port = 587,
+        //            /**/
+        //            Port = 587,
         //            EnableSsl = true,
         //            DeliveryMethod = SmtpDeliveryMethod.Network,
         //            UseDefaultCredentials = false,
@@ -477,208 +623,10 @@ namespace AtSepete.Business.Concrete
         /// <param name="accessTokenDate">token.Expiration</param>
         /// <param name="AddOnAccessTokenDate">accessToken'a eklenecek süre yani refresh token süresi</param>
         /// <returns></returns>
-        public async Task<IResult> UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate)
-        {
-            if (userDto is not null)
-            {
-                userDto.RefreshToken = refreshToken;
-                userDto.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
-                var userMap = _mapper.Map<UserDto, User>(userDto);
-                await _userRepository.UpdateAsync(userMap);
-                await _userRepository.SaveChangesAsync();
-                return new SuccessResult();
-            }
-            return new ErrorResult();
-        }
-
-        public async Task<IDataResult<UpdateUserDto>> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
-        {
-            try
-            {
-                var user = await _userRepository.GetByIdAsync(id);
-                if (user is null)
-                {
-                    return new ErrorDataResult<UpdateUserDto>(Messages.UserNotFound);
-                }
-
-                if (user.Id != updateUserDto.Id)
-                {
-                    return new ErrorDataResult<UpdateUserDto>(Messages.ObjectNotValid);
-                }
-
-                var updateUser = _mapper.Map(updateUserDto, user);
-
-                var result = await _userRepository.UpdateAsync(updateUser);
-                await _userRepository.SaveChangesAsync();
-
-                return new SuccessDataResult<UpdateUserDto>(_mapper.Map<User, UpdateUserDto>(result), Messages.UpdateSuccess);
 
 
-            }
-            catch (Exception)
-            {
+      
 
-                return new ErrorDataResult<UpdateUserDto>(Messages.UpdateFail);
-            }
-
-        }
-
-
-        //public IActionResult CreateUser()
-        //{
-        //    CreatePerson createManager = new CreatePerson();
-        //    createManager.Companies = _company.GetAll();
-        //    createManager.Person = new Person();
-        //    return View(createManager);
-        //}
-
-        //[HttpPost]
-        //public IActionResult CreateManager(CreatePerson createPerson)
-        //{
-        //    var manager = createPerson.Person;
-        //    var tryMail = _context.Employees.Where(x => x.Mail == createPerson.Person.Mail).Select(y => y.Mail).FirstOrDefault();
-        //    if (tryMail != null)
-        //    {
-        //        ViewBag.AllReadyAddedd = "Mail adresi Sistemde Kayıtlı";
-        //        return View();
-        //    }
-        //    else
-        //    {
-        //        if (manager.Photo == null)
-        //        {
-        //            if (manager.Gender == ENTITIES.Enums.GenderEnum.Erkek)
-        //            {
-        //                manager.PhotoName = "\\img\\3586f868_94a2_4fd2_8933_17cd1ff7605e.jpeg";
-        //            }
-        //            else
-        //            {
-        //                manager.PhotoName = "\\img\\3a172567_ce6c_4e78_964a_6860b74eeff1.jpeg";
-        //            }
-        //        }
-        //        else
-        //        {
-        //            manager.PhotoName = SaveThePicture(manager.Photo);
-        //        }
-        //        manager.RoleEnum = RoleEnum.Yönetici;
-        //        var fromAddress = new MailAddress("i_am_hr@outlook.com");
-        //        var toAddress = new MailAddress(manager.Mail);
-        //        var Link = "Şifrenizi Oluşturmak İçin Linke Tıklayınız<a href= http://imhere.azurewebsites.net/Home/ResetPass/" + manager.Mail + ">Buraya Tıklayınız</a>.";
-
-        //        string resetPass = "Şifre Oluşturma Bağlantınız";
-        //        using (var smtp = new SmtpClient
-        //        {
-        //            Host = "smtp-mail.outlook.com",
-        //            /**/
-        //            Port = 587,
-        //            EnableSsl = true,
-        //            DeliveryMethod = SmtpDeliveryMethod.Network,
-        //            UseDefaultCredentials = false,
-
-        //            Credentials = new NetworkCredential(fromAddress.Address, "ik-123456")
-        //        })
-        //            try
-        //            {
-        //                using (var message = new MailMessage(fromAddress, toAddress) { Subject = resetPass, Body = Link, IsBodyHtml = true })
-        //                {
-        //                    smtp.Send(message);
-        //                }
-        //                ViewBag.Success = "Mail Başarıyla Gönderildi.";
-        //            }
-        //            catch (Exception)
-        //            {
-        //                ViewBag.Unsuccess = "Mail Gönderiminde Hata Oluştu.";
-        //                return View();
-        //            }
-        //        _person.Add(manager);
-        //        return RedirectToAction("GetManager");
-        //    }
-        //}
-
-
-        //[HttpGet]
-        //public IActionResult CreatePackage()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public IActionResult CreatePackage(Package package)
-        //{
-        //    if (package.StartDate < package.EndDate)
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            if (package.Photo != null)
-        //            {
-        //                package.PhotoName = SaveThePicture(package.Photo);
-        //            }
-        //            else
-        //            {
-        //                ViewBag.PackageHata = "Fotoğraf Seçiniz";
-        //                return View();
-        //            }
-        //            _package.Add(package);
-        //            return RedirectToAction("GetPackage");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        ViewBag.Hata = "Başlangıç Tarihi Bitiş Tarihinden Büyük Olamaz.";
-        //    }
-        //    return View();
-        //}
-
-        //public IActionResult GetPackage()
-        //{
-        //    return View(_package.GetAll());
-        //}
-
-
-        //public IActionResult GetManager()
-        //{
-        //    return View(_person.GetAll());
-        //}
-
-
-        //[HttpGet]
-        //public IActionResult CreateCompany()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public IActionResult CreateCompany(CompanyPackage companies)
-        //{
-        //    var company = companies.Company;
-        //    if (company.Photo == null)
-        //        company.PhotoName = "\\img\\3586f868_94a2_4fd2_8933_17cd1ff7605e.jpeg";
-        //    else
-        //        company.PhotoName = SaveThePicture(company.Photo);
-        //    _company.Add(company);
-        //    return RedirectToAction("GetCompanies");
-        //}
-
-        //[HttpGet]
-        //public IActionResult GetCompanies()
-        //{
-        //    return View(_company.GetAll());
-        //}
-
-        //private string SaveThePicture(IFormFile img)
-        //{
-        //    string filePath = Path.Combine(_env.WebRootPath, "img"); // ~/img
-
-        //    string uniqueName = $"{Guid.NewGuid().ToString().Replace("-", "_").ToLower()}.{img.ContentType.Split('/')[1]}"; // Benzersiz isim oluşturma. İsimler Guid oluşturulacak. Küçük harf olacak ve - işaretleri yerine _ işareti olacak.
-
-        //    string newFilePath = Path.Combine(filePath, uniqueName); //~/img/Dosyadı
-
-        //    using (FileStream fs = new FileStream(newFilePath, FileMode.Create))
-        //    {
-        //        img.CopyTo(fs);
-        //        return newFilePath.Substring(newFilePath.IndexOf("\\img\\")); // burada da dosya yolunun tammaı yerine \img\ kısmını substirng olarak alsın ve return etsin istiyorum. 
-        //    }
-        //}
-
-
+      
     }
 }

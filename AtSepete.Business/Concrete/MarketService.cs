@@ -24,7 +24,7 @@ namespace AtSepete.Business.Concrete
         private readonly IProductMarketService _productMarketService;
         private readonly ILoggerService _loggerService;
 
-        public MarketService(IMarketRepository marketRepository, IMapper mapper, IProductMarketService productMarketService, ILoggerService loggerService )
+        public MarketService(IMarketRepository marketRepository, IMapper mapper, IProductMarketService productMarketService, ILoggerService loggerService)
         {
             _productRepository = marketRepository;
             _mapper = mapper;
@@ -113,7 +113,7 @@ namespace AtSepete.Business.Concrete
 
                 if (hasMarket)
                 {
-                    _loggerService.LogError(Messages.AddFailAlreadyExists);
+                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
                     return new ErrorDataResult<UpdateMarketDto>(Messages.AddFailAlreadyExists);
                 }
                 else
@@ -135,34 +135,54 @@ namespace AtSepete.Business.Concrete
 
         public async Task<IResult> HardDeleteMarketAsync(Guid id)
         {
-            var Market = await _productRepository.GetByIdActiveOrPassiveAsync(id);
-            if (Market is null)
+            try
             {
-                return new ErrorResult(Messages.MarketNotFound);
+                var Market = await _productRepository.GetByIdActiveOrPassiveAsync(id);
+                if (Market is null)
+                {
+                    _loggerService.LogWarning(Messages.MarketNotFound);
+                    return new ErrorResult(Messages.MarketNotFound);
+                }
+
+                await _productRepository.DeleteAsync(Market);
+                await _productRepository.SaveChangesAsync();
+                _loggerService.LogInfo(Messages.DeleteSuccess);
+                return new SuccessResult(Messages.DeleteSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(Messages.DeleteFail);
+                return new ErrorResult(Messages.DeleteFail);
             }
 
-            await _productRepository.DeleteAsync(Market);
-            await _productRepository.SaveChangesAsync();
-
-            return new SuccessResult(Messages.DeleteSuccess);
         }
 
         public async Task<IResult> SoftDeleteMarketAsync(Guid id)
         {
-            var Market = await _productRepository.GetByIdAsync(id);
-            if (Market is null)
+            try
             {
-                return new ErrorResult(Messages.MarketNotFound);
-            }
-            else 
-            {
+                var Market = await _productRepository.GetByIdAsync(id);
+                if (Market is null)
+                {
+                    _loggerService.LogWarning(Messages.MarketNotFound);
+                    return new ErrorResult(Messages.MarketNotFound);
+                }
+
                 Market.IsActive = false;
-                Market.DeletedDate= DateTime.Now;
+                Market.DeletedDate = DateTime.Now;
                 await _productRepository.UpdateAsync(Market);
                 await _productRepository.SaveChangesAsync();
+                _loggerService.LogInfo(Messages.DeleteSuccess);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
-           
+            catch (Exception)
+            {
+                _loggerService.LogError(Messages.DeleteFail);
+                return new ErrorResult(Messages.DeleteFail);
+            }
+
+
+
         }
 
 

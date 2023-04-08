@@ -1,5 +1,7 @@
 ﻿using AtSepete.Business.Abstract;
+using AtSepete.Dtos.Dto.Users;
 using AtSepete.Entities.Data;
+using AtSepete.Results;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -17,18 +19,18 @@ namespace AtSepete.Api.Controllers
           
             _userService = userService;
         }
-        //[HttpGet]
-        //[Route("[action]")]
-        //public async Task<IActionResult> GetAllUser()
-        //{
-        //    return Ok(await _userService.GetAllAsync());
-        //}
-        //[HttpGet]
-        //[Route("[action]/{id}")]
-        //public async Task<IActionResult> GetByUser(Guid id)
-        //{
-        //    return Ok(await _userService.GetByIdAsync(id));
-        //}
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IDataResult<List<UserListDto>>> GetAllUser()
+        {
+            return await _userService.GetAllUserAsync();
+        }
+        [HttpGet]
+        [Route("[action]/{id:Guid}")]
+        public async Task<IDataResult<UserDto>> GetByUser(Guid id)
+        {
+            return await _userService.FindUserByIdAsync(id);
+        }
         //[HttpGet]
         //[Route("[action]")]
         //public async Task<IActionResult> GetAllActiveUser()

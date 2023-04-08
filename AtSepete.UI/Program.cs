@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());//o an yürütülen mapper'ý kendisi tanýr
 builder.Services.AddControllers();
 
 builder.Services.AddDataAccessServices(builder.Configuration);
