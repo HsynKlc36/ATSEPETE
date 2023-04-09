@@ -34,3 +34,46 @@
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
     <a asp-action="Index">Back to List</a>
 </div>
+<div id="myTooltip" style="display: none; position: absolute; background-color: #f1f1f1; color: #000; padding: 10px; border-radius: 5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
+</div>
+<script>
+    // Tooltip bileşeni seçimi
+    var tooltip = document.getElementById("myTooltip");
+    // API isteği gönderme fonksiyonu
+    function sendApiRequest() {
+        var dto = {
+            "FirstName": "@Model.Data.FirstName",
+            "LastName": "@Model.Data.LastName"
+        };
+        fetch("https://localhost:7286/AtSepeteApi/Category/AddCategory", {
+            method: "POST",
+            body: JSON.stringify(dto),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        }).then(response => response.json())
+            .then(data => {
+                // API cevabını tooltip bileşeninde gösterme
+                tooltip.innerHTML = "API cevabı: " + data.Message;
+                tooltip.style.display = "block";
+            })
+            .catch(error => {
+                // Hata durumunda tooltip bileşeninde hata mesajını gösterme
+                tooltip.innerHTML = "API isteği sırasında bir hata oluştu: " + error.message;
+                tooltip.style.display = "block";
+            });
+    } // Tooltip bileşeni görünürlüğünü ayarlama fonksiyonu
+    function showTooltip() {
+        tooltip.style.display = "block";
+    } // Tooltip bileşeni görünürlüğünü kapatma fonksiyonu
+    function hideTooltip() {
+        tooltip.style.display = "none";
+    } // API isteği gönderme butonu seçimi
+    var button = document.getElementById("myButton"); // Buton tıklama olayı ekleme
+    button.addEventListener("click", function () {
+        sendApiRequest();
+    }); // Tooltip bileşeni üzerine gelme ve çıkma olayları ekleme
+    tooltip.addEventListener("mouseover", function () {
+        showTooltip();
+    }); tooltip.addEventListener("mouseout", function () {
+        hideTooltip();
+    });
+</script>

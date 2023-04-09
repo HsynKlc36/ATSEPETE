@@ -1,0 +1,84 @@
+﻿@model AtSepete.UI.ApiResponses.AddCategoryResponse
+
+@{
+    ViewData["Title"] = "AddCategory";
+}
+
+<h1>AddCategory</h1>
+<h4>Category</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddCategory">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.Data.Name" class="control-label"></label>
+                <input asp-for="@Model.Data.Name" class="form-control" />
+                <span asp-validation-for="@Model.Data.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Data.Description" class="control-label"></label>
+                <input asp-for="@Model.Data.Description" class="form-control" />
+                <span asp-validation-for="@Model.Data.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div id="myTooltip" style="display: none; position: absolute; background-color: #f1f1f1; color: #000; padding: 10px; border-radius: 5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
+    </div>
+    <script>
+        // Tooltip bileşeni seçimi
+        var tooltip = document.getElementById("myTooltip");
+        // API isteği gönderme fonksiyonu
+        function sendApiRequest() {
+            var dto = {
+                "Description": "@Model.Data.Description",
+                "Name": "@Model.Data.Name"
+            };
+            fetch("https://localhost:7286/AtSepeteApi/Category/AddCategory", {
+                method: "POST",
+                body: JSON.stringify(dto),
+                headers: { "Content-type": "application/json; charset=UTF-8" }
+            }).then(response => response.json())
+                .then(data => {
+                    // API cevabını tooltip bileşeninde gösterme
+                    tooltip.innerHTML = "API cevabı: " + data.Message;
+                    tooltip.style.display = "block";
+                })
+                .catch(error => {
+                    // Hata durumunda tooltip bileşeninde hata mesajını gösterme
+                    tooltip.innerHTML = "API isteği sırasında bir hata oluştu: " + error.message;
+                    tooltip.style.display = "block";
+                });
+        } // Tooltip bileşeni görünürlüğünü ayarlama fonksiyonu
+        function showTooltip() {
+            tooltip.style.display = "block";
+        } // Tooltip bileşeni görünürlüğünü kapatma fonksiyonu
+        function hideTooltip() {
+            tooltip.style.display = "none";
+        } // API isteği gönderme butonu seçimi
+        var button = document.getElementById("myButton"); // Buton tıklama olayı ekleme
+        button.addEventListener("click", function () {
+            sendApiRequest();
+        }); // Tooltip bileşeni üzerine gelme ve çıkma olayları ekleme
+        tooltip.addEventListener("mouseover", function () {
+            showTooltip();
+        }); tooltip.addEventListener("mouseout", function () {
+            hideTooltip();
+        });
+    </script>
+
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
