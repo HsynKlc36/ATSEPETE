@@ -1,6 +1,9 @@
-﻿using AtSepete.Entities.BaseData;
+﻿using AtSepete.Dtos.Dto.Users;
+using AtSepete.Entities.BaseData;
 using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
+using AtSepete.Results;
+using AtSepete.Results.Concrete;
 using AtSepete.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -16,23 +19,20 @@ namespace AtSepete.UI.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-           
+
         }
 
         public async Task<IActionResult> Index()
         {
-            var products=new Product();
-            using (var httpClient = new HttpClient())//api ile localhosttan bağlantı kurarak istekleri yönetir.
-            {
-                using (var answer = await httpClient.GetAsync("https://localhost:7286/AtSepeteApi/Product/GetAllProduct"))
-                {
-                    string apiAnswer = await answer.Content.ReadAsStringAsync();
-                    products = JsonConvert.DeserializeObject<Product>(apiAnswer);
-                }
-            }
-            return View(products);
-        }
 
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/user/GetByIdUser/f6c16176-471e-4ef5-1c67-08db38735e6e");
+
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            UserApiResponse user = JsonConvert.DeserializeObject<UserApiResponse>(apiResponse);           
+            return View(user);
+
+        }
         public IActionResult Privacy()
         {
             return View();
@@ -44,4 +44,5 @@ namespace AtSepete.UI.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
+
 }

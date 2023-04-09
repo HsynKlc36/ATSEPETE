@@ -30,6 +30,6 @@ namespace AtSepete.Dtos.Dto.Users
         public bool IsActive { get; set; }
         
 
-       UserDto user=desadlas.jsom(httpsdlkfşsdkfksdfklsdfklsd)
+       
     }
 }

@@ -133,11 +133,11 @@ namespace AtSepete.Business.Concrete
                     return new ErrorDataResult<ChangePasswordDto>(Messages.UserNotFound);
                 }
                 changePasswordDto.CurrentPassword = await PasswordHashAsync(changePasswordDto.CurrentPassword);
-                if (currentUser.Password != changePasswordDto.CurrentPassword)
+                if (currentUser.Password != changePasswordDto.CurrentPassword)//burada hashlemeler şifre aynı olsa bile farklı oluyor hashlemeleri çözümleyip sitring şifreden kontrol edin!
                 {
                     _loggerService.LogWarning(Messages.PasswordNotMatch);
                     return new ErrorDataResult<ChangePasswordDto>(Messages.PasswordNotMatch);
-                    //hashlenmiş şifreler foreach ile dönülüp index index kontrol edilebilir!!
+                    
                 }
                 changePasswordDto.NewPassword = await PasswordHashAsync(changePasswordDto.NewPassword);
                 var userMap = _mapper.Map<ChangePasswordDto, User>(changePasswordDto);
@@ -219,7 +219,7 @@ namespace AtSepete.Business.Concrete
         {
             try
             {
-                var user = await _userRepository.GetByDefaultAsync(x => x.Id == id);
+               var user = await _userRepository.GetByDefaultAsync(x => x.Id == id);
                 if (user is null)
                 {
                     _loggerService.LogWarning(Messages.UserNotFound);
@@ -234,6 +234,7 @@ namespace AtSepete.Business.Concrete
             {
                 _loggerService.LogError(Messages.UserFoundFail);
                 return new ErrorDataResult<UserDto>(Messages.UserFoundFail);
+
             }
 
         }
@@ -435,7 +436,7 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(Messages.ObjectNotValid);
                     return new ErrorDataResult<UpdateUserDto>(Messages.ObjectNotValid);
                 }
-
+                
                 var updateUser = _mapper.Map(updateUserDto, user);
 
                 var result = await _userRepository.UpdateAsync(updateUser);

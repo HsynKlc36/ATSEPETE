@@ -12,6 +12,8 @@ namespace AtSepete.Business.Mapper.Profiles
     {
         public UserProfile()
         {
+            CreateMap<User,UpdateUserDto>();
+            CreateMap<UpdateUserDto,User>();
             CreateMap<User, CreateUserDto>();
             CreateMap<CreateUserDto,User>();
             CreateMap<User, UserListDto>();

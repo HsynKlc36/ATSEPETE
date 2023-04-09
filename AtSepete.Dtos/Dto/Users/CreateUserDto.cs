@@ -23,7 +23,9 @@ namespace AtSepete.Dtos.Dto.Users
         public DateTime BirthDate { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime? CreatedDate { get; set; } = DateTime.Now;
-
+        public DateTimeOffset? LockoutEnd { get; set; }
+        public bool LockoutEnabled { get; set; } = true;
+        public int AccessFailedCount { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }
