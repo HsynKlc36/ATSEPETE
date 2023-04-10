@@ -37,24 +37,33 @@ namespace AtSepete.Business.Concrete
             var orderDetail = await _orderDetailRepository.GetByDefaultAsync(x => x.Id == id);
             if (orderDetail is null)
             {
-                _loggerService.LogWarning(Messages.OrderDetailNotFound);
+                _loggerService.LogWarning(LogMessages.OrderDetail_Object_Not_Found);
                 return new ErrorDataResult<OrderDetailDto>(Messages.OrderDetailNotFound);
             }
-            _loggerService.LogInfo(Messages.OrderDetailFoundSuccess);
+            _loggerService.LogInfo(LogMessages.OrderDetail_Object_Found_Success);
             return new SuccessDataResult<OrderDetailDto>(_mapper.Map<OrderDetailDto>(orderDetail), Messages.OrderDetailFoundSuccess);
 
         }
         public async Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetailAsync()
         {
-            var tempEntity = await _orderDetailRepository.GetAllAsync();
-            if (!tempEntity.Any())
+            try
             {
-                _loggerService.LogWarning(Messages.OrderDetailNotFound);
-                return new ErrorDataResult<List<OrderDetailListDto>>(Messages.OrderDetailNotFound);
+                var tempEntity = await _orderDetailRepository.GetAllAsync();
+                if (!tempEntity.Any())
+                {
+                    _loggerService.LogWarning(LogMessages.OrderDetail_Object_Not_Found);
+                    return new ErrorDataResult<List<OrderDetailListDto>>(Messages.OrderDetailNotFound);
+                }
+                var result = _mapper.Map<IEnumerable<OrderDetail>, List<OrderDetailListDto>>(tempEntity);
+                _loggerService.LogInfo(LogMessages.OrderDetail_Listed_Success);
+                return new SuccessDataResult<List<OrderDetailListDto>>(result, Messages.ListedSuccess);
             }
-            var result = _mapper.Map<IEnumerable<OrderDetail>, List<OrderDetailListDto>>(tempEntity);
-            _loggerService.LogInfo(Messages.ListedSuccess);
-            return new SuccessDataResult<List<OrderDetailListDto>>(result, Messages.ListedSuccess);
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.OrderDetail_Listed_Failed);
+                return new ErrorDataResult<List<OrderDetailListDto>>(Messages.ListedFailed);
+            }
+
         }
         public async Task<IDataResult<CreateOrderDetailDto>> AddOrderDetailAsync(CreateOrderDetailDto entity)
         {
@@ -62,26 +71,26 @@ namespace AtSepete.Business.Concrete
             {
                 if (entity is null)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotFound);
-                    return new ErrorDataResult<CreateOrderDetailDto>(Messages.ObjectNotFound);
+                    _loggerService.LogWarning(LogMessages.OrderDetail_Object_Not_Valid);
+                    return new ErrorDataResult<CreateOrderDetailDto>(Messages.ObjectNotValid);
                 }
-                var market = await _orderRepository.GetByIdAsync(entity.OrderId);
-                if (market is null)
+                var order = await _orderRepository.GetByIdAsync(entity.OrderId);
+                if (order is null)
                 {
-                    _loggerService.LogWarning(Messages.OrderNotFound);
+                    _loggerService.LogWarning(LogMessages.Order_Object_Not_Found);
                     return new ErrorDataResult<CreateOrderDetailDto>(Messages.OrderNotFound);
                 }
                 var product = await _productRepository.GetByIdAsync(entity.ProductId);
 
                 if (product is null)
                 {
-                    _loggerService.LogWarning(Messages.ProductNotFound);
+                    _loggerService.LogWarning(LogMessages.Product_Object_Not_Found);
                     return new ErrorDataResult<CreateOrderDetailDto>(Messages.ProductNotFound);
                 }
                 var hasOrderDetail = await _orderDetailRepository.AnyAsync(x => x.ProductId.Equals(entity.ProductId) && x.OrderId.Equals(entity.OrderId));
                 if (hasOrderDetail)
                 {
-                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
+                    _loggerService.LogWarning(LogMessages.OrderDetail_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateOrderDetailDto>(Messages.AddFailAlreadyExists);
 
                 }
@@ -89,7 +98,7 @@ namespace AtSepete.Business.Concrete
 
                 var result = await _orderDetailRepository.AddAsync(OrderDetail);
                 await _orderDetailRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.AddSuccess);
+                _loggerService.LogInfo(LogMessages.OrderDetail_Added_Success);
                 return new SuccessDataResult<CreateOrderDetailDto>(_mapper.Map<OrderDetail, CreateOrderDetailDto>(result), Messages.AddSuccess);
                 #region Control+K+S
                 //    var hasMarket = await _marketRepository.AnyAsync(market => market.Id == entity.MarketId);
@@ -143,7 +152,7 @@ namespace AtSepete.Business.Concrete
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.AddFail);
+                _loggerService.LogError(LogMessages.OrderDetail_Added_Failed);
                 return new ErrorDataResult<CreateOrderDetailDto>(Messages.AddFail);
             }
 
@@ -156,38 +165,38 @@ namespace AtSepete.Business.Concrete
                 var orderDetail = await _orderDetailRepository.GetByIdAsync(id);
                 if (orderDetail is null)
                 {
-                    _loggerService.LogWarning(Messages.OrderDetailNotFound);
+                    _loggerService.LogWarning(LogMessages.OrderDetail_Object_Not_Found);
                     return new ErrorDataResult<UpdateOrderDetailDto>(Messages.OrderDetailNotFound);
                 }
                 var order = await _orderRepository.GetByIdAsync(updateOrderDetailDto.OrderId);
                 if (order is null)
                 {
-                    _loggerService.LogWarning(Messages.OrderNotFound);
+                    _loggerService.LogWarning(LogMessages.Order_Object_Not_Found);
                     return new ErrorDataResult<UpdateOrderDetailDto>(Messages.OrderNotFound);
                 }
                 var product = await _productRepository.GetByIdAsync(updateOrderDetailDto.ProductId);
 
                 if (product is null)
                 {
-                    _loggerService.LogWarning(Messages.ProductNotFound);
+                    _loggerService.LogWarning(LogMessages.Product_Object_Not_Found);
                     return new ErrorDataResult<UpdateOrderDetailDto>(Messages.ProductNotFound);
                 }
 
                 if (orderDetail.Id != updateOrderDetailDto.Id)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotValid);
+                    _loggerService.LogWarning(LogMessages.OrderDetail_Object_Not_Valid);
                     return new ErrorDataResult<UpdateOrderDetailDto>(Messages.ObjectNotValid);
                 }
                 var updateOrderDetail = _mapper.Map(updateOrderDetailDto, orderDetail);
 
                 var result = await _orderDetailRepository.UpdateAsync(updateOrderDetail);
                 await _orderDetailRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.UpdateSuccess);
+                _loggerService.LogInfo(LogMessages.OrderDetail_Updated_Success);
                 return new SuccessDataResult<UpdateOrderDetailDto>(_mapper.Map<OrderDetail, UpdateOrderDetailDto>(result), Messages.UpdateSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UpdateFail);
+                _loggerService.LogError(LogMessages.OrderDetail_Updated_Failed);
                 return new ErrorDataResult<UpdateOrderDetailDto>(Messages.UpdateFail);
             }
         }
@@ -200,19 +209,19 @@ namespace AtSepete.Business.Concrete
                 var OrderDetail = await _orderDetailRepository.GetByIdActiveOrPassiveAsync(id);
                 if (OrderDetail is null)
                 {
-                    _loggerService.LogWarning(Messages.OrderDetailNotFound);
+                    _loggerService.LogWarning(LogMessages.OrderDetail_Object_Not_Found);
                     return new ErrorResult(Messages.OrderDetailNotFound);
                 }
 
                 await _orderDetailRepository.DeleteAsync(OrderDetail);
                 await _orderDetailRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.OrderDetail_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
 
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.OrderDetail_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
         }
@@ -224,7 +233,7 @@ namespace AtSepete.Business.Concrete
                 var OrderDetail = await _orderDetailRepository.GetByIdAsync(id);
                 if (OrderDetail is null)
                 {
-                    _loggerService.LogWarning(Messages.OrderDetailNotFound);
+                    _loggerService.LogWarning(LogMessages.OrderDetail_Object_Not_Found);
                     return new ErrorResult(Messages.OrderDetailNotFound);
                 }
 
@@ -233,13 +242,13 @@ namespace AtSepete.Business.Concrete
                 OrderDetail.DeletedDate = DateTime.Now;
                 await _orderDetailRepository.UpdateAsync(OrderDetail);
                 await _orderDetailRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.OrderDetail_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
 
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.OrderDetail_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
         }

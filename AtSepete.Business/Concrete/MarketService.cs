@@ -36,25 +36,33 @@ namespace AtSepete.Business.Concrete
             var market = await _productRepository.GetByDefaultAsync(x => x.Id == id);
             if (market is null)
             {
-                _loggerService.LogWarning(Messages.MarketNotFound);
+                _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
                 return new ErrorDataResult<MarketDto>(Messages.MarketNotFound);
             }
-            _loggerService.LogInfo(Messages.MarketFoundSuccess);
+            _loggerService.LogInfo(LogMessages.Market_Object_Found_Success);
             return new SuccessDataResult<MarketDto>(_mapper.Map<MarketDto>(market), Messages.MarketFoundSuccess);
 
         }
         public async Task<IDataResult<List<MarketListDto>>> GetAllMarketAsync()
         {
-
-            var tempEntity = await _productRepository.GetAllAsync();
-            if (!tempEntity.Any())
+            try
             {
-                _loggerService.LogWarning(Messages.MarketNotFound);
-                return new ErrorDataResult<List<MarketListDto>>(Messages.MarketNotFound);
+                var tempEntity = await _productRepository.GetAllAsync();
+                if (!tempEntity.Any())
+                {
+                    _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
+                    return new ErrorDataResult<List<MarketListDto>>(Messages.MarketNotFound);
+                }
+                var result = _mapper.Map<IEnumerable<Market>, List<MarketListDto>>(tempEntity);
+                _loggerService.LogInfo(LogMessages.Market_Listed_Success);
+                return new SuccessDataResult<List<MarketListDto>>(result, Messages.ListedSuccess);
             }
-            var result = _mapper.Map<IEnumerable<Market>, List<MarketListDto>>(tempEntity);
-            _loggerService.LogInfo(Messages.ListedSuccess);
-            return new SuccessDataResult<List<MarketListDto>>(result, Messages.ListedSuccess);
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.Market_Listed_Failed);
+                return new ErrorDataResult<List<MarketListDto>>(Messages.ListedFailed);
+            }
+
 
         }
 
@@ -64,13 +72,13 @@ namespace AtSepete.Business.Concrete
             {
                 if (entity is null)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotValid);
+                    _loggerService.LogWarning(LogMessages.Market_Object_Not_Valid);
                     return new ErrorDataResult<CreateMarketDto>(Messages.ObjectNotValid); ;
                 }
                 var hasMarket = await _productRepository.AnyAsync(c => c.MarketName.Trim().ToLower() == entity.MarketName.Trim().ToLower());
                 if (hasMarket)
                 {
-                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
+                    _loggerService.LogWarning(LogMessages.Market_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateMarketDto>(Messages.AddFailAlreadyExists);
                 }
                 Market market = _mapper.Map<CreateMarketDto, Market>(entity);
@@ -78,12 +86,12 @@ namespace AtSepete.Business.Concrete
                 await _productRepository.SaveChangesAsync();
 
                 CreateMarketDto createMarketDto = _mapper.Map<Market, CreateMarketDto>(result);
-                _loggerService.LogInfo(Messages.AddSuccess);
+                _loggerService.LogInfo(LogMessages.Market_Added_Success);
                 return new SuccessDataResult<CreateMarketDto>(createMarketDto, Messages.AddSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.AddFail);
+                _loggerService.LogError(LogMessages.Market_Added_Failed);
                 return new ErrorDataResult<CreateMarketDto>(Messages.AddFail);
             }
         }
@@ -96,7 +104,7 @@ namespace AtSepete.Business.Concrete
                 var market = await _productRepository.GetByIdAsync(id);
                 if (market is null)
                 {
-                    _loggerService.LogWarning(Messages.MarketNotFound);
+                    _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
                     return new ErrorDataResult<UpdateMarketDto>(Messages.MarketNotFound);
                 }
                 if (updateMarketDto.MarketName.Trim().ToLower() == market.MarketName.Trim().ToLower())
@@ -105,7 +113,7 @@ namespace AtSepete.Business.Concrete
                     var updateMarket = _mapper.Map(updateMarketDto, market);
                     await _productRepository.UpdateAsync(updateMarket);
                     await _productRepository.SaveChangesAsync();
-                    _loggerService.LogInfo($"Update {market.MarketName}");
+                    _loggerService.LogInfo(LogMessages.Market_Updated_Success);
                     return new SuccessDataResult<UpdateMarketDto>(_mapper.Map<Market, UpdateMarketDto>(updateMarket), Messages.UpdateSuccess);
                 }
 
@@ -113,7 +121,7 @@ namespace AtSepete.Business.Concrete
 
                 if (hasMarket)
                 {
-                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
+                    _loggerService.LogWarning(LogMessages.Market_Add_Fail_Already_Exists);
                     return new ErrorDataResult<UpdateMarketDto>(Messages.AddFailAlreadyExists);
                 }
                 else
@@ -121,14 +129,14 @@ namespace AtSepete.Business.Concrete
                     var updateMarket = _mapper.Map(updateMarketDto, market);
                     await _productRepository.UpdateAsync(updateMarket);
                     await _productRepository.SaveChangesAsync();
-                    _loggerService.LogInfo($"Update {market.MarketName}");
+                    _loggerService.LogInfo(LogMessages.Market_Updated_Success);
                     return new SuccessDataResult<UpdateMarketDto>(_mapper.Map<Market, UpdateMarketDto>(updateMarket), Messages.UpdateSuccess);
                 }
 
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UpdateFail);
+                _loggerService.LogError(LogMessages.Market_Updated_Failed);
                 return new ErrorDataResult<UpdateMarketDto>(Messages.UpdateFail);
             }
         }
@@ -140,18 +148,18 @@ namespace AtSepete.Business.Concrete
                 var Market = await _productRepository.GetByIdActiveOrPassiveAsync(id);
                 if (Market is null)
                 {
-                    _loggerService.LogWarning(Messages.MarketNotFound);
+                    _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
                     return new ErrorResult(Messages.MarketNotFound);
                 }
 
                 await _productRepository.DeleteAsync(Market);
                 await _productRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.Market_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.Market_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
 
@@ -164,7 +172,7 @@ namespace AtSepete.Business.Concrete
                 var Market = await _productRepository.GetByIdAsync(id);
                 if (Market is null)
                 {
-                    _loggerService.LogWarning(Messages.MarketNotFound);
+                    _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
                     return new ErrorResult(Messages.MarketNotFound);
                 }
 
@@ -172,19 +180,16 @@ namespace AtSepete.Business.Concrete
                 Market.DeletedDate = DateTime.Now;
                 await _productRepository.UpdateAsync(Market);
                 await _productRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.Market_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.Market_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
 
-
-
         }
-
 
     }
 }

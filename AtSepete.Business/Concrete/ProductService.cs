@@ -35,11 +35,11 @@ namespace AtSepete.Business.Concrete
             var product = await _productRepository.GetByDefaultAsync(x => x.Id == id);
             if (product is null)
             {
-                _loggerService.LogWarning(Messages.ProductNotFound);
+                _loggerService.LogWarning(LogMessages.Product_Object_Not_Found);
                 return new ErrorDataResult<ProductDto>(Messages.ProductNotFound);
             }
 
-            _loggerService.LogInfo(Messages.ProductFoundSuccess);
+            _loggerService.LogInfo(LogMessages.Product_Object_Found_Success);
             return new SuccessDataResult<ProductDto>(_mapper.Map<ProductDto>(product), Messages.ProductFoundSuccess);
 
         }
@@ -48,12 +48,12 @@ namespace AtSepete.Business.Concrete
             var tempEntity = await _productRepository.GetAllAsync();
             if (!tempEntity.Any())
             {
-                _loggerService.LogWarning(Messages.ProductNotFound);
+                _loggerService.LogWarning(LogMessages.Product_Object_Not_Found);
                 return new ErrorDataResult<List<ProductListDto>>(Messages.ProductNotFound);
             }
 
             var result = _mapper.Map<IEnumerable<Product>, List<ProductListDto>>(tempEntity);
-            _loggerService.LogInfo(Messages.ListedSuccess);
+            _loggerService.LogInfo(LogMessages.Product_Listed_Success);
             return new SuccessDataResult<List<ProductListDto>>(result, Messages.ListedSuccess);
         }
 
@@ -63,13 +63,13 @@ namespace AtSepete.Business.Concrete
             {
                 if (entity is null)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotFound);
-                    return new ErrorDataResult<CreateProductDto>(Messages.ObjectNotFound);
+                    _loggerService.LogWarning(LogMessages.Product_Object_Not_Valid);
+                    return new ErrorDataResult<CreateProductDto>(Messages.ObjectNotValid);
                 }
                 var hasCategory = await _productRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == entity.Barcode.Trim().ToLower());
                 if (hasCategory)
                 {
-                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
+                    _loggerService.LogWarning(LogMessages.Product_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateProductDto>(Messages.AddFailAlreadyExists);
                 }
                 var product = _mapper.Map<CreateProductDto, Product>(entity);
@@ -77,12 +77,12 @@ namespace AtSepete.Business.Concrete
                 await _productRepository.SaveChangesAsync();
 
                 var createProductDto = _mapper.Map<Product, CreateProductDto>(result);
-                _loggerService.LogInfo(Messages.AddSuccess);
+                _loggerService.LogInfo(LogMessages.Product_Added_Success);
                 return new SuccessDataResult<CreateProductDto>(createProductDto, Messages.AddSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.AddFail);
+                _loggerService.LogError(LogMessages.Product_Added_Failed);
                 return new ErrorDataResult<CreateProductDto>(Messages.AddFail);
             }
         }
@@ -95,7 +95,7 @@ namespace AtSepete.Business.Concrete
                 var product = await _productRepository.GetByIdAsync(id);
                 if (product is null)
                 {
-                    _loggerService.LogWarning(Messages.ProductNotFound);
+                    _loggerService.LogWarning(LogMessages.Product_Object_Not_Found);
                     return new ErrorDataResult<UpdateProductDto>(Messages.ProductNotFound);
                 }
                 if (updateProductDto.Barcode == product.Barcode && updateProductDto.Id == product.Id)
@@ -104,16 +104,16 @@ namespace AtSepete.Business.Concrete
                     await _productRepository.UpdateAsync(updateProduct);
                     await _productRepository.SaveChangesAsync();
 
-                    _loggerService.LogInfo(Messages.UpdateSuccess);
+                    _loggerService.LogInfo(LogMessages.Product_Updated_Success);
                     return new SuccessDataResult<UpdateProductDto>(_mapper.Map<Product, UpdateProductDto>(updateProduct), Messages.UpdateSuccess);
                 }
                 else
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotValid);
+                    _loggerService.LogWarning(LogMessages.Product_Object_Not_Valid);
                     return new ErrorDataResult<UpdateProductDto>(Messages.ObjectNotValid);
                 }
-
-                //var hasProduct = await _productRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == updateProductDto.Barcode.Trim().ToLower());
+                #region ekSatırlar
+ //var hasProduct = await _productRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == updateProductDto.Barcode.Trim().ToLower());
 
                 //if (hasProduct)
                 //{
@@ -126,11 +126,13 @@ namespace AtSepete.Business.Concrete
                 //    await _productRepository.SaveChangesAsync();
                 //    return new SuccessDataResult<UpdateProductDto>(_mapper.Map<Product, UpdateProductDto>(updateProduct), Messages.UpdateSuccess);
                 //}
+                #endregion
+               
 
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UpdateFail);
+                _loggerService.LogError(LogMessages.Product_Updated_Failed);
                 return new ErrorDataResult<UpdateProductDto>(Messages.UpdateFail);
             }
         }
@@ -142,18 +144,18 @@ namespace AtSepete.Business.Concrete
                 var product = await _productRepository.GetByIdActiveOrPassiveAsync(id);
                 if (product is null)
                 {
-                    _loggerService.LogWarning(Messages.ProductNotFound);
+                    _loggerService.LogWarning(LogMessages.Product_Object_Not_Found);
                     return new ErrorResult(Messages.ProductNotFound);
                 }
 
                 await _productRepository.DeleteAsync(product);
                 await _productRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.Product_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.Product_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
 
@@ -166,7 +168,7 @@ namespace AtSepete.Business.Concrete
                 var product = await _productRepository.GetByIdAsync(id);
                 if (product is null)
                 {
-                    _loggerService.LogWarning(Messages.ProductNotFound);
+                    _loggerService.LogWarning(LogMessages.Product_Object_Not_Found);
                     return new ErrorResult(Messages.ProductNotFound);
                 }
 
@@ -174,12 +176,12 @@ namespace AtSepete.Business.Concrete
                 product.DeletedDate = DateTime.Now;
                 await _productRepository.UpdateAsync(product);
                 await _productRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.Product_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.Product_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
 

@@ -35,28 +35,37 @@ namespace AtSepete.Business.Concrete
 
         public async Task<IDataResult<ProductMarketDto>> GetByIdProductMarketAsync(Guid id)
         {
-            var product = await _productMarketRepository.GetByDefaultAsync(x => x.Id == id);
-            if (product is null)
+            var productMarket = await _productMarketRepository.GetByDefaultAsync(x => x.Id == id);
+            if (productMarket is null)
             {
-                _loggerService.LogWarning(Messages.ProductNotFound);
-                return new ErrorDataResult<ProductMarketDto>(Messages.ProductNotFound);
+                _loggerService.LogWarning(LogMessages.ProductMarket_Object_Not_Found);
+                return new ErrorDataResult<ProductMarketDto>(Messages.ProductMarketNotFound);
             }
 
-            _loggerService.LogInfo(Messages.ProductFoundSuccess);
-            return new SuccessDataResult<ProductMarketDto>(_mapper.Map<ProductMarketDto>(product), Messages.ProductFoundSuccess);
+            _loggerService.LogInfo(LogMessages.ProductMarket_Object_Found_Success);
+            return new SuccessDataResult<ProductMarketDto>(_mapper.Map<ProductMarketDto>(productMarket), Messages.ProductFoundSuccess);
 
         }
         public async Task<IDataResult<List<ProductMarketListDto>>> GetAllProductMarketAsync()
         {
-            var tempEntity = await _productMarketRepository.GetAllAsync();
-            if (!tempEntity.Any())
+            try
             {
-                _loggerService.LogWarning(Messages.ProductMarketNotFound);
-                return new ErrorDataResult<List<ProductMarketListDto>>(Messages.ProductMarketNotFound);
+                var tempEntity = await _productMarketRepository.GetAllAsync();
+                if (!tempEntity.Any())
+                {
+                    _loggerService.LogWarning(LogMessages.ProductMarket_Object_Not_Found);
+                    return new ErrorDataResult<List<ProductMarketListDto>>(Messages.ProductMarketNotFound);
+                }
+                var result = _mapper.Map<IEnumerable<ProductMarket>, List<ProductMarketListDto>>(tempEntity);
+                _loggerService.LogInfo(LogMessages.ProductMarket_Listed_Success);
+                return new SuccessDataResult<List<ProductMarketListDto>>(result, Messages.ListedSuccess);
             }
-            var result = _mapper.Map<IEnumerable<ProductMarket>, List<ProductMarketListDto>>(tempEntity);
-            _loggerService.LogInfo(Messages.ListedSuccess);
-            return new SuccessDataResult<List<ProductMarketListDto>>(result, Messages.ListedSuccess);
+            catch (Exception)
+            {
+                _loggerService.LogInfo(LogMessages.ProductMarket_Listed_Failed);
+                return new ErrorDataResult<List<ProductMarketListDto>>(Messages.ListedFailed);
+            }
+
         }
         public async Task<IDataResult<CreateProductMarketDto>> AddProductMarketAsync(CreateProductMarketDto entity)
         {
@@ -66,20 +75,20 @@ namespace AtSepete.Business.Concrete
                 var market = await _marketRepository.GetByIdAsync(entity.MarketId);
                 if (market is null)
                 {
-                    _loggerService.LogWarning(Messages.MarketNotFound);
+                    _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
                     return new ErrorDataResult<CreateProductMarketDto>(Messages.MarketNotFound);
                 }
                 var product = await _productRepository.GetByIdAsync(entity.ProductId);
 
                 if (product is null)
                 {
-                    _loggerService.LogWarning(Messages.ProductNotFound);
+                    _loggerService.LogWarning(LogMessages.Product_Object_Not_Found);
                     return new ErrorDataResult<CreateProductMarketDto>(Messages.ProductNotFound);
                 }
                 var hasProductMarket = await _productMarketRepository.AnyAsync(x => x.ProductId.Equals(entity.ProductId) && x.MarketId.Equals(entity.MarketId));
                 if (hasProductMarket)
                 {
-                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
+                    _loggerService.LogWarning(LogMessages.ProductMarket_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateProductMarketDto>(Messages.AddFailAlreadyExists);
 
                 }
@@ -88,7 +97,7 @@ namespace AtSepete.Business.Concrete
                 var result = await _productMarketRepository.AddAsync(productMarket);
                 await _productMarketRepository.SaveChangesAsync();
 
-                _loggerService.LogInfo(Messages.AddSuccess);
+                _loggerService.LogInfo(LogMessages.ProductMarket_Added_Success);
                 return new SuccessDataResult<CreateProductMarketDto>(_mapper.Map<ProductMarket, CreateProductMarketDto>(result), Messages.AddSuccess);
                 #region Control+K+S
                 //    var hasMarket = await _marketRepository.AnyAsync(market => market.Id == entity.MarketId);
@@ -155,13 +164,13 @@ namespace AtSepete.Business.Concrete
                 var productMarket = await _productMarketRepository.GetByIdAsync(id);
                 if (productMarket is null)
                 {
-                    _loggerService.LogWarning(Messages.ProductMarketNotFound);
+                    _loggerService.LogWarning(LogMessages.ProductMarket_Object_Not_Found);
                     return new ErrorDataResult<UpdateProductMarketDto>(Messages.ProductMarketNotFound);
                 }
 
                 if (productMarket.Id != updateProductMarketDto.Id)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotValid);
+                    _loggerService.LogWarning(LogMessages.ProductMarket_Object_Not_Valid);
                     return new ErrorDataResult<UpdateProductMarketDto>(Messages.ObjectNotValid);
                 }
                 var updateProductMarket = _mapper.Map(updateProductMarketDto, productMarket);
@@ -169,13 +178,13 @@ namespace AtSepete.Business.Concrete
                 var result = await _productMarketRepository.UpdateAsync(updateProductMarket);
                 await _productMarketRepository.SaveChangesAsync();
 
-                _loggerService.LogInfo(Messages.UpdateSuccess);
+                _loggerService.LogInfo(LogMessages.ProductMarket_Updated_Success);
                 return new SuccessDataResult<UpdateProductMarketDto>(_mapper.Map<ProductMarket, UpdateProductMarketDto>(result), Messages.UpdateSuccess);
 
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UpdateFail);
+                _loggerService.LogError(LogMessages.ProductMarket_Updated_Failed);
                 return new ErrorDataResult<UpdateProductMarketDto>(Messages.UpdateFail);
             }
         }
@@ -187,19 +196,19 @@ namespace AtSepete.Business.Concrete
                 var productMarket = await _productMarketRepository.GetByIdActiveOrPassiveAsync(id);
                 if (productMarket is null)
                 {
-                    _loggerService.LogWarning(Messages.ProductMarketNotFound);
+                    _loggerService.LogWarning(LogMessages.ProductMarket_Object_Not_Found);
                     return new ErrorResult(Messages.ProductMarketNotFound);
                 }
                 await _productMarketRepository.DeleteAsync(productMarket);
                 await _productMarketRepository.SaveChangesAsync();
 
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.ProductMarket_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
 
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.ProductMarket_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
 
@@ -212,7 +221,7 @@ namespace AtSepete.Business.Concrete
                 var productMarket = await _productMarketRepository.GetByIdAsync(id);
                 if (productMarket is null)
                 {
-                    _loggerService.LogWarning(Messages.ProductMarketNotFound);
+                    _loggerService.LogWarning(LogMessages.ProductMarket_Object_Not_Found);
                     return new ErrorResult(Messages.ProductMarketNotFound);
                 }
                 else
@@ -221,13 +230,13 @@ namespace AtSepete.Business.Concrete
                     productMarket.DeletedDate = DateTime.Now;
                     await _productMarketRepository.UpdateAsync(productMarket);
                     await _productMarketRepository.SaveChangesAsync();
-                    _loggerService.LogInfo(Messages.DeleteSuccess);
+                    _loggerService.LogInfo(LogMessages.ProductMarket_Deleted_Success);
                     return new SuccessResult(Messages.DeleteSuccess);
                 }
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.ProductMarket_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
 
@@ -242,8 +251,8 @@ namespace AtSepete.Business.Concrete
                 _loggerService.LogWarning(Messages.ProductMarketNotFound);
                 return new ErrorDataResult<List<ProductMarketListDto>>(Messages.ProductMarketNotFound);
             }
-            IEnumerable<ProductMarket> productList =await _productMarketRepository.Where(x => x.ProductId == productId);
-            var sortedProductList= productList.AsQueryable().OrderByDescending(x => x.Price).ToList();
+            IEnumerable<ProductMarket> productList = await _productMarketRepository.Where(x => x.ProductId == productId);
+            var sortedProductList = productList.AsQueryable().OrderByDescending(x => x.Price).ToList();
 
             var result = _mapper.Map<IEnumerable<ProductMarket>, List<ProductMarketListDto>>(sortedProductList);
             _loggerService.LogInfo(Messages.ListedSuccess);

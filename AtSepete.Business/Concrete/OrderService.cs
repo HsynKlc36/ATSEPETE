@@ -38,25 +38,32 @@ namespace AtSepete.Business.Concrete
             var product = await _orderRepository.GetByDefaultAsync(x => x.Id == id);
             if (product is null)
             {
-                _loggerService.LogWarning(Messages.OrderNotFound);
+                _loggerService.LogWarning(LogMessages.Order_Object_Not_Found);
                 return new ErrorDataResult<OrderDto>(Messages.OrderNotFound);
             }
-            _loggerService.LogInfo(Messages.OrderFoundSuccess);
+            _loggerService.LogInfo(LogMessages.Order_Object_Found_Success);
             return new SuccessDataResult<OrderDto>(_mapper.Map<OrderDto>(product), Messages.OrderFoundSuccess);
 
         }
         public async Task<IDataResult<List<OrderListDto>>> GetAllOrderAsync()
         {
-            var tempEntity = await _orderRepository.GetAllAsync();
-            if (!tempEntity.Any())
+            try
             {
-                _loggerService.LogWarning(Messages.OrderNotFound);
-                return new ErrorDataResult<List<OrderListDto>>(Messages.OrderNotFound);
+                var tempEntity = await _orderRepository.GetAllAsync();
+                if (!tempEntity.Any())
+                {
+                    _loggerService.LogWarning(LogMessages.Order_Object_Not_Found);
+                    return new ErrorDataResult<List<OrderListDto>>(Messages.OrderNotFound);
+                }
+                var result = _mapper.Map<IEnumerable<Order>, List<OrderListDto>>(tempEntity);
+                _loggerService.LogInfo(LogMessages.Order_Listed_Success);
+                return new SuccessDataResult<List<OrderListDto>>(result, Messages.ListedSuccess);
             }
-            var result = _mapper.Map<IEnumerable<Order>, List<OrderListDto>>(tempEntity);
-            _loggerService.LogInfo(Messages.ListedSuccess);
-            return new SuccessDataResult<List<OrderListDto>>(result, Messages.ListedSuccess);
-
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.Order_Listed_Failed);
+                return new ErrorDataResult<List<OrderListDto>>(Messages.ListedFailed);
+            }
         }
 
         public async Task<IDataResult<CreateOrderDto>> AddOrderAsync(CreateOrderDto entity)
@@ -65,20 +72,20 @@ namespace AtSepete.Business.Concrete
             {
                 if (entity is null)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotValid);
+                    _loggerService.LogWarning(LogMessages.Order_Object_Not_Valid);
                     return new ErrorDataResult<CreateOrderDto>(Messages.ObjectNotValid); ;
                 }
                 var market = await _marketRepository.GetByIdAsync(entity.MarketId);
                 if (market is null)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotFound);
+                    _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
                     return new ErrorDataResult<CreateOrderDto>(Messages.MarketNotFound);
                 }
                 var customer = await _userRepository.GetByIdAsync(entity.CustomerId);
 
                 if (customer is null)
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorDataResult<CreateOrderDto>(Messages.UserNotFound);
                 }
                 var product = _mapper.Map<CreateOrderDto, Order>(entity);
@@ -86,12 +93,12 @@ namespace AtSepete.Business.Concrete
                 await _orderRepository.SaveChangesAsync();
 
                 var createOrderDto = _mapper.Map<Order, CreateOrderDto>(result);
-                _loggerService.LogInfo(Messages.AddSuccess);
+                _loggerService.LogInfo(LogMessages.Order_Added_Success);
                 return new SuccessDataResult<CreateOrderDto>(createOrderDto, Messages.AddSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.AddFail);
+                _loggerService.LogError(LogMessages.Order_Added_Failed);
                 return new ErrorDataResult<CreateOrderDto>(Messages.AddFail);
             }
         }
@@ -104,40 +111,40 @@ namespace AtSepete.Business.Concrete
                 var order = await _orderRepository.GetByIdAsync(id);
                 if (order is null)
                 {
-                    _loggerService.LogWarning(Messages.OrderNotFound);
+                    _loggerService.LogWarning(LogMessages.Order_Object_Not_Found);
                     return new ErrorDataResult<UpdateOrderDto>(Messages.OrderNotFound);
                 }
                 //
                 var customer = await _userRepository.GetByIdAsync(updateOrderDto.CustomerId);
                 if (customer is null)
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorDataResult<UpdateOrderDto>(Messages.UserNotFound);
                 }
                 var market = await _marketRepository.GetByIdAsync(updateOrderDto.MarketId);
 
                 if (market is null)
                 {
-                    _loggerService.LogWarning(Messages.MarketNotFound);
+                    _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
                     return new ErrorDataResult<UpdateOrderDto>(Messages.MarketNotFound);
                 }
 
                 if (order.Id != updateOrderDto.Id)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotValid);
+                    _loggerService.LogWarning(LogMessages.Order_Object_Not_Valid);
                     return new ErrorDataResult<UpdateOrderDto>(Messages.ObjectNotValid);
                 }
 
                 var updateOrder = _mapper.Map(updateOrderDto, order);
                 await _orderRepository.UpdateAsync(updateOrder);
                 await _orderRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.UpdateSuccess);
+                _loggerService.LogInfo(LogMessages.Order_Updated_Success);
                 return new SuccessDataResult<UpdateOrderDto>(_mapper.Map<Order, UpdateOrderDto>(updateOrder), Messages.UpdateSuccess);
 
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UpdateFail);
+                _loggerService.LogError(LogMessages.Order_Updated_Failed);
                 return new ErrorDataResult<UpdateOrderDto>(Messages.UpdateFail);
             }
         }
@@ -149,18 +156,18 @@ namespace AtSepete.Business.Concrete
                 var order = await _orderRepository.GetByIdActiveOrPassiveAsync(id);
                 if (order is null)
                 {
-                    _loggerService.LogWarning(Messages.OrderNotFound);
+                    _loggerService.LogWarning(LogMessages.Order_Object_Not_Found);
                     return new ErrorResult(Messages.OrderNotFound);
                 }
                 await _orderRepository.DeleteAsync(order);
                 await _orderRepository.SaveChangesAsync();
 
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.Order_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.Order_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
 
@@ -173,7 +180,7 @@ namespace AtSepete.Business.Concrete
                 var order = await _orderRepository.GetByIdAsync(id);
                 if (order is null)
                 {
-                    _loggerService.LogWarning(Messages.OrderNotFound);
+                    _loggerService.LogWarning(LogMessages.Order_Object_Not_Found);
                     return new ErrorResult(Messages.OrderNotFound);
                 }
 
@@ -182,12 +189,12 @@ namespace AtSepete.Business.Concrete
                 await _orderRepository.UpdateAsync(order);
                 await _orderRepository.SaveChangesAsync();
 
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.Order_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.Order_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
 

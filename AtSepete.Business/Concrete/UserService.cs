@@ -133,11 +133,12 @@ namespace AtSepete.Business.Concrete
                     return new ErrorDataResult<ChangePasswordDto>(Messages.UserNotFound);
                 }
                 changePasswordDto.CurrentPassword = await PasswordHashAsync(changePasswordDto.CurrentPassword);
-                if (currentUser.Password != changePasswordDto.CurrentPassword)//burada hashlemeler şifre aynı olsa bile farklı oluyor hashlemeleri çözümleyip sitring şifreden kontrol edin!
+
+                if (currentUser.Password != changePasswordDto.CurrentPassword)//buradaki kontrole bakılacak!
                 {
                     _loggerService.LogWarning(Messages.PasswordNotMatch);
                     return new ErrorDataResult<ChangePasswordDto>(Messages.PasswordNotMatch);
-                    
+
                 }
                 changePasswordDto.NewPassword = await PasswordHashAsync(changePasswordDto.NewPassword);
                 var userMap = _mapper.Map<ChangePasswordDto, User>(changePasswordDto);
@@ -153,6 +154,9 @@ namespace AtSepete.Business.Concrete
             }
 
         }
+
+        
+
 
         public async Task<IResult> CheckPasswordAsync(CheckPasswordDto checkPasswordDto)//login olurken şifre kontrolü
         {
@@ -219,7 +223,7 @@ namespace AtSepete.Business.Concrete
         {
             try
             {
-               var user = await _userRepository.GetByDefaultAsync(x => x.Id == id);
+                var user = await _userRepository.GetByDefaultAsync(x => x.Id == id);
                 if (user is null)
                 {
                     _loggerService.LogWarning(Messages.UserNotFound);
@@ -361,24 +365,35 @@ namespace AtSepete.Business.Concrete
             }
         }
 
-        protected async Task<string> PasswordHashAsync(string password)//şifre hashlemek için kullanırız sadece burada yazdık o yüzden protected
+        protected async Task<string> PasswordHashAsync(string password)
         {
-            byte[] salt;
-            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000);
-            byte[] hash = pbkdf2.GetBytes(20);
-            byte[] hashBytes = new byte[36];
-            Array.Copy(salt, 0, hashBytes, 0, 16);
-            Array.Copy(hash, 0, hashBytes, 16, 20);
-            string savedPasswordHash = Convert.ToBase64String(hashBytes);
-            _loggerService.LogInfo("PasswordHash is saved");
-            return savedPasswordHash;
+            using (var sha256 = SHA256.Create())
+            {
+                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var builder = new StringBuilder();
+                foreach (var b in bytes)
+                    builder.Append(b.ToString("x2"));
+                return builder.ToString();
+            }
         }
 
         public Task<IResult> PasswordSignInAsync(UserDto user, string password, bool isPersistent, bool lockoutOnFailure)
         {
             throw new NotImplementedException();
         }
+        //protected async Task<string> PasswordHashAsync(string password)//şifre hashlemek için kullanırız sadece burada yazdık o yüzden protected
+        //{
+        //    byte[] salt;
+        //    new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+        //    var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000);//salt, her kullanıcı için farklıdır ve hash'in sonucunu değiştirir. Bu nedenle, aynı şifreyi kullanan iki kullanıcının hash'leri farklı olacaktır.
+        //    byte[] hash = pbkdf2.GetBytes(20);
+        //    byte[] hashBytes = new byte[36];
+        //    Array.Copy(salt, 0, hashBytes, 0, 16);
+        //    Array.Copy(hash, 0, hashBytes, 16, 20);
+        //    string savedPasswordHash = Convert.ToBase64String(hashBytes);
+        //    _loggerService.LogInfo("PasswordHash is saved");
+        //    return savedPasswordHash;
+        //}
 
         public Task<IResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
         {
@@ -436,7 +451,7 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(Messages.ObjectNotValid);
                     return new ErrorDataResult<UpdateUserDto>(Messages.ObjectNotValid);
                 }
-                
+
                 var updateUser = _mapper.Map(updateUserDto, user);
 
                 var result = await _userRepository.UpdateAsync(updateUser);
@@ -453,7 +468,7 @@ namespace AtSepete.Business.Concrete
             }
 
         }
-      
+
         #region Şifremi unuttum deneme
         //        [HttpPost]
         //        public async Task<IResult> SifremiUnuttum(string email)
@@ -625,9 +640,5 @@ namespace AtSepete.Business.Concrete
         /// <param name="AddOnAccessTokenDate">accessToken'a eklenecek süre yani refresh token süresi</param>
         /// <returns></returns>
 
-
-      
-
-      
     }
 }
