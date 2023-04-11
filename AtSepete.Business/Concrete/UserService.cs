@@ -44,22 +44,19 @@ namespace AtSepete.Business.Concrete
             _mapper = mapper;
             _loggerService = loggerService;
         }
-
-
-
-        public async Task<IDataResult<CreateUserDto>> AddUserAsync(CreateUserDto entity)
+        public async Task<IDataResult<CreateUserDto>> AddUserAsync(CreateUserDto entity)//kullanıcı ekler
         {
             try
             {
                 if (entity == null)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotFound);
-                    return new ErrorDataResult<CreateUserDto>(Messages.ObjectNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Valid);
+                    return new ErrorDataResult<CreateUserDto>(Messages.ObjectNotValid);
                 }
                 var currentUser = await _userRepository.GetByDefaultAsync(x => x.Email == entity.Email);
                 if (currentUser is not null)
                 {
-                    _loggerService.LogWarning(Messages.AddFailAlreadyExists);
+                    _loggerService.LogWarning(LogMessages.User_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateUserDto>(Messages.AddFailAlreadyExists);
                 }
                 entity.Password = await PasswordHashAsync(entity.Password);
@@ -67,16 +64,14 @@ namespace AtSepete.Business.Concrete
                 await _userRepository.AddAsync(userMap);
                 await _userRepository.SaveChangesAsync();
 
-                _loggerService.LogInfo(Messages.AddUserFail);
+                _loggerService.LogInfo(LogMessages.User_Added_Success);
                 return new SuccessDataResult<CreateUserDto>(_mapper.Map<User, CreateUserDto>(userMap), Messages.AddUserSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.AddUserFail);
+                _loggerService.LogError(LogMessages.User_Added_Failed);
                 return new ErrorDataResult<CreateUserDto>(Messages.AddUserFail);
-
             }
-
         }
 
         #region resetPassword
@@ -115,62 +110,72 @@ namespace AtSepete.Business.Concrete
         //return RedirectToAction("GetManager");
 
         #endregion
-
-
-        public async Task<IDataResult<ChangePasswordDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
+        public async Task<IDataResult<ChangePasswordDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto)//kullanıcı şifresini değiştirir
         {
             try
             {
                 if (changePasswordDto == null)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotFound);
-                    return new ErrorDataResult<ChangePasswordDto>(Messages.ObjectNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Valid);
+                    return new ErrorDataResult<ChangePasswordDto>(Messages.ObjectNotValid);
                 }
                 var currentUser = await _userRepository.GetByDefaultAsync(x => x.Email == changePasswordDto.Email);
                 if (currentUser is null)
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorDataResult<ChangePasswordDto>(Messages.UserNotFound);
                 }
-                changePasswordDto.CurrentPassword = await PasswordHashAsync(changePasswordDto.CurrentPassword);
+                //changePasswordDto.CurrentPassword = await PasswordHashAsync(changePasswordDto.CurrentPassword);
 
-                if (currentUser.Password != changePasswordDto.CurrentPassword)//buradaki kontrole bakılacak!
+                var passhased = currentUser.Password;
+                byte[] hashBytes = Convert.FromBase64String(passhased);
+                byte[] salt = new byte[16];
+                Array.Copy(hashBytes, 0, salt, 0, 16);
+                var pbkdf2 = new Rfc2898DeriveBytes(changePasswordDto.CurrentPassword, salt, 100000);
+                byte[] hash = pbkdf2.GetBytes(20);
+
+                for (int i = 0; i < 20; i++)
                 {
-                    _loggerService.LogWarning(Messages.PasswordNotMatch);
-                    return new ErrorDataResult<ChangePasswordDto>(Messages.PasswordNotMatch);
-
+                    if (hashBytes[i + 16] != hash[i])
+                    {
+                        _loggerService.LogWarning(LogMessages.User_Password_Not_Match);
+                        return new ErrorDataResult<ChangePasswordDto>(Messages.PasswordNotMatch);
+                    }
                 }
+
+                //if (currentUser.Password != changePasswordDto.CurrentPassword)//buradaki kontrole bakılacak!
+                //{
+                //    _loggerService.LogWarning(Messages.PasswordNotMatch);
+                //    return new ErrorDataResult<ChangePasswordDto>(Messages.PasswordNotMatch);
+
+                //}
                 changePasswordDto.NewPassword = await PasswordHashAsync(changePasswordDto.NewPassword);
-                var userMap = _mapper.Map<ChangePasswordDto, User>(changePasswordDto);
+                var userMap = _mapper.Map(changePasswordDto,currentUser);
                 await _userRepository.UpdateAsync(userMap);
                 await _userRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.ChangePasswordSucces);
-                return new SuccessDataResult<ChangePasswordDto>(_mapper.Map<User, ChangePasswordDto>(userMap), Messages.ChangePasswordSucces);
+                _loggerService.LogInfo(LogMessages.User_ChangePassword_Success);
+                return new SuccessDataResult<ChangePasswordDto>(_mapper.Map<User, ChangePasswordDto>(userMap), Messages.ChangePasswordSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.ChangePasswordFail);
+                _loggerService.LogError(LogMessages.User_ChangePassword_Fail);
                 return new ErrorDataResult<ChangePasswordDto>(Messages.ChangePasswordFail);
             }
 
         }
-
-        
-
-
         public async Task<IResult> CheckPasswordAsync(CheckPasswordDto checkPasswordDto)//login olurken şifre kontrolü
         {
             try
             {
                 if (checkPasswordDto == null)
                 {
-                    _loggerService.LogWarning(Messages.ObjectNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Valid);
                     return new ErrorResult(Messages.ObjectNotFound);
                 }
                 var currentUser = await _userRepository.GetByDefaultAsync(x => x.Email == checkPasswordDto.Email);
                 if (currentUser is null)
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorResult(Messages.UserNotFound);
                 }
                 var passhased = currentUser.Password;
@@ -184,16 +189,16 @@ namespace AtSepete.Business.Concrete
                 {
                     if (hashBytes[i + 16] != hash[i])
                     {
-                        _loggerService.LogWarning(Messages.CheckPasswordNotValid);
+                        _loggerService.LogWarning(LogMessages.User_CheckPassword_Not_Valid);
                         return new ErrorResult(Messages.CheckPasswordNotValid);
                     }
                 }
-                _loggerService.LogInfo(Messages.CheckPasswordValid);
+                _loggerService.LogInfo(LogMessages.User_CheckPassword_Valid);
                 return new SuccessResult(Messages.CheckPasswordValid);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.CheckPasswordFail);
+                _loggerService.LogError(LogMessages.User_CheckPassword_Fail);
                 return new ErrorDataResult<CheckPasswordDto>(Messages.CheckPasswordFail);
             }
 
@@ -205,20 +210,19 @@ namespace AtSepete.Business.Concrete
                 var user = await _userRepository.GetByDefaultAsync(x => x.Email == email);
                 if (user is null)
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorDataResult<UserDto>(Messages.UserNotFound);
                 }
                 var userDto = _mapper.Map<User, UserDto>(user);
-                _loggerService.LogInfo(Messages.UserFoundSuccess);
+                _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
                 return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UserFoundFail);
+                _loggerService.LogError(LogMessages.User_Object_Found_Fail);
                 return new ErrorDataResult<UserDto>(Messages.UserFoundFail);
             }
         }
-
         public async Task<IDataResult<UserDto>> FindUserByIdAsync(Guid id)//ıd ile user getirir
         {
             try
@@ -226,23 +230,22 @@ namespace AtSepete.Business.Concrete
                 var user = await _userRepository.GetByDefaultAsync(x => x.Id == id);
                 if (user is null)
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorDataResult<UserDto>(Messages.UserNotFound);
                 }
                 var userDto = _mapper.Map<User, UserDto>(user);
 
-                _loggerService.LogInfo(Messages.UserFoundSuccess);
+                _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
                 return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UserFoundFail);
+                _loggerService.LogError(LogMessages.User_Object_Found_Fail);
                 return new ErrorDataResult<UserDto>(Messages.UserFoundFail);
 
             }
 
         }
-
         public async Task<IDataResult<List<UserDto>>> FindUsersByRoleAsync(string roleName)//role göre user getirir
         {
             try
@@ -250,21 +253,20 @@ namespace AtSepete.Business.Concrete
                 var users = await _userRepository.GetDefaultAsync(x => x.Role.ToString().Trim().ToLower() == roleName.Trim().ToLower());//buradaki rol int mi gelecek yoksa string mi dene !!
                 if (!users.Any())
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorDataResult<List<UserDto>>(Messages.UsersNotFound);
                 }
                 var userDto = _mapper.Map<List<User>, List<UserDto>>(users.ToList());
-                _loggerService.LogInfo(Messages.UserFoundSuccess);
+                _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
                 return new SuccessDataResult<List<UserDto>>(userDto, Messages.UsersFoundSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UserFoundFail);
+                _loggerService.LogError(LogMessages.User_Object_Found_Fail);
                 return new ErrorDataResult<List<UserDto>>(Messages.UserFoundFail);
             }
 
         }
-
         public async Task<IDataResult<List<UserListDto>>> GetAllUserAsync()//tüm aktif userları getirir
         {
             try
@@ -272,21 +274,20 @@ namespace AtSepete.Business.Concrete
                 IEnumerable<User> users = await _userRepository.GetAllAsync();
                 if (!users.Any())
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorDataResult<List<UserListDto>>(Messages.UsersNotFound);
                 }
                 var usersDto = _mapper.Map<IEnumerable<User>, List<UserListDto>>(users);
-                _loggerService.LogInfo(Messages.UsersFoundSuccess);
+                _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
                 return new SuccessDataResult<List<UserListDto>>(usersDto, Messages.UsersFoundSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UserFoundFail);
+                _loggerService.LogError(LogMessages.User_Object_Found_Fail);
                 return new ErrorDataResult<List<UserListDto>>(Messages.UserFoundFail);
             }
 
         }
-
         public async Task<IDataResult<UserDto>> GetUserAsync(ClaimsPrincipal principal)//login olan kullanıcıyı getirir!!
         {
             try
@@ -295,29 +296,61 @@ namespace AtSepete.Business.Concrete
                 var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (userId == null)
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Logged_Not_UserId);
                     return new ErrorDataResult<UserDto>(Messages.UserNotFound);
                 }
                 // Veritabanından kullanıcıyı bulmak için UserRepository kullanılır
                 var user = await _userRepository.GetByIdAsync(Guid.Parse(userId));
                 if (user == null)
                 {
-                    _loggerService.LogWarning(Messages.UsersNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorDataResult<UserDto>(Messages.UserNotFound);
                 }
                 // UserDto nesnesine çevirme yapılır ve sonuç döndürülür
                 var userDto = _mapper.Map<UserDto>(user);
-                _loggerService.LogInfo(Messages.UserFoundSuccess);
+                _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
                 return new SuccessDataResult<UserDto>(userDto, Messages.UserFoundSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.UserFoundFail);
+                _loggerService.LogError(LogMessages.User_Object_Found_Fail);
                 return new ErrorDataResult<UserDto>(Messages.UserFoundFail);
             }
 
         }
+        public async Task<IDataResult<UpdateUserDto>> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(id);
+                if (user is null)
+                {
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
+                    return new ErrorDataResult<UpdateUserDto>(Messages.UserNotFound);
+                }
 
+                if (user.Id != updateUserDto.Id)
+                {
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
+                    return new ErrorDataResult<UpdateUserDto>(Messages.ObjectNotValid);
+                }
+
+                var updateUser = _mapper.Map(updateUserDto, user);
+
+                var result = await _userRepository.UpdateAsync(updateUser);
+                await _userRepository.SaveChangesAsync();
+                _loggerService.LogInfo(LogMessages.User_Updated_Success);
+                return new SuccessDataResult<UpdateUserDto>(_mapper.Map<User, UpdateUserDto>(result), Messages.UpdateSuccess);
+
+
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.User_Updated_Failed);
+                return new ErrorDataResult<UpdateUserDto>(Messages.UpdateFail);
+            }
+
+        }
         public async Task<IResult> HardDeleteUserAsync(Guid id)//tamamen veritabanından siler
         {
             try
@@ -325,17 +358,17 @@ namespace AtSepete.Business.Concrete
                 var user = await _userRepository.GetByIdActiveOrPassiveAsync(id);
                 if (user is null)
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorResult(Messages.UserNotFound);
                 }
                 await _userRepository.DeleteAsync(user);
                 await _userRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.User_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.User_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
 
@@ -347,7 +380,7 @@ namespace AtSepete.Business.Concrete
                 var user = await _userRepository.GetByIdAsync(id);
                 if (user is null)
                 {
-                    _loggerService.LogWarning(Messages.UserNotFound);
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
                     return new ErrorResult(Messages.UserNotFound);
                 }
 
@@ -355,45 +388,47 @@ namespace AtSepete.Business.Concrete
                 user.DeletedDate = DateTime.Now;
                 await _userRepository.UpdateAsync(user);
                 await _userRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.DeleteSuccess);
+                _loggerService.LogInfo(LogMessages.User_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
             catch (Exception)
             {
-                _loggerService.LogError(Messages.DeleteFail);
+                _loggerService.LogError(LogMessages.User_Deleted_Failed);
                 return new ErrorResult(Messages.DeleteFail);
             }
         }
-
-        protected async Task<string> PasswordHashAsync(string password)
+        protected async Task<string> PasswordHashAsync(string password)//şifre hashlemek için kullanırız sadece burada yazdık o yüzden protected
         {
-            using (var sha256 = SHA256.Create())
-            {
-                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                var builder = new StringBuilder();
-                foreach (var b in bytes)
-                    builder.Append(b.ToString("x2"));
-                return builder.ToString();
-            }
+            byte[] salt;
+            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000);//salt, her kullanıcı için farklıdır ve hash'in sonucunu değiştirir. Bu nedenle, aynı şifreyi kullanan iki kullanıcının hash'leri farklı olacaktır.
+            byte[] hash = pbkdf2.GetBytes(20);
+            byte[] hashBytes = new byte[36];
+            Array.Copy(salt, 0, hashBytes, 0, 16);
+            Array.Copy(hash, 0, hashBytes, 16, 20);
+            string savedPasswordHash = Convert.ToBase64String(hashBytes);
+            _loggerService.LogInfo(LogMessages.User_PasswordHash_Success);
+            return savedPasswordHash;
         }
-
+        public async Task<IResult> UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate)//token üretildiğinde refresh token değerini oluşturup veritabanına kaydeder
+        {
+            if (userDto is not null)
+            {
+                userDto.RefreshToken = refreshToken;
+                userDto.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
+                var userMap = _mapper.Map<UserDto, User>(userDto);
+                await _userRepository.UpdateAsync(userMap);
+                await _userRepository.SaveChangesAsync();
+                _loggerService.LogInfo($"Updated refresh token");
+                return new SuccessResult();
+            }
+            _loggerService.LogError("update refresh token is fail");
+            return new ErrorResult();
+        }
         public Task<IResult> PasswordSignInAsync(UserDto user, string password, bool isPersistent, bool lockoutOnFailure)
         {
             throw new NotImplementedException();
         }
-        //protected async Task<string> PasswordHashAsync(string password)//şifre hashlemek için kullanırız sadece burada yazdık o yüzden protected
-        //{
-        //    byte[] salt;
-        //    new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
-        //    var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000);//salt, her kullanıcı için farklıdır ve hash'in sonucunu değiştirir. Bu nedenle, aynı şifreyi kullanan iki kullanıcının hash'leri farklı olacaktır.
-        //    byte[] hash = pbkdf2.GetBytes(20);
-        //    byte[] hashBytes = new byte[36];
-        //    Array.Copy(salt, 0, hashBytes, 0, 16);
-        //    Array.Copy(hash, 0, hashBytes, 16, 20);
-        //    string savedPasswordHash = Convert.ToBase64String(hashBytes);
-        //    _loggerService.LogInfo("PasswordHash is saved");
-        //    return savedPasswordHash;
-        //}
 
         public Task<IResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
         {
@@ -420,54 +455,6 @@ namespace AtSepete.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public async Task<IResult> UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate)
-        {
-            if (userDto is not null)
-            {
-                userDto.RefreshToken = refreshToken;
-                userDto.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
-                var userMap = _mapper.Map<UserDto, User>(userDto);
-                await _userRepository.UpdateAsync(userMap);
-                await _userRepository.SaveChangesAsync();
-                _loggerService.LogInfo($"Updated refresh token");
-                return new SuccessResult();
-            }
-            _loggerService.LogError("update refresh token is fail");
-            return new ErrorResult();
-        }
-        public async Task<IDataResult<UpdateUserDto>> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
-        {
-            try
-            {
-                var user = await _userRepository.GetByIdAsync(id);
-                if (user is null)
-                {
-                    _loggerService.LogWarning(Messages.UserNotFound);
-                    return new ErrorDataResult<UpdateUserDto>(Messages.UserNotFound);
-                }
-
-                if (user.Id != updateUserDto.Id)
-                {
-                    _loggerService.LogWarning(Messages.ObjectNotValid);
-                    return new ErrorDataResult<UpdateUserDto>(Messages.ObjectNotValid);
-                }
-
-                var updateUser = _mapper.Map(updateUserDto, user);
-
-                var result = await _userRepository.UpdateAsync(updateUser);
-                await _userRepository.SaveChangesAsync();
-                _loggerService.LogInfo(Messages.UpdateSuccess);
-                return new SuccessDataResult<UpdateUserDto>(_mapper.Map<User, UpdateUserDto>(result), Messages.UpdateSuccess);
-
-
-            }
-            catch (Exception)
-            {
-                _loggerService.LogError(Messages.UpdateFail);
-                return new ErrorDataResult<UpdateUserDto>(Messages.UpdateFail);
-            }
-
-        }
 
         #region Şifremi unuttum deneme
         //        [HttpPost]

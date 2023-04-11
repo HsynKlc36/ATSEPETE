@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using AtSepete.DataAccess.Extensions;
 using AtSepete.Business.Mapper.Profiles;
 using System.Reflection;
+using AtSepete.UI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 
 builder.Services.AddDataAccessServices(builder.Configuration);
+builder.Services.AddAutoMapper(typeof(Program));
+ 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

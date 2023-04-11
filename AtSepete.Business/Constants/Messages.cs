@@ -55,7 +55,7 @@ public class Messages
     public const string SoftDeleteSuccess = "Soft_Delete_Success";
 
 
-    public const string ChangePasswordSucces = "Change_Password_Success";
+    public const string ChangePasswordSuccess = "Change_Password_Success";
     public const string ChangePasswordFail = "Change_Password_Fail";
     public const string CheckPasswordNotValid = "Check_Password_Not_Valid";
     public const string CheckPasswordValid = "Check_Password_Valid";

@@ -12,6 +12,7 @@ namespace AtSepete.Business.Mapper.Profiles
     {
         public CategoryProfile()
         {
+            //DTO AND CATEGORY
             CreateMap<Category, CategoryDto>();
             CreateMap<CategoryDto, Category>();
             CreateMap<Category, CategoryListDto>();
@@ -20,6 +21,7 @@ namespace AtSepete.Business.Mapper.Profiles
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<Category, UpdateCategoryDto>();
             CreateMap<UpdateCategoryDto, Category>();
+
         }
     }
 }

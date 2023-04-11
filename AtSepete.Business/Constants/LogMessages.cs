@@ -32,11 +32,20 @@ namespace AtSepete.Business.Constants
         public const string User_Deleted_Success = "User_Deleted_Success";
         public const string User_Deleted_Failed = "User_Deleted_Failed";
         public const string User_Object_Not_Found = "User_Object_Not_Found";
+        public const string User_Object_Found_Fail = "User_Object_Found_Fail";
         public const string User_Object_Not_Valid = "User_Object_Not_Valid";
+        public const string User_Object_Logged_Not_UserId = "User_Object_Logged_Not_UserId";
         public const string User_Object_Found_Success = "User_Object_Found_Success";
         public const string User_Invalid_Input = "User_Invalid_Input";
         public const string User_Authentication_Failed = "User_Authentication_Failed";
         public const string User_Add_Fail_Already_Exists = "User_Add_Fail_Already_Exists";
+        public const string User_Password_Not_Match = "User_Password_Not_Match";
+        public const string User_ChangePassword_Success = "User_ChangePassword_Success";
+        public const string User_ChangePassword_Fail = "User_ChangePassword_Fail";
+        public const string User_CheckPassword_Not_Valid = "User_CheckPassword_Not_Valid";
+        public const string User_CheckPassword_Valid = "User_CheckPassword_Valid";
+        public const string User_CheckPassword_Fail = "User_CheckPassword_Fail";
+        public const string User_PasswordHash_Success = "User_PasswordHash_Success";
 
 
         public const string Product_Listed_Success = "Product_Listed_Success";

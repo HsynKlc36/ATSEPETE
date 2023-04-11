@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using AtSepete.Dtos.Dto.Products;
 using AtSepete.Business.Logger;
+using AtSepete.Business.CloudinaryImageUploader;
 
 namespace AtSepete.Business.Concrete
 {
@@ -59,6 +60,7 @@ namespace AtSepete.Business.Concrete
 
         public async Task<IDataResult<CreateProductDto>> AddProductAsync(CreateProductDto entity)
         {
+
             try
             {
                 if (entity is null)
@@ -72,6 +74,9 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(LogMessages.Product_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateProductDto>(Messages.AddFailAlreadyExists);
                 }
+                string photoUrl = entity.Photo  == null ? entity.PhotoPath : await ImageUploaderService.SaveImageAsync(entity.Photo);
+                entity.PhotoPath = photoUrl;
+
                 var product = _mapper.Map<CreateProductDto, Product>(entity);
                 var result = await _productRepository.AddAsync(product);
                 await _productRepository.SaveChangesAsync();
@@ -90,6 +95,7 @@ namespace AtSepete.Business.Concrete
 
         public async Task<IDataResult<UpdateProductDto>> UpdateProductAsync(Guid id, UpdateProductDto updateProductDto)
         {
+
             try
             {
                 var product = await _productRepository.GetByIdAsync(id);
@@ -100,6 +106,10 @@ namespace AtSepete.Business.Concrete
                 }
                 if (updateProductDto.Barcode == product.Barcode && updateProductDto.Id == product.Id)
                 {
+                    
+                    string photoUrl = updateProductDto.Photo == null ? updateProductDto.PhotoPath : await ImageUploaderService.SaveImageAsync(updateProductDto.Photo);
+                    updateProductDto.PhotoPath = photoUrl;
+
                     var updateProduct = _mapper.Map(updateProductDto, product);
                     await _productRepository.UpdateAsync(updateProduct);
                     await _productRepository.SaveChangesAsync();

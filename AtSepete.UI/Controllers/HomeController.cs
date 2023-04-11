@@ -16,15 +16,15 @@ namespace AtSepete.UI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+     
+        private readonly Mapper _mapper;
 
-
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(Mapper mapper)
         {
-            _logger = logger;
-
+           
+            _mapper = mapper;
         }
-
+        //user dan get işlemi ile veri getirme denendi
         public async Task<IActionResult> Index()
         {
 
@@ -41,6 +41,7 @@ namespace AtSepete.UI.Controllers
             return View();
         }
         [HttpPost]
+        //post işlemi ile category ekleme işlemi ve dönen sonucu yakalayıp view da gösterme denendi!!
         public async Task<IActionResult> AddCategory(Category category )
         {
             CreateCategoryDto dto = new CreateCategoryDto();
@@ -57,6 +58,38 @@ namespace AtSepete.UI.Controllers
                 }
             }
            
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateCategory()
+        {
+
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/Category/GetByIdCategory/ef43c461-6948-4939-cc3b-08db393cda8a");
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            AddCategoryResponse category = JsonConvert.DeserializeObject<AddCategoryResponse>(apiResponse);
+            return View(category);
+        }
+        [HttpPost]
+        //post işlemi ile category ekleme işlemi ve dönen sonucu yakalayıp view da gösterme denendi!!
+        public async Task<IActionResult> UpdateCategory(AddCategoryResponse category)
+        {
+            var updateCategoryDto=_mapper.Map<AddCategoryResponse, UpdateCategoryDto>(category);
+            //CreateCategoryDto dto = new CreateCategoryDto();
+            //dto.Description = category.Data.Description;
+            //dto.Name = category.Data.Name;
+            using (var httpClient = new HttpClient())
+            {
+                StringContent content = new StringContent(JsonConvert.SerializeObject(updateCategoryDto), Encoding.UTF8, "application/Json");
+                using (var answer = await httpClient.PutAsync("https://localhost:7286/AtSepeteApi/Category/UpdateCategory/ef43c461-6948-4939-cc3b-08db393cda8a", content))
+                {
+                    string apiAnswer = await answer.Content.ReadAsStringAsync();
+                    AddCategoryResponse categoryResponse = JsonConvert.DeserializeObject<AddCategoryResponse>(apiAnswer);
+                    ViewBag.cevap = categoryResponse.Message;
+                }
+            }
+
             return View();
         }
         public IActionResult Privacy()
