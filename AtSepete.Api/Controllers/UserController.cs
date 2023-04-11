@@ -70,15 +70,15 @@ namespace AtSepete.Api.Controllers
 
         [HttpDelete]
         [Route("[Action]/{id:Guid}")]
-        public async Task<IResult> HardDeleteProduct([FromRoute] Guid id)
+        public async Task<IResult> HardDeleteUser([FromRoute] Guid id)
         {
             return await _userService.HardDeleteUserAsync(id);
         }
         [HttpDelete]
         [Route("[Action]/{id:Guid}")]
-        public async Task<IResult> SoftDeleteProduct([FromRoute] Guid id)
+        public async Task<IResult> SoftDeleteUser([FromRoute] Guid id)
         {
-            return await _userService.HardDeleteUserAsync(id);
+            return await _userService.SoftDeleteUserAsync(id);
         }
 
     }

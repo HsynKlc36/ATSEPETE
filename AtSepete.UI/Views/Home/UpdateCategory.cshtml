@@ -13,6 +13,7 @@
     <div class="col-md-4">
         <form asp-action="UpdateCategory">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="@Model.Data.Id" />
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="IsSuccess" /> @Html.DisplayNameFor(model => model.IsSuccess)

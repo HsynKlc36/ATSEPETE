@@ -7,6 +7,9 @@ using AtSepete.DataAccess.Extensions;
 using AtSepete.Business.Mapper.Profiles;
 using System.Reflection;
 using AtSepete.UI.Extensions;
+using AtSepete.UI.MapperUI.Profiles;
+using AtSepete.Business.Extensions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +17,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 
-builder.Services.AddDataAccessServices(builder.Configuration);
-builder.Services.AddAutoMapper(typeof(Program));
- 
+builder.Services.AddDataAccessServices(builder.Configuration)
+    .AddMvcServices();
+
+
+
+
+
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

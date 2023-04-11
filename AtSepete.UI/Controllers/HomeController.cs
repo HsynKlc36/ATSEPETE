@@ -17,9 +17,9 @@ namespace AtSepete.UI.Controllers
     public class HomeController : Controller
     {
      
-        private readonly Mapper _mapper;
+        private readonly IMapper _mapper;
 
-        public HomeController(Mapper mapper)
+        public HomeController(IMapper mapper)
         {
            
             _mapper = mapper;
@@ -29,7 +29,7 @@ namespace AtSepete.UI.Controllers
         {
 
             HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/user/GetByIdUser/f6c16176-471e-4ef5-1c67-08db38735e6e");
+            HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/user/GetByIdUser/aa0acb6a-adfd-49b4-83a8-5939af00178b");
             string apiResponse = await response.Content.ReadAsStringAsync();
             UserApiResponse user = JsonConvert.DeserializeObject<UserApiResponse>(apiResponse);           
             return View(user);
@@ -75,10 +75,10 @@ namespace AtSepete.UI.Controllers
         //post işlemi ile category ekleme işlemi ve dönen sonucu yakalayıp view da gösterme denendi!!
         public async Task<IActionResult> UpdateCategory(AddCategoryResponse category)
         {
-            var updateCategoryDto=_mapper.Map<AddCategoryResponse, UpdateCategoryDto>(category);
-            //CreateCategoryDto dto = new CreateCategoryDto();
-            //dto.Description = category.Data.Description;
-            //dto.Name = category.Data.Name;
+
+            CreateCategoryDto dto = new CreateCategoryDto();
+            var updateCategoryDto=_mapper.Map( category.Data ,dto);
+          
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(updateCategoryDto), Encoding.UTF8, "application/Json");
@@ -91,6 +91,17 @@ namespace AtSepete.UI.Controllers
             }
 
             return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response = await httpClient.DeleteAsync($"https://localhost:7286/AtSepeteApi/user/SoftDeleteUser/{id}");
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            UserApiResponse user = JsonConvert.DeserializeObject<UserApiResponse>(apiResponse);
+            return RedirectToAction("AddCategory");
+
         }
         public IActionResult Privacy()
         {

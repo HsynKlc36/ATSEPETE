@@ -2,7 +2,11 @@
 
 @{
     ViewData["Title"] = "Index";
+    Layout = null;
 }
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.37/dist/sweetalert2.min.css" />
+</head>
 
 <h1>Index</h1>
 
@@ -16,27 +20,30 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Data.Email)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Message)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Message)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.IsSuccess)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.IsSuccess)
         </dd>
     </dl>
 </div>
 <div>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @*    @Html.ActionLink("Delete", "DeleteUser", new { id = Model.Data.Id }, new { @class = "deleteAction" })*@
+    @Html.ActionLink("Delete", "DeleteUser", new { id = Model.Data.Id }, new { @class = "deleteAction", data_id = Model.Data.Id })
+
     <a asp-action="Index">Back to List</a>
 </div>
 <div id="myTooltip" style="display: none; position: absolute; background-color: #f1f1f1; color: #000; padding: 10px; border-radius: 5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
 </div>
-<script>
+@*<script>
     // Tooltip bileşeni seçimi
     var tooltip = document.getElementById("myTooltip");
     // API isteği gönderme fonksiyonu
@@ -76,4 +83,39 @@
     }); tooltip.addEventListener("mouseout", function () {
         hideTooltip();
     });
-</script>
+</script>*@
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script src="~/limonte-sweetalert2/sweetalert2.all.js"></script>
+    <script src="~/limonte-sweetalert2/sweetalert2.all.min.js"></script>
+    <script>
+        $(".deleteAction").click(function () {
+            const id = $(this).attr("data-id");
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Bu işlem geri alınamaz!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet, sil!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "GET",
+                        url: "@Url.Action("DeleteUser")" + "?id=" + id,
+                        success: function (result) {
+                            if (result.isSuccess) {
+                                setTimeout(() => location.href = "/Home/Index", 5000)
+                            }
+                        }
+                    });
+                }
+            });
+    
+
+ 
+
+

@@ -25,16 +25,8 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAutoMapper(
-    Assembly.GetExecutingAssembly(),
-    typeof(CategoryProfile).Assembly,
-    typeof(MarketProfile).Assembly,
-    typeof(OrderProfile).Assembly,
-    typeof(OrderDetailProfile).Assembly,
-    typeof(ProductMarketProfile).Assembly,
-    typeof(ProductProfile).Assembly,
-    typeof(UserProfile).Assembly
-);
+
+
 builder.Services.AddControllers();
 builder.Services.AddRepositoriesServices()
     .AddBusinessServices()
