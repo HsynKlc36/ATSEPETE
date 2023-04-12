@@ -100,7 +100,8 @@ namespace AtSepete.UI.Controllers
             HttpResponseMessage response = await httpClient.DeleteAsync($"https://localhost:7286/AtSepeteApi/user/SoftDeleteUser/{id}");
             string apiResponse = await response.Content.ReadAsStringAsync();
             UserApiResponse user = JsonConvert.DeserializeObject<UserApiResponse>(apiResponse);
-            return RedirectToAction("AddCategory");
+            //return RedirectToAction("AddCategory");
+            return Json(user);
 
         }
         public IActionResult Privacy()
