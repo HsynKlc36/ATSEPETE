@@ -1,4 +1,5 @@
 {
+  //clientside tarafını yani wwwroot daki framework'leri yönettiğimiz config dosyası!
   "version": "1.0",
   "defaultProvider": "cdnjs",
   "libraries": [

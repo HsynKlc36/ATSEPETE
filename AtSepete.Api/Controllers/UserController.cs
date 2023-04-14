@@ -6,6 +6,7 @@ using AtSepete.Dtos.Dto.Users;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using IResult = AtSepete.Results.IResult;
 
 namespace AtSepete.Api.Controllers
@@ -39,12 +40,15 @@ namespace AtSepete.Api.Controllers
         {
             return await _userService.FindUserByEmailAsync(email);
         }
-        
+
+       
+
+
         [HttpPost]
         [Route("[action]")]
-        public async Task<IResult> UserCheckPassword(CheckPasswordDto checkPasswordDto)
+        public async Task<IDataResult<UserDto>> CheckUserSign(CheckPasswordDto checkPasswordDto)
         {
-            return await _userService.CheckPasswordAsync(checkPasswordDto);
+            return await _userService.CheckUserSignAsync(checkPasswordDto);
            
         }
         [HttpPost]

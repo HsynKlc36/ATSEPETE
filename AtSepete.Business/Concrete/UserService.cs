@@ -450,10 +450,23 @@ namespace AtSepete.Business.Concrete
             throw new NotImplementedException();
         }
 
+        public async Task<IDataResult<UserDto>> CheckUserSignAsync(CheckPasswordDto checkPasswordDto)
+        {
+           var userDto=await FindUserByEmailAsync(checkPasswordDto.Email);
+            var userCheck=await CheckPasswordAsync(checkPasswordDto);
+            if (userDto.IsSuccess && userCheck.IsSuccess)
+            {
+                _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
+                return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
+            }
+            _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
+            return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+        }
         public Task<IResult> SignOutAsync()
         {
             throw new NotImplementedException();
         }
+
 
 
         #region Şifremi unuttum deneme

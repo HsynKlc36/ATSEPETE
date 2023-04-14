@@ -46,6 +46,6 @@ app.UseAuthorization();
 app.UseNotyf();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{area:exists}{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

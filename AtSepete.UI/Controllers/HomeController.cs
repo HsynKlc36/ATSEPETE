@@ -29,7 +29,7 @@ namespace AtSepete.UI.Controllers
         {
 
             HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/user/GetByIdUser/aa0acb6a-adfd-49b4-83a8-5939af00178b");
+            HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/user/GetByIdUser/df035792-e647-45bb-cbff-08db3cf9a924");
             string apiResponse = await response.Content.ReadAsStringAsync();
             UserApiResponse user = JsonConvert.DeserializeObject<UserApiResponse>(apiResponse);           
             return View(user);
