@@ -425,6 +425,24 @@ namespace AtSepete.Business.Concrete
             _loggerService.LogError("update refresh token is fail");
             return new ErrorResult();
         }
+
+        public async Task<IDataResult<UserDto>> CheckUserSignAsync(CheckPasswordDto checkPasswordDto)//giriş yapan kullanıcının mail ve şifresini kontrol eder ve user'ı geriye döndürür.Yani Login olan kullancının bilgilerini kontrol eder doğrularsa ona göre login işlemleri yapılabilir
+        {
+            if (checkPasswordDto is null)
+            {
+                _loggerService.LogInfo(LogMessages.User_Object_Not_Valid);
+                return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+            }
+           var userDto=await FindUserByEmailAsync(checkPasswordDto.Email);
+            var userCheck=await CheckPasswordAsync(checkPasswordDto);
+            if (userDto.IsSuccess && userCheck.IsSuccess)
+            {
+                _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
+                return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
+            }
+            _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
+            return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+        }
         public Task<IResult> PasswordSignInAsync(UserDto user, string password, bool isPersistent, bool lockoutOnFailure)
         {
             throw new NotImplementedException();
@@ -450,23 +468,10 @@ namespace AtSepete.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public async Task<IDataResult<UserDto>> CheckUserSignAsync(CheckPasswordDto checkPasswordDto)
-        {
-           var userDto=await FindUserByEmailAsync(checkPasswordDto.Email);
-            var userCheck=await CheckPasswordAsync(checkPasswordDto);
-            if (userDto.IsSuccess && userCheck.IsSuccess)
-            {
-                _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
-                return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
-            }
-            _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
-            return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
-        }
         public Task<IResult> SignOutAsync()
         {
             throw new NotImplementedException();
         }
-
 
 
         #region Şifremi unuttum deneme

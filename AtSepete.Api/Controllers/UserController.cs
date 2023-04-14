@@ -41,8 +41,6 @@ namespace AtSepete.Api.Controllers
             return await _userService.FindUserByEmailAsync(email);
         }
 
-       
-
 
         [HttpPost]
         [Route("[action]")]
