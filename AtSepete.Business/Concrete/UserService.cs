@@ -150,7 +150,7 @@ namespace AtSepete.Business.Concrete
 
                 //}
                 changePasswordDto.NewPassword = await PasswordHashAsync(changePasswordDto.NewPassword);
-                var userMap = _mapper.Map(changePasswordDto,currentUser);
+                var userMap = _mapper.Map(changePasswordDto, currentUser);
                 await _userRepository.UpdateAsync(userMap);
                 await _userRepository.SaveChangesAsync();
                 _loggerService.LogInfo(LogMessages.User_ChangePassword_Success);
@@ -426,32 +426,116 @@ namespace AtSepete.Business.Concrete
             return new ErrorResult();
         }
 
-        public async Task<IDataResult<UserDto>> CheckUserSignAsync(CheckPasswordDto checkPasswordDto)//giriş yapan kullanıcının mail ve şifresini kontrol eder ve user'ı geriye döndürür.Yani Login olan kullancının bilgilerini kontrol eder doğrularsa ona göre login işlemleri yapılabilir
+        public async Task<IDataResult<UserDto>> CheckUserSignAsync(CheckPasswordDto checkPasswordDto, bool lockoutOnFailure)//giriş yapan kullanıcının mail ve şifresini kontrol eder ve user'ı geriye döndürür.Yani Login olan kullancının bilgilerini kontrol eder doğrularsa ona göre login işlemleri yapılabilir
         {
             if (checkPasswordDto is null)
             {
-                _loggerService.LogInfo(LogMessages.User_Object_Not_Valid);
+                _loggerService.LogWarning(LogMessages.User_Object_Not_Valid);
                 return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
             }
-           var userDto=await FindUserByEmailAsync(checkPasswordDto.Email);
-            var userCheck=await CheckPasswordAsync(checkPasswordDto);
-            if (userDto.IsSuccess && userCheck.IsSuccess)
+            var userDto = await FindUserByEmailAsync(checkPasswordDto.Email);
+            var userCheck = await CheckPasswordAsync(checkPasswordDto);
+            if (!lockoutOnFailure)
             {
-                _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
-                return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
+                if (userDto.IsSuccess)
+                {
+                    if (userCheck.IsSuccess)
+                    {
+
+                        _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
+                        return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
+                    }
+                    else
+                    {
+                        _loggerService.LogWarning(LogMessages.User_Object_Found_Success);//hatalı şifre mesajı dön
+                        return new ErrorDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
+                    }
+                }
+
+                _loggerService.LogWarning(LogMessages.User_Object_Not_Found);//bu mailde kullanıcı bullanılamadı
+                return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
             }
-            _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
-            return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+            _loggerService.LogInfo(LogMessages.User_Object_Found_Success); //şifre kilitleme metoduna gidecek              
+            return await PasswordSignInAsync(checkPasswordDto);
+
         }
-        public Task<IResult> PasswordSignInAsync(UserDto user, string password, bool isPersistent, bool lockoutOnFailure)
+        protected async Task<IDataResult<UserDto>> PasswordSignInAsync(CheckPasswordDto checkPasswordDto)
         {
-            throw new NotImplementedException();
+
+            //kullanıcı şifreyi hatalı girdiği anda buraya uğrar
+            var userDto = await FindUserByEmailAsync(checkPasswordDto.Email);
+            var userCheck = await CheckPasswordAsync(checkPasswordDto);
+            if (userDto.Data is null)
+            {
+                _loggerService.LogWarning(LogMessages.User_Object_Not_Found);//bu mailde kullanıcı bullanılamadı
+                return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+            }
+            var currentUser = await _userRepository.GetByIdAsync(userDto.Data.Id);
+            if (currentUser.AccessFailedDate is not null)
+            {
+
+                TimeSpan ts = DateTime.Now - currentUser.AccessFailedDate.Value;
+                if (currentUser.LockoutEnd >= DateTime.Now && ts.TotalMinutes > 30)
+                {
+                    currentUser.AccessFailedCount = 0;
+                }
+            }
+            if (userDto.IsSuccess)
+            {
+                if (userCheck.IsSuccess && (currentUser.LockoutEnd <= DateTime.Now || currentUser.LockoutEnd is null))//şifre başarılı ve daha önceden hesap kilitlenmişse kontrol yapar kilitleme süresi dolmuşşa girebilir
+                {
+
+                    currentUser.AccessFailedCount = 0;
+                    await _userRepository.UpdateAsync(currentUser);
+                    await _userRepository.SaveChangesAsync();
+                    _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
+                    return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);//buradan alınan değer login controllerda yakalanıcak
+                }
+                else
+                {
+
+                    currentUser.AccessFailedCount++;
+                    currentUser.AccessFailedDate = DateTime.Now;
+                    if (currentUser.AccessFailedCount >= 2)
+                    {
+                        _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
+                        currentUser.LockoutEnd = DateTime.Now.AddMinutes(1);//kaç dakika kilitlemek istiyorsak o süre kadar hesabı kilitler
+                    }
+                    await _userRepository.UpdateAsync(currentUser);
+                    await _userRepository.SaveChangesAsync();
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
+                    return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+
+                }
+            }
+
+            _loggerService.LogInfo(LogMessages.User_Object_Found_Success);//hatalı şifre mesajı dön
+            return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
+
         }
 
-        public Task<IResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
-        {
-            throw new NotImplementedException();
-        }
+        //public async Task<IDataResult<UserDto>> PasswordSignInAsync(PasswordSignDto passwordSignDto, CheckPasswordDto checkPasswordDto, bool lockoutOnFailure, Guid id)
+        //{
+        //    if (passwordSignDto is null)
+        //    {
+        //        _loggerService.LogInfo(LogMessages.User_Object_Not_Valid);
+        //        return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+        //    }
+        //    var userDto = await FindUserByEmailAsync(passwordSignDto.Email);
+        //    var userCheck = await CheckPasswordAsync(checkPasswordDto);
+        //    if (userDto.IsSuccess && userCheck.IsSuccess)
+        //    {
+        //        _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
+        //        return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
+        //    }
+        //    else
+        //    {
+        //        var currentUser = await _userRepository.GetByIdAsync(id);
+        //        currentUser
+        //    }
+        //    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
+        //    return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+        //}
 
         public Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
         {

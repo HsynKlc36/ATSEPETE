@@ -2902,3 +2902,161 @@
 2023-04-14 18:55:36.0531 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
 2023-04-14 18:55:36.0752 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
 2023-04-14 18:55:36.0812 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console
+2023-04-16 17:08:30.0884 Info Message Template Auto Format enabled
+2023-04-16 17:08:30.2863 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign property 'Encoding'='iso-8859-2'. Error: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+ ---> System.ArgumentException: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+   at System.Text.EncodingTable.InternalGetCodePageFromName(String name)
+   at System.Text.EncodingTable.GetCodePageFromName(String name)
+   at System.Text.Encoding.GetEncoding(String name)
+   at NLog.Internal.PropertyHelper.TryNLogSpecificConversion(Type propertyType, String value, ConfigurationItemFactory configurationItemFactory, Object& newValue)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   --- End of inner exception stack trace ---
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, String propertyName, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString(Object targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2023-04-16 17:08:30.3557 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=logfile)
+2023-04-16 17:08:30.3891 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
+2023-04-16 17:08:30.4292 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-16 17:08:30.4404 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console
+2023-04-16 17:08:36.2820 Info FileTarget(Name=logfile_wrapped): Deleting old archive file: 'C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\bin\Debug\net6.0\logs\2023-04-07_logfile.txt'.
+2023-04-16 17:08:36.2820 Info FileTarget(Name=logfile_wrapped): Deleting old archive file: 'C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\bin\Debug\net6.0\logs\2023-04-08_logfile.txt'.
+2023-04-16 17:12:56.6576 Info Message Template Auto Format enabled
+2023-04-16 17:12:56.7498 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign property 'Encoding'='iso-8859-2'. Error: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+ ---> System.ArgumentException: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+   at System.Text.EncodingTable.InternalGetCodePageFromName(String name)
+   at System.Text.EncodingTable.GetCodePageFromName(String name)
+   at System.Text.Encoding.GetEncoding(String name)
+   at NLog.Internal.PropertyHelper.TryNLogSpecificConversion(Type propertyType, String value, ConfigurationItemFactory configurationItemFactory, Object& newValue)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   --- End of inner exception stack trace ---
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, String propertyName, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString(Object targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2023-04-16 17:12:56.7885 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=logfile)
+2023-04-16 17:12:56.8036 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
+2023-04-16 17:12:56.8287 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-16 17:12:56.8287 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console
+2023-04-16 17:42:16.3726 Info Message Template Auto Format enabled
+2023-04-16 17:42:16.5126 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign property 'Encoding'='iso-8859-2'. Error: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+ ---> System.ArgumentException: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+   at System.Text.EncodingTable.InternalGetCodePageFromName(String name)
+   at System.Text.EncodingTable.GetCodePageFromName(String name)
+   at System.Text.Encoding.GetEncoding(String name)
+   at NLog.Internal.PropertyHelper.TryNLogSpecificConversion(Type propertyType, String value, ConfigurationItemFactory configurationItemFactory, Object& newValue)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   --- End of inner exception stack trace ---
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, String propertyName, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString(Object targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2023-04-16 17:42:16.5769 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=logfile)
+2023-04-16 17:42:16.6175 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
+2023-04-16 17:42:16.6499 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-16 17:42:16.6595 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console
+2023-04-16 17:42:59.1727 Info Message Template Auto Format enabled
+2023-04-16 17:42:59.2147 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign property 'Encoding'='iso-8859-2'. Error: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+ ---> System.ArgumentException: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+   at System.Text.EncodingTable.InternalGetCodePageFromName(String name)
+   at System.Text.EncodingTable.GetCodePageFromName(String name)
+   at System.Text.Encoding.GetEncoding(String name)
+   at NLog.Internal.PropertyHelper.TryParseEncodingValue(String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.TryNLogSpecificConversion(Type propertyType, String value, ConfigurationItemFactory configurationItemFactory, Object& newValue)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   --- End of inner exception stack trace ---
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, String propertyName, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString(Object targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2023-04-16 17:42:59.2147 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=logfile)
+2023-04-16 17:42:59.2340 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
+2023-04-16 17:42:59.2491 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-16 17:42:59.2491 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console
+2023-04-16 17:43:00.1885 Info AppDomain Shutting down. LogFactory closing...
+2023-04-16 17:43:00.1997 Info LogFactory has been closed.
+2023-04-16 17:49:18.2425 Info Message Template Auto Format enabled
+2023-04-16 17:49:18.2842 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign property 'Encoding'='iso-8859-2'. Error: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+ ---> System.ArgumentException: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+   at System.Text.EncodingTable.InternalGetCodePageFromName(String name)
+   at System.Text.EncodingTable.GetCodePageFromName(String name)
+   at System.Text.Encoding.GetEncoding(String name)
+   at NLog.Internal.PropertyHelper.TryParseEncodingValue(String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.TryNLogSpecificConversion(Type propertyType, String value, ConfigurationItemFactory configurationItemFactory, Object& newValue)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   --- End of inner exception stack trace ---
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, String propertyName, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString(Object targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2023-04-16 17:49:18.2933 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=logfile)
+2023-04-16 17:49:18.2933 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
+2023-04-16 17:49:18.3184 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-16 17:49:18.3225 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console
+2023-04-16 17:49:19.1821 Info AppDomain Shutting down. LogFactory closing...
+2023-04-16 17:49:19.1917 Info LogFactory has been closed.
+2023-04-16 17:54:06.0353 Info Message Template Auto Format enabled
+2023-04-16 17:54:06.0781 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign property 'Encoding'='iso-8859-2'. Error: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+ ---> System.ArgumentException: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+   at System.Text.EncodingTable.InternalGetCodePageFromName(String name)
+   at System.Text.EncodingTable.GetCodePageFromName(String name)
+   at System.Text.Encoding.GetEncoding(String name)
+   at NLog.Internal.PropertyHelper.TryParseEncodingValue(String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.TryNLogSpecificConversion(Type propertyType, String value, ConfigurationItemFactory configurationItemFactory, Object& newValue)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   --- End of inner exception stack trace ---
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, String propertyName, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString(Object targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2023-04-16 17:54:06.0781 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=logfile)
+2023-04-16 17:54:06.0978 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
+2023-04-16 17:54:06.1135 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-16 17:54:06.1135 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console
+2023-04-16 17:54:07.1364 Info AppDomain Shutting down. LogFactory closing...
+2023-04-16 17:54:07.1364 Info LogFactory has been closed.
+2023-04-16 17:55:56.6175 Info Message Template Auto Format enabled
+2023-04-16 17:55:56.6620 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign property 'Encoding'='iso-8859-2'. Error: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+ ---> System.ArgumentException: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+   at System.Text.EncodingTable.InternalGetCodePageFromName(String name)
+   at System.Text.EncodingTable.GetCodePageFromName(String name)
+   at System.Text.Encoding.GetEncoding(String name)
+   at NLog.Internal.PropertyHelper.TryParseEncodingValue(String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.TryNLogSpecificConversion(Type propertyType, String value, ConfigurationItemFactory configurationItemFactory, Object& newValue)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   --- End of inner exception stack trace ---
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, String propertyName, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString(Object targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2023-04-16 17:55:56.6707 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=logfile)
+2023-04-16 17:55:56.6707 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
+2023-04-16 17:55:56.6968 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-16 17:55:56.7030 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console
+2023-04-16 17:56:02.2973 Info AppDomain Shutting down. LogFactory closing...
+2023-04-16 17:56:02.3071 Info LogFactory has been closed.
+2023-04-16 17:56:59.0833 Info Message Template Auto Format enabled
+2023-04-16 17:56:59.2434 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign property 'Encoding'='iso-8859-2'. Error: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+ ---> System.ArgumentException: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+   at System.Text.EncodingTable.InternalGetCodePageFromName(String name)
+   at System.Text.EncodingTable.GetCodePageFromName(String name)
+   at System.Text.Encoding.GetEncoding(String name)
+   at NLog.Internal.PropertyHelper.TryNLogSpecificConversion(Type propertyType, String value, ConfigurationItemFactory configurationItemFactory, Object& newValue)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   --- End of inner exception stack trace ---
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, String propertyName, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString(Object targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2023-04-16 17:56:59.2802 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=logfile)
+2023-04-16 17:56:59.3008 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
+2023-04-16 17:56:59.3296 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-16 17:56:59.3296 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console
+2023-04-16 18:17:26.3182 Info Message Template Auto Format enabled
+2023-04-16 18:17:26.3977 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign property 'Encoding'='iso-8859-2'. Error: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+ ---> System.ArgumentException: 'iso-8859-2' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
+   at System.Text.EncodingTable.InternalGetCodePageFromName(String name)
+   at System.Text.EncodingTable.GetCodePageFromName(String name)
+   at System.Text.Encoding.GetEncoding(String name)
+   at NLog.Internal.PropertyHelper.TryNLogSpecificConversion(Type propertyType, String value, ConfigurationItemFactory configurationItemFactory, Object& newValue)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   --- End of inner exception stack trace ---
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, PropertyInfo propInfo, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Internal.PropertyHelper.SetPropertyFromString(Object targetObject, String propertyName, String stringValue, ConfigurationItemFactory configurationItemFactory)
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString(Object targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2023-04-16 18:17:26.4226 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=logfile)
+2023-04-16 18:17:26.4359 Info Registered target NLog.Targets.Wrappers.AsyncTargetWrapper(Name=console)
+2023-04-16 18:17:26.4588 Info Validating config: TargetNames=logfile, ConfigItems=25, FilePath=C:\Users\kılıç\OneDrive\Masaüstü\Atsepete\AtSepete\AtSepete.Api\nlog.config
+2023-04-16 18:17:26.4650 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: console

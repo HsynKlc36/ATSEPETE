@@ -19,6 +19,7 @@ namespace AtSepete.Entities.Data
         public DateTimeOffset? LockoutEnd { get; set; }// hesabı ne kadar süreyle kitleyeceğini belirler
         public bool LockoutEnabled { get; set; }// hesap kilitlensin mi bunu belirler
         public int AccessFailedCount { get; set; }// kaç kere hatalı girişte hasabın kilitleneceğini belirler
+        public DateTime? AccessFailedDate { get; set; }// en son yapılan hatalı girişin tarihini tutar
         //navigation property
         virtual public IEnumerable<Order>? Orders { get; set; }
         

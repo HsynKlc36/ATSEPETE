@@ -46,7 +46,7 @@ namespace AtSepete.Api.Controllers
         [Route("[action]")]
         public async Task<IDataResult<UserDto>> CheckUserSign(CheckPasswordDto checkPasswordDto)
         {
-            return await _userService.CheckUserSignAsync(checkPasswordDto);
+            return await _userService.CheckUserSignAsync(checkPasswordDto,true);
            
         }
         [HttpPost]

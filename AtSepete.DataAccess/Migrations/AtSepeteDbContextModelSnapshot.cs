@@ -271,6 +271,9 @@ namespace AtSepete.DataAccess.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("AccessFailedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Adress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

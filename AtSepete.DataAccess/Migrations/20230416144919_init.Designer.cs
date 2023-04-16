@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AtSepete.DataAccess.Migrations
 {
     [DbContext(typeof(AtSepeteDbContext))]
-    [Migration("20230406110014_initial")]
-    partial class initial
+    [Migration("20230416144919_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -272,6 +272,9 @@ namespace AtSepete.DataAccess.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("AccessFailedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Adress")
                         .IsRequired()
