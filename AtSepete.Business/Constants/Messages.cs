@@ -2,6 +2,9 @@
 
 public class Messages
 {
+    public const string LoginSuccess = "Login_Success";
+    public const string LoginFailed = "Login_Failed";
+
     public const string ListedSuccess = "Listed_Success";
     public const string ListedFailed = "Listed_Failed";
     public const string ListReceived = "List_Received";

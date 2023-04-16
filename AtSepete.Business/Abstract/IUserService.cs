@@ -17,8 +17,7 @@ namespace AtSepete.Business.Abstract
 {
     public interface IUserService 
     {
-        Task<IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null);
-        Task<IResult> SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null);//İkinci parametre olan authenticationProperties özelliği, kullanıcının kimlik doğrulaması işleminin niteliklerini içeren bir nesnedir. Bu nesne, kullanıcının kimlik doğrulama işlemleri sırasında taşıyabileceği ek bilgileri içerir. Örneğin, bu nesne kullanıcının dil ayarlarını, kimlik doğrulama işlemi sırasında kullanabileceği bir token'ı veya diğer kullanıcı bilgilerini içerebilir.Son parametre olan authenticationMethod özelliği, kullanıcının kimlik doğrulama yöntemini belirler.Varsayılan olarak null'dır. Ancak, özel kimlik doğrulama yöntemleri kullanmak isterseniz, bu parametre kullanılabilir.      
+        Task<IDataResult<ClaimsPrincipal>> SignInAsync(UserDto user);// giriş yapma işlemini dener
         Task<IResult> SignOutAsync();
         //yukarıdaki satırlar giriş ve çıkış işlemleri için kullanılır
         Task<IDataResult<List<UserListDto>>> GetAllUserAsync();//tüm user'ları getirir

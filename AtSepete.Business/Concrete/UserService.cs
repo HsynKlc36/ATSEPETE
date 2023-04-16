@@ -27,6 +27,7 @@ using System.Web;
 using CloudinaryDotNet;
 using Newtonsoft.Json;
 using AtSepete.Business.Logger;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace AtSepete.Business.Concrete
 {
@@ -461,7 +462,7 @@ namespace AtSepete.Business.Concrete
         }
         protected async Task<IDataResult<UserDto>> PasswordSignInAsync(CheckPasswordDto checkPasswordDto)
         {
-
+            //burası düzenlenecek 477. satırdan sonrası
             //kullanıcı şifreyi hatalı girdiği anda buraya uğrar
             var userDto = await FindUserByEmailAsync(checkPasswordDto.Email);
             var userCheck = await CheckPasswordAsync(checkPasswordDto);
@@ -471,13 +472,16 @@ namespace AtSepete.Business.Concrete
                 return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
             }
             var currentUser = await _userRepository.GetByIdAsync(userDto.Data.Id);
-            if (currentUser.AccessFailedDate is not null)
+            if (currentUser.AccessFailedDate is not null)//daha önce hatalı giriş yapmış mı yoksa ilk girişi mi kontrol ederiz
             {
-
                 TimeSpan ts = DateTime.Now - currentUser.AccessFailedDate.Value;
-                if (currentUser.LockoutEnd >= DateTime.Now && ts.TotalMinutes > 30)
+                if (currentUser.LockoutEnd <= DateTime.Now || ts.TotalMinutes > 2)//son hatalı girişten sonra 15 dakika geçmiş mi ya da şifre kilitlenmişse de süresini doldurmuş mu diye bakılır!
                 {
+
                     currentUser.AccessFailedCount = 0;
+                    //currentUser.AccessFailedDate=null gerekli olursa bakılacak!!
+                    _loggerService.LogInfo(LogMessages.User_Object_Not_Found);//bu mailde kullanıcı bullanılamadı
+
                 }
             }
             if (userDto.IsSuccess)
@@ -499,7 +503,7 @@ namespace AtSepete.Business.Concrete
                     if (currentUser.AccessFailedCount >= 2)
                     {
                         _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
-                        currentUser.LockoutEnd = DateTime.Now.AddMinutes(1);//kaç dakika kilitlemek istiyorsak o süre kadar hesabı kilitler
+                        currentUser.LockoutEnd = DateTime.Now.AddMinutes(3);//kaç dakika kilitlemek istiyorsak o süre kadar hesabı kilitler , 30 dakika olarak belirlendi.
                     }
                     await _userRepository.UpdateAsync(currentUser);
                     await _userRepository.SaveChangesAsync();
@@ -542,14 +546,37 @@ namespace AtSepete.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null)
+        public async Task<IDataResult<ClaimsPrincipal>> SignInAsync(UserDto user)//buradan claimsPrincipal tipinde gönderilen veri login controllerda yakalanacak ve //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal); metot ile login işlemi başarılı olacak!!!
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                if (user is not null)
+                {
+                    var claims = new List<Claim>()
+                    {
+                        new Claim("ID", user.Id.ToString()),
+                        new Claim(ClaimTypes.Name, user.FirstName),
+                        new Claim(ClaimTypes.Surname, user.LastName),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                    };
 
-        public Task<IResult> SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
-        {
-            throw new NotImplementedException();
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+                    _loggerService.LogInfo();
+                    return new SuccessDataResult<ClaimsPrincipal>(principal, Messages.LoginSuccess);
+                    //await HttpContext.SignInAsync(
+                    //    CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                }
+                // Kullanıcının kimlik bilgileri doğru ise HTTP yanıtına bir kimlik belirtimi ekleyin
+
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError();
+                return new ErrorDataResult<ClaimsPrincipal>(Messages.LoginFailed);
+            }
+
         }
 
         public Task<IResult> SignOutAsync()
