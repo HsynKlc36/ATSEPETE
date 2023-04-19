@@ -30,11 +30,12 @@ namespace AtSepete.Business.JWT
 
             //oluşturulacak token ayarlarını vereceğiz!
             token.Expirition = DateTime.UtcNow.AddMinutes(minute);
+            //ürettiğimiz token içeriği
             JwtSecurityToken securityToken = new(
                 audience: _configuration["Token:Audience"],
                 issuer: _configuration["Token:Issuer"],
                 expires: token.Expirition,
-                notBefore: DateTime.UtcNow,
+                notBefore: DateTime.UtcNow,//ne zamandan itibaren geçerli olmalı
                 signingCredentials: signingCredentials,
                 claims:claimsPrincipal.Claims // dışarıdan aldığımız claimsleri burada atadık token'de.
                 );

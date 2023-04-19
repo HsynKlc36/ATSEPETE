@@ -16,6 +16,7 @@ namespace AtSepete.Api.Controllers
 {
     [Route("AtSepeteApi/[controller]")]
     [ApiController]
+    //[Authorize(AuthenticationSchemes = "Admin")]//buraya bakılacak!!
     public class userController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -27,6 +28,7 @@ namespace AtSepete.Api.Controllers
         }
         [HttpGet]
         [Route("[action]")]
+
         public async Task<IDataResult<List<UserListDto>>> GetAllUser()
         {
             return await _userService.GetAllUserAsync();
@@ -45,9 +47,9 @@ namespace AtSepete.Api.Controllers
         }
 
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Roles ="Admin")]//buraya bakılacak!!
         [HttpPost]
         [Route("[action]")]
+        [Authorize(AuthenticationSchemes = "Customer")]//buraya bakılacak!!
         public async Task<IDataResult<UserDto>> CheckUserSignIn(CheckPasswordDto checkPasswordDto)
         {
             return await _userService.CheckUserSignAsync(checkPasswordDto,true);
@@ -55,6 +57,7 @@ namespace AtSepete.Api.Controllers
         }
         [HttpPost]
         [Route("[action]")]
+        [AllowAnonymous]
         public async Task<IDataResult<Token>> LoginSignIn(CheckPasswordDto checkPasswordDto)
         {
             var userDto= await _userService.CheckUserSignAsync(checkPasswordDto, true);

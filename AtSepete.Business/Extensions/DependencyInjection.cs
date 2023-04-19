@@ -26,7 +26,7 @@ namespace AtSepete.Business.Extensions
             services.AddHttpContextAccessor();//servislerde httpContext'e ulaşabilmek için
             services.AddScoped<ITokenHandler, JWT.TokenHandler>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-               .AddJwtBearer(options =>
+               .AddJwtBearer("Admin", options =>
                {
                    options.TokenValidationParameters = new()
                    {
@@ -48,7 +48,38 @@ namespace AtSepete.Business.Extensions
                            var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
 
                            // Kontrol etmek istediğiniz roller veya izinler burada belirtilir.
-                           if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && (c.Value == "Admin"||c.Value=="Customer")))
+                           if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Admin"))
+                           {
+                               context.Fail("Unauthorized");
+                           }
+
+                           return Task.CompletedTask;
+                       }
+                   };
+               })
+               .AddJwtBearer("Customer", options =>
+               {
+                   options.TokenValidationParameters = new()
+                   {
+                       ValidateAudience = true,// hangi sitelerin veya kimlerin kullancağını belirleriz
+                       ValidateIssuer = true,//oluşturulacak token değerini kimin dağıttığının belirlendiği yerdir
+                       ValidateLifetime = true,//oluşturulan token değerinin süresini kontrol edecek olan doğrulama
+                       ValidateIssuerSigningKey = true,//üretilecek token değerinin uygulamamıza ait bir değer olduğunu ifade eden security key  verisinin doğrulanmasıdır
+                       ValidAudience = configuration["Token:Audience"],
+                       ValidIssuer = configuration["Token:Issuer"],
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
+                       LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
+                       //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
+
+                   };
+                   options.Events = new JwtBearerEvents
+                   {
+                       OnTokenValidated = context =>
+                       {
+                           var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+
+                           // Kontrol etmek istediğiniz roller veya izinler burada belirtilir.
+                           if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Customer"))
                            {
                                context.Fail("Unauthorized");
                            }
@@ -57,37 +88,7 @@ namespace AtSepete.Business.Extensions
                        }
                    };
                });
-               //.AddJwtBearer("Customer", options =>
-               //{
-               //    options.TokenValidationParameters = new()
-               //    {
-               //        ValidateAudience = true,// hangi sitelerin veya kimlerin kullancağını belirleriz
-               //        ValidateIssuer = true,//oluşturulacak token değerini kimin dağıttığının belirlendiği yerdir
-               //        ValidateLifetime = true,//oluşturulan token değerinin süresini kontrol edecek olan doğrulama
-               //        ValidateIssuerSigningKey = true,//üretilecek token değerinin uygulamamıza ait bir değer olduğunu ifade eden security key  verisinin doğrulanmasıdır
-               //        ValidAudience = configuration["Token:Audience"],
-               //        ValidIssuer = configuration["Token:Issuer"],
-               //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
-               //        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
-               //        //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
 
-               //    };
-               //    options.Events = new JwtBearerEvents
-               //    {
-               //        OnTokenValidated = context =>
-               //        {
-               //            var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
-
-               //            // Kontrol etmek istediğiniz roller veya izinler burada belirtilir.
-               //            if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Customer"))
-               //            {
-               //                context.Fail("Unauthorized");
-               //            }
-
-               //            return Task.CompletedTask;
-               //        }
-               //    };
-               //});
 
             services.AddAutoMapper(
             Assembly.GetExecutingAssembly(),
