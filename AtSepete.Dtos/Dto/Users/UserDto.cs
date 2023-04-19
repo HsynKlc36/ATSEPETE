@@ -19,6 +19,10 @@ namespace AtSepete.Dtos.Dto.Users
         public string Password { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenEndDate { get; set; }
+        public DateTimeOffset? LockoutEnd { get; set; }// hesabı ne kadar süreyle kitleyeceğini belirler
+        public bool LockoutEnabled { get; set; }// hesap kilitlensin mi bunu belirler
+        public int AccessFailedCount { get; set; }// kaç kere hatalı girişte hasabın kilitleneceğini belirler
+        public DateTime? AccessFailedDate { get; set; }
         public string Role { get; set; }
         public Gender Gender { get; set; }
         public string Adress { get; set; }

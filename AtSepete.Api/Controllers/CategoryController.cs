@@ -1,4 +1,4 @@
-﻿using AtSepete.Api.Jwt;
+﻿using AtSepete.Business.JWT;
 using AtSepete.Business.Abstract;
 using AtSepete.Dtos.Dto.Categories;
 using AtSepete.Entities.Data;

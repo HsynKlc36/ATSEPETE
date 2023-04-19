@@ -1,4 +1,4 @@
-﻿using AtSepete.Api.Jwt;
+﻿using AtSepete.Business.JWT;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,13 +18,13 @@ namespace AtSepete.Api.Controllers
         [HttpPost]
         public IActionResult Login(string userName, string password)
         {
-            if (userName == "N" && password == "M")
-            {
-                var token = _tokenHandler.CreateAccessToken(15);
+            //if (userName == "N" && password == "M")
+            //{
+            //    var token = _tokenHandler.CreateAccessToken(15,claimsPrincipal);
 
-                return Ok(token);
-            }
-            else
+            //    return Ok(token);
+            //}
+            //else
                 return BadRequest("Kullanıcı adı veya şifre hatalı !");
         }
 

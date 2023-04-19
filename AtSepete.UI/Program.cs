@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddDataAccessServices(builder.Configuration)
-    .AddBusinessServices()
+    .AddBusinessServices(builder.Configuration)
     .AddRepositoriesServices()
     .AddMvcServices();
 

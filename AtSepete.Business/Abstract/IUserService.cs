@@ -1,4 +1,5 @@
-﻿using AtSepete.Dtos.Dto.Users;
+﻿using AtSepete.Business.JWT;
+using AtSepete.Dtos.Dto.Users;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
 using AtSepete.Results.Concrete;
@@ -17,7 +18,7 @@ namespace AtSepete.Business.Abstract
 {
     public interface IUserService 
     {
-        Task<IDataResult<ClaimsPrincipal>> SignInAsync(UserDto user);// giriş yapma işlemini dener
+        Task<IDataResult<Token>> SignInAsync(UserDto user, bool IsSuccess);// giriş yapma işlemini dener
         Task<IResult> SignOutAsync();
         //yukarıdaki satırlar giriş ve çıkış işlemleri için kullanılır
         Task<IDataResult<List<UserListDto>>> GetAllUserAsync();//tüm user'ları getirir

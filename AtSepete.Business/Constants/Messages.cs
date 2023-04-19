@@ -4,6 +4,10 @@ public class Messages
 {
     public const string LoginSuccess = "Login_Success";
     public const string LoginFailed = "Login_Failed";
+    public const string LogOutSuccess = "LogOut_Success";
+    public const string LogOutFailed = "LogOut_Failed";
+
+
 
     public const string ListedSuccess = "Listed_Success";
     public const string ListedFailed = "Listed_Failed";
@@ -12,6 +16,8 @@ public class Messages
     public const string InvalidParameter = "Invalid_Parameter";
 
     public const string EmailDuplicate = "Email_Duplicate";
+    public const string EmailFailed = "Email_Failed";
+    public const string EmailOrPasswordInvalid = "Email_Or_Password_Invalid";
     public const string UserNotFound = "User_Not_Found";
     public const string UsersNotFound = "Users_Not_Found";
     public const string AddUserSuccess = "Add_User_Success";
@@ -65,6 +71,8 @@ public class Messages
     public const string CheckPasswordFail = "Check_Password_Fail";
 
     public const string PasswordNotMatch = "Password_Not_Match";
+    public const string PasswordFail = "Password_Fail";
+    public const string PasswordSuccess = "Password_Success";
 
 
  //Cons ve static atasındaki fark

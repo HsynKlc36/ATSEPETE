@@ -46,6 +46,17 @@ namespace AtSepete.Business.Constants
         public const string User_CheckPassword_Valid = "User_CheckPassword_Valid";
         public const string User_CheckPassword_Fail = "User_CheckPassword_Fail";
         public const string User_PasswordHash_Success = "User_PasswordHash_Success";
+        public const string User_Login_Success = "User_Login_Success";
+        public const string User_Login_Fail = "User_Login_Fail";
+        public const string User_LogOut_Fail = "User_LogOut_Fail";
+        public const string User_LogOut_Success = "User_LogOut_Success";
+        public const string User_Password_Fail = "User_Password_Fail";
+        public const string User_Password_Success = "User_Password_Success";
+        public const string User_Password_Lock_Enabled = "User_Password_Lock_Enabled";
+        public const string User_Email_Success = "User_Email_Success";
+        public const string User_Email_Fail = "User_Email_Fail";
+        public const string User_AccessFailedCount_Has_Been_Reset_To_Zero = "User_AccessFailedCount_Has_Been_Reset_To_Zero";
+        public const string User_Add_30_Minutes_To_AccessFailedDate = "User_Add_30_Minutes_To_AccessFailedDate";
 
 
         public const string Product_Listed_Success = "Product_Listed_Success";

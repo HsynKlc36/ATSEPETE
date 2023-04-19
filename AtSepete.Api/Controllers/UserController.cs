@@ -1,10 +1,13 @@
 ﻿using AtSepete.Business.Abstract;
 using AtSepete.Business.Concrete;
+using AtSepete.Business.JWT;
 using AtSepete.Dtos.Dto.ProductMarkets;
 using AtSepete.Dtos.Dto.Products;
 using AtSepete.Dtos.Dto.Users;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using IResult = AtSepete.Results.IResult;
@@ -42,13 +45,24 @@ namespace AtSepete.Api.Controllers
         }
 
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Roles ="Admin")]//buraya bakılacak!!
         [HttpPost]
         [Route("[action]")]
-        public async Task<IDataResult<UserDto>> CheckUserSign(CheckPasswordDto checkPasswordDto)
+        public async Task<IDataResult<UserDto>> CheckUserSignIn(CheckPasswordDto checkPasswordDto)
         {
             return await _userService.CheckUserSignAsync(checkPasswordDto,true);
            
         }
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IDataResult<Token>> LoginSignIn(CheckPasswordDto checkPasswordDto)
+        {
+            var userDto= await _userService.CheckUserSignAsync(checkPasswordDto, true);
+            return await _userService.SignInAsync(userDto.Data,userDto.IsSuccess);
+
+        }
+
+    
         [HttpPost]
         [Route("[action]")]
         public async Task<IResult> UserChangePassword(ChangePasswordDto changePasswordDto)

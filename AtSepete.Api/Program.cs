@@ -29,7 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddRepositoriesServices()
-    .AddBusinessServices()
+    .AddBusinessServices(builder.Configuration)
     .AddDataAccessServices(builder.Configuration)
     .AddApiServices(builder.Configuration);
 

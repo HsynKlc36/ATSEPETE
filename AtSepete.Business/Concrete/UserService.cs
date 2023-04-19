@@ -28,6 +28,7 @@ using CloudinaryDotNet;
 using Newtonsoft.Json;
 using AtSepete.Business.Logger;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using AtSepete.Business.JWT;
 
 namespace AtSepete.Business.Concrete
 {
@@ -37,13 +38,16 @@ namespace AtSepete.Business.Concrete
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly ILoggerService _loggerService;
-        //private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly ITokenHandler _tokenHandler;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, ILoggerService loggerService)
+        public UserService(IUserRepository userRepository, IMapper mapper, ILoggerService loggerService, ITokenHandler tokenHandler, IHttpContextAccessor httpContextAccessor = null)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _loggerService = loggerService;
+            _httpContext = httpContextAccessor;
+            _tokenHandler = tokenHandler;
         }
         public async Task<IDataResult<CreateUserDto>> AddUserAsync(CreateUserDto entity)//kullanıcı ekler
         {
@@ -415,10 +419,10 @@ namespace AtSepete.Business.Concrete
         {
             if (userDto is not null)
             {
-                userDto.RefreshToken = refreshToken;
-                userDto.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
-                var userMap = _mapper.Map<UserDto, User>(userDto);
-                await _userRepository.UpdateAsync(userMap);
+                var user=await _userRepository.GetByIdAsync(userDto.Id);
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
+                await _userRepository.UpdateAsync(user);
                 await _userRepository.SaveChangesAsync();
                 _loggerService.LogInfo($"Updated refresh token");
                 return new SuccessResult();
@@ -435,153 +439,158 @@ namespace AtSepete.Business.Concrete
                 return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
             }
             var userDto = await FindUserByEmailAsync(checkPasswordDto.Email);
+            if (userDto.Data is null)
+            {
+                _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
+                return new ErrorDataResult<UserDto>(Messages.ObjectNotFound);
+            }
             var userCheck = await CheckPasswordAsync(checkPasswordDto);
-            if (!lockoutOnFailure)
+            if (!lockoutOnFailure)//hesap kitleme aktif değilse giriş denemesi burada yapılır
             {
                 if (userDto.IsSuccess)
                 {
                     if (userCheck.IsSuccess)
                     {
-
-                        _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
-                        return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
+                        //kullanıcının lockOnEnable özelliği false çekilmesi gerekebilir!
+                        var user = await _userRepository.GetByIdAsync(userDto.Data.Id);
+                        user.LockoutEnabled = false;
+                        await _userRepository.UpdateAsync(user);
+                        await _userRepository.SaveChangesAsync();
+                        _loggerService.LogInfo(LogMessages.User_Login_Success);//login başarılı
+                        return new SuccessDataResult<UserDto>(userDto.Data, Messages.LoginSuccess);
                     }
                     else
                     {
-                        _loggerService.LogWarning(LogMessages.User_Object_Found_Success);//hatalı şifre mesajı dön
-                        return new ErrorDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
+                        _loggerService.LogWarning(LogMessages.User_Password_Fail);//hatalı şifre mesajı dön
+                        return new ErrorDataResult<UserDto>(userDto.Data, Messages.PasswordFail);
                     }
                 }
 
-                _loggerService.LogWarning(LogMessages.User_Object_Not_Found);//bu mailde kullanıcı bullanılamadı
-                return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+                _loggerService.LogWarning(LogMessages.User_Email_Fail);//hatalı email girişi
+                return new ErrorDataResult<UserDto>(Messages.EmailOrPasswordInvalid);//şifre veya mail hatalı
             }
-            _loggerService.LogInfo(LogMessages.User_Object_Found_Success); //şifre kilitleme metoduna gidecek              
+            if (userDto.Data.LockoutEnd > DateTime.Now)
+            {
+                _loggerService.LogWarning($"Hesabınız {userDto.Data.LockoutEnd}'e Kadar Kilitlendi");
+                return new ErrorDataResult<UserDto>($"Hesabınız {userDto.Data.LockoutEnd}'e Kadar Kilitlendi");//hesap kilitli ise buraya uğrayacak ve bunu dönecek!
+            }
+            _loggerService.LogInfo(LogMessages.User_Password_Lock_Enabled); //şifre kilitleme aktif                                 
             return await PasswordSignInAsync(checkPasswordDto);
-
         }
         protected async Task<IDataResult<UserDto>> PasswordSignInAsync(CheckPasswordDto checkPasswordDto)
         {
-            //burası düzenlenecek 477. satırdan sonrası
             //kullanıcı şifreyi hatalı girdiği anda buraya uğrar
             var userDto = await FindUserByEmailAsync(checkPasswordDto.Email);
             var userCheck = await CheckPasswordAsync(checkPasswordDto);
             if (userDto.Data is null)
             {
-                _loggerService.LogWarning(LogMessages.User_Object_Not_Found);//bu mailde kullanıcı bullanılamadı
-                return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
+                _loggerService.LogWarning(LogMessages.User_Email_Fail);//bu mailde kullanıcı bullanılamadı
+                return new ErrorDataResult<UserDto>(Messages.EmailFailed);//kullanıcı mail'i hatalı
             }
             var currentUser = await _userRepository.GetByIdAsync(userDto.Data.Id);
             if (currentUser.AccessFailedDate is not null)//daha önce hatalı giriş yapmış mı yoksa ilk girişi mi kontrol ederiz
             {
                 TimeSpan ts = DateTime.Now - currentUser.AccessFailedDate.Value;
-                if (currentUser.LockoutEnd <= DateTime.Now || ts.TotalMinutes > 2)//son hatalı girişten sonra 15 dakika geçmiş mi ya da şifre kilitlenmişse de süresini doldurmuş mu diye bakılır!
+                if (ts.TotalMinutes > 15)//son hatalı girişten sonra 15 dakika geçmiş mi ya da şifre kilitlenmişse de süresini doldurmuş mu diye bakılır!
                 {
-
                     currentUser.AccessFailedCount = 0;
                     //currentUser.AccessFailedDate=null gerekli olursa bakılacak!!
-                    _loggerService.LogInfo(LogMessages.User_Object_Not_Found);//bu mailde kullanıcı bullanılamadı
-
+                    _loggerService.LogInfo(LogMessages.User_AccessFailedCount_Has_Been_Reset_To_Zero);// AccessFailedCount sıfırlandı
                 }
             }
-            if (userDto.IsSuccess)
+            if (userDto.IsSuccess)//doğru email ile kullanıcı gelmiş mi kontrol ederiz ve gelmiş ise giriş işlemi denenir
             {
                 if (userCheck.IsSuccess && (currentUser.LockoutEnd <= DateTime.Now || currentUser.LockoutEnd is null))//şifre başarılı ve daha önceden hesap kilitlenmişse kontrol yapar kilitleme süresi dolmuşşa girebilir
                 {
-
                     currentUser.AccessFailedCount = 0;
                     await _userRepository.UpdateAsync(currentUser);
                     await _userRepository.SaveChangesAsync();
-                    _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
-                    return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);//buradan alınan değer login controllerda yakalanıcak
+                    _loggerService.LogInfo(LogMessages.User_Login_Success);
+                    return new SuccessDataResult<UserDto>(userDto.Data, Messages.LoginSuccess);//buradan alınan değer login controllerda yakalanıcak
                 }
                 else
                 {
-
                     currentUser.AccessFailedCount++;
                     currentUser.AccessFailedDate = DateTime.Now;
-                    if (currentUser.AccessFailedCount >= 2)
+                    if (currentUser.AccessFailedCount >= 5)
                     {
-                        _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
-                        currentUser.LockoutEnd = DateTime.Now.AddMinutes(3);//kaç dakika kilitlemek istiyorsak o süre kadar hesabı kilitler , 30 dakika olarak belirlendi.
+                        currentUser.LockoutEnd = DateTime.Now.AddMinutes(30);//kaç dakika kilitlemek istiyorsak o süre kadar hesabı kilitler , 30 dakika olarak belirlendi.
+                        _loggerService.LogInfo(LogMessages.User_Add_30_Minutes_To_AccessFailedDate);//AccessFailedDate'e 30 dakika eklendi
                     }
                     await _userRepository.UpdateAsync(currentUser);
                     await _userRepository.SaveChangesAsync();
-                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
-                    return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
-
+                    _loggerService.LogWarning(LogMessages.User_Login_Fail);
+                    return new ErrorDataResult<UserDto>(Messages.LoginFailed);
                 }
             }
-
-            _loggerService.LogInfo(LogMessages.User_Object_Found_Success);//hatalı şifre mesajı dön
-            return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
-
+            _loggerService.LogWarning(LogMessages.User_Email_Fail);//hatalı email 
+            return new ErrorDataResult<UserDto>(userDto.Data, Messages.EmailOrPasswordInvalid);//hatalı şifre veya email döneriz
         }
 
-        //public async Task<IDataResult<UserDto>> PasswordSignInAsync(PasswordSignDto passwordSignDto, CheckPasswordDto checkPasswordDto, bool lockoutOnFailure, Guid id)
-        //{
-        //    if (passwordSignDto is null)
-        //    {
-        //        _loggerService.LogInfo(LogMessages.User_Object_Not_Valid);
-        //        return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
-        //    }
-        //    var userDto = await FindUserByEmailAsync(passwordSignDto.Email);
-        //    var userCheck = await CheckPasswordAsync(checkPasswordDto);
-        //    if (userDto.IsSuccess && userCheck.IsSuccess)
-        //    {
-        //        _loggerService.LogInfo(LogMessages.User_Object_Found_Success);
-        //        return new SuccessDataResult<UserDto>(userDto.Data, Messages.UserFoundSuccess);
-        //    }
-        //    else
-        //    {
-        //        var currentUser = await _userRepository.GetByIdAsync(id);
-        //        currentUser
-        //    }
-        //    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
-        //    return new ErrorDataResult<UserDto>(Messages.ObjectNotValid);
-        //}
+
 
         public Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IDataResult<ClaimsPrincipal>> SignInAsync(UserDto user)//buradan claimsPrincipal tipinde gönderilen veri login controllerda yakalanacak ve //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal); metot ile login işlemi başarılı olacak!!!
+        public async Task<IDataResult<Token>> SignInAsync(UserDto userDto, bool IsSuccess)//buradan claimsPrincipal tipinde gönderilen veri login controllerda yakalanacak ve //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal); metot ile login işlemi başarılı olacak!!!
         {
+            
             try
             {
-                if (user is not null)
+                if (IsSuccess&& userDto is not null)
                 {
-                    var claims = new List<Claim>()
+                    
+                        var claims = new List<Claim>()
                     {
-                        new Claim("ID", user.Id.ToString()),
-                        new Claim(ClaimTypes.Name, user.FirstName),
-                        new Claim(ClaimTypes.Surname, user.LastName),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                        new Claim("ID", userDto.Id.ToString()),
+                        new Claim(ClaimTypes.Name, userDto.FirstName),
+                        new Claim(ClaimTypes.Surname, userDto.LastName),
+                        new Claim(ClaimTypes.Email, userDto.Email),
+                        new Claim(ClaimTypes.Role, userDto.Role.ToString())
                     };
+                        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    ClaimsPrincipal principal = new ClaimsPrincipal(identity);
-                    _loggerService.LogInfo();
-                    return new SuccessDataResult<ClaimsPrincipal>(principal, Messages.LoginSuccess);
-                    //await HttpContext.SignInAsync(
-                    //    CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                        Token token= _tokenHandler.CreateAccessToken(30,principal);
+                        await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 1);
+                    /*await _httpContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);*///=>bunu ui da yazmamız gerekecek.Gönderirken ne olarak gönderecek buna bakılacak!!
+
+                    _loggerService.LogInfo(LogMessages.User_Login_Success);
+                        return new SuccessDataResult<Token>(token, Messages.LoginSuccess);
+                    
+                    // Kullanıcının kimlik bilgileri doğru ise HTTP yanıtına bir kimlik belirtimi ekleyin
+                  
+
                 }
-                // Kullanıcının kimlik bilgileri doğru ise HTTP yanıtına bir kimlik belirtimi ekleyin
-
+                else
+                {
+                    _loggerService.LogWarning(LogMessages.User_Login_Fail);
+                    return new ErrorDataResult<Token>(Messages.LoginFailed);
+                }
             }
             catch (Exception)
             {
-                _loggerService.LogError();
-                return new ErrorDataResult<ClaimsPrincipal>(Messages.LoginFailed);
+                _loggerService.LogError(LogMessages.User_Login_Fail);
+                return new ErrorDataResult<Token>(Messages.LoginFailed);
             }
 
         }
 
-        public Task<IResult> SignOutAsync()
+        public async Task<IResult> SignOutAsync()
         {
-            throw new NotImplementedException();
+            try
+            {               
+                _loggerService.LogInfo(LogMessages.User_LogOut_Success);
+                return new SuccessResult(Messages.LogOutSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.User_LogOut_Fail);
+                return new ErrorResult(Messages.LogOutFailed);
+            }
+
         }
 
 
