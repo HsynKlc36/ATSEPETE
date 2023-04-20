@@ -89,5 +89,5 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-AdminSeedData.SeedAsync(app.Configuration);
+await AdminSeedData.SeedAsync(app.Configuration);
 app.Run();
