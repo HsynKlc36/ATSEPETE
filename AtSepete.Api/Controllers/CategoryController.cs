@@ -17,7 +17,6 @@ namespace AtSepete.Api.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        
 
         public CategoryController(ICategoryService CategoryService)
         {

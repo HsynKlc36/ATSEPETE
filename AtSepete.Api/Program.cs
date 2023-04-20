@@ -5,6 +5,7 @@ using AtSepete.Business.Concrete;
 using AtSepete.Business.Extensions;
 using AtSepete.Business.Mapper.Profiles;
 using AtSepete.DataAccess.Extensions;
+using AtSepete.DataAccess.SeedData;
 using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
@@ -83,11 +84,10 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseMiddleware<Mid>();
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
-
 app.MapControllers();
-
+AdminSeedData.SeedAsync(app.Configuration);
 app.Run();
