@@ -33,6 +33,7 @@ namespace AtSepete.Business.Abstract
         Task<IResult> HardDeleteUserAsync(Guid id);//veritabanından siler
         Task<IResult> SoftDeleteUserAsync(Guid id);//IsActive false' a çeker
         Task<IResult> CheckPasswordAsync(CheckPasswordDto checkPasswordDto);//user'ın şifresini kontrol eder!
+        Task<IDataResult<string>> ResetPasswordEmailSender(string email);
         Task<IDataResult<UserDto>> CheckUserSignAsync(CheckPasswordDto checkPasswordDto,bool lockoutOnFailure);//giriş yapmak isteyen kullanıcıyı database'den kontrol edecek!
         Task<IResult> UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate);//user login olunca verilecek refresh tokenı belirler.dto ya RefreshToken ve süresi parametreleri eklenmeli!!
 

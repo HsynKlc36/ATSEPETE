@@ -6,6 +6,10 @@ using AtSepete.Business.Mapper.Profiles;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -37,8 +41,9 @@ namespace AtSepete.Business.Extensions
                        ValidAudience = configuration["Token:Audience"],
                        ValidIssuer = configuration["Token:Issuer"],
                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
-                       LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
+                       LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
                        //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
+                       NameClaimType=ClaimTypes.Name //=>jwt üzerinde Name claim'e karşılık gelen değeri User.Identity.Name propertysinden elde edebiliriz.Yani hangi kullanıcının istek yaptığını bu property sayesinde user.Identity.Name ile cağırdığımız yerde yakalamamıza yardımcı olur
 
                    };
                    options.Events = new JwtBearerEvents
@@ -46,13 +51,11 @@ namespace AtSepete.Business.Extensions
                        OnTokenValidated = context =>
                        {
                            var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
-
                            // Kontrol etmek istediğiniz roller veya izinler burada belirtilir.
                            if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Admin"))
                            {
                                context.Fail("Unauthorized");
                            }
-
                            return Task.CompletedTask;
                        }
                    };
@@ -108,6 +111,8 @@ namespace AtSepete.Business.Extensions
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IUserService, UserService>();
             services.AddSingleton<ILoggerService, LoggerService>();
+            services.AddSingleton<IEmailSender, EmailSenderService>();
+            
             return services;
         }
     }

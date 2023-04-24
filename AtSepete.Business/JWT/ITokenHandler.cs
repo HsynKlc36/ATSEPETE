@@ -9,6 +9,7 @@ namespace AtSepete.Business.JWT
 {
     public interface ITokenHandler
     {
+        public Token ResetPasswordToken(int minute);
         Token CreateAccessToken(int minute, ClaimsPrincipal claimsPrincipal);
         string CreateRefreshToken();
     }

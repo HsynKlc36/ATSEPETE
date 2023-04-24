@@ -10,6 +10,6 @@ namespace AtSepete.Business.JWT
     {
         public string AccessToken { get; set; }//token
         public DateTime Expirition { get; set; }//token süresi
-        public string RefreshToken { get; set; }//refresh token
+        public string? RefreshToken { get; set; }//refresh token
     }
 }

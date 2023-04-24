@@ -63,8 +63,16 @@ namespace AtSepete.Api.Controllers
             return await _userService.SignInAsync(userDto.Data,userDto.IsSuccess);
 
         }
+        [HttpPost]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public async Task<IDataResult<string>> ResetPasswordEmailSender([FromBody]string email)
+        {
+            return await _userService.ResetPasswordEmailSender(email);
 
-    
+        }
+
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IResult> UserChangePassword(ChangePasswordDto changePasswordDto)

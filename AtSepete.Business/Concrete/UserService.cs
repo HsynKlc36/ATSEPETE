@@ -29,6 +29,10 @@ using Newtonsoft.Json;
 using AtSepete.Business.Logger;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AtSepete.Business.JWT;
+using SendGrid.Helpers.Mail;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace AtSepete.Business.Concrete
 {
@@ -40,14 +44,16 @@ namespace AtSepete.Business.Concrete
         private readonly ILoggerService _loggerService;
         private readonly IHttpContextAccessor _httpContext;
         private readonly ITokenHandler _tokenHandler;
+        private readonly IEmailSender _emailSender;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, ILoggerService loggerService, ITokenHandler tokenHandler, IHttpContextAccessor httpContextAccessor = null)
+        public UserService(IUserRepository userRepository, IMapper mapper, ILoggerService loggerService, ITokenHandler tokenHandler,IEmailSender emailSender, IHttpContextAccessor httpContextAccessor = null)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _loggerService = loggerService;
             _httpContext = httpContextAccessor;
             _tokenHandler = tokenHandler;
+            _emailSender = emailSender;
         }
         public async Task<IDataResult<CreateUserDto>> AddUserAsync(CreateUserDto entity)//kullanıcı ekler
         {
@@ -419,7 +425,7 @@ namespace AtSepete.Business.Concrete
         {
             if (userDto is not null)
             {
-                var user=await _userRepository.GetByIdAsync(userDto.Id);
+                var user = await _userRepository.GetByIdAsync(userDto.Id);
                 user.RefreshToken = refreshToken;
                 user.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
                 await _userRepository.UpdateAsync(user);
@@ -527,7 +533,38 @@ namespace AtSepete.Business.Concrete
             return new ErrorDataResult<UserDto>(userDto.Data, Messages.EmailOrPasswordInvalid);//hatalı şifre veya email döneriz
         }
 
+        public async Task<IDataResult<string>> ResetPasswordEmailSender(string email)
+        {
+            try
+            {
+                var user = await FindUserByEmailAsync(email);
+                if (user.Data == null)
+                {
+                    _loggerService.LogWarning(LogMessages.User_Email_Fail);//bu mailde kullanıcı bullanılamadı
+                    return new ErrorDataResult<string>(Messages.EmailFailed);//kullanıcı mail'i hatalı
+                }
 
+                Token token = _tokenHandler.ResetPasswordToken(10);
+                string encodedToken = HttpUtility.UrlEncode(token.ToString()); // URL ile gönderileceği için bazı karakterlerin bozulmaması için encode ediliyor             
+                string encodedEmail = HttpUtility.UrlEncode(email); // URL ile gönderileceği için bazı karakterlerin bozulmaması için encode ediliyor             
+                
+                var content = $"Merhaba, <br />" +
+                    $"Şifreni yenilemek için linke tıklayabilirsin: " +
+                    $"<a href='https://localhost:7290/Login/NewPasword?email={encodedEmail}&token={encodedToken}{token}'>Şifre Yenile</a>" +
+                    $"İyi çalışmalar dileriz.. <br /> <br />" +
+                    $"AtSepete";
+                await _emailSender.SendEmailAsync(email, "Şifre Yenile", content); //Mail gönderiliyor
+                _loggerService.LogInfo(LogMessages.User_ResetPasswordEmailSender_Success);
+                return new SuccessDataResult<string>(content, Messages.ResetPasswordEmailSender_Success);
+            }
+            catch (Exception)
+            {
+
+                _loggerService.LogError(LogMessages.User_ResetPasswordEmailSender_Fail);
+                return new ErrorDataResult<string>(Messages.ResetPasswordEmailSender_Fail);
+            }
+
+        }
 
         public Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
         {
@@ -536,13 +573,11 @@ namespace AtSepete.Business.Concrete
 
         public async Task<IDataResult<Token>> SignInAsync(UserDto userDto, bool IsSuccess)//buradan claimsPrincipal tipinde gönderilen veri login controllerda yakalanacak ve //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal); metot ile login işlemi başarılı olacak!!!
         {
-            
             try
             {
-                if (IsSuccess&& userDto is not null)
+                if (IsSuccess && userDto is not null)
                 {
-                    
-                        var claims = new List<Claim>()
+                    var claims = new List<Claim>()
                     {
                         new Claim("ID", userDto.Id.ToString()),
                         new Claim(ClaimTypes.Name, userDto.FirstName),
@@ -550,18 +585,18 @@ namespace AtSepete.Business.Concrete
                         new Claim(ClaimTypes.Email, userDto.Email),
                         new Claim(ClaimTypes.Role, userDto.Role.ToString())
                     };
-                        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
-                        Token token= _tokenHandler.CreateAccessToken(30,principal);
-                        await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 15);
+                    Token token = _tokenHandler.CreateAccessToken(30, principal);
+                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 15);
                     /*await _httpContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);*///=>bunu ui da yazmamız gerekecek.Gönderirken ne olarak gönderecek buna bakılacak!!
 
                     _loggerService.LogInfo(LogMessages.User_Login_Success);
-                        return new SuccessDataResult<Token>(token, Messages.LoginSuccess);
-                    
+                    return new SuccessDataResult<Token>(token, Messages.LoginSuccess);
+
                     // Kullanıcının kimlik bilgileri doğru ise HTTP yanıtına bir kimlik belirtimi ekleyin
-                  
+
 
                 }
                 else
@@ -581,7 +616,7 @@ namespace AtSepete.Business.Concrete
         public async Task<IResult> SignOutAsync()
         {
             try
-            {               
+            {
                 _loggerService.LogInfo(LogMessages.User_LogOut_Success);
                 return new SuccessResult(Messages.LogOutSuccess);
             }

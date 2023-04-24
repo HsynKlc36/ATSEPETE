@@ -17,6 +17,8 @@ public class Messages
 
     public const string EmailDuplicate = "Email_Duplicate";
     public const string EmailFailed = "Email_Failed";
+    public const string ResetPasswordEmailSender_Fail= "ResetPasswordEmailSender_Fail";
+    public const string ResetPasswordEmailSender_Success= "ResetPasswordEmailSender_Success";
     public const string EmailOrPasswordInvalid = "Email_Or_Password_Invalid";
     public const string UserNotFound = "User_Not_Found";
     public const string UsersNotFound = "Users_Not_Found";
