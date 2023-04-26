@@ -43,7 +43,7 @@ namespace AtSepete.Business.Extensions
                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
                        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
                        //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
-                       NameClaimType=ClaimTypes.Name //=>jwt üzerinde Name claim'e karşılık gelen değeri User.Identity.Name propertysinden elde edebiliriz.Yani hangi kullanıcının istek yaptığını bu property sayesinde user.Identity.Name ile cağırdığımız yerde yakalamamıza yardımcı olur
+                       NameClaimType = ClaimTypes.Name //=>jwt üzerinde Name claim'e karşılık gelen değeri User.Identity.Name propertysinden elde edebiliriz.Yani hangi kullanıcının istek yaptığını bu property sayesinde user.Identity.Name ile cağırdığımız yerde yakalamamıza yardımcı olur
 
                    };
                    options.Events = new JwtBearerEvents
@@ -87,6 +87,40 @@ namespace AtSepete.Business.Extensions
                                context.Fail("Unauthorized");
                            }
 
+                           return Task.CompletedTask;
+                       }
+                   };
+               })
+               .AddJwtBearer("ForgetPassword", options =>
+               {
+                   options.TokenValidationParameters = new()
+                   {
+                       ValidateAudience = true,// hangi sitelerin veya kimlerin kullancağını belirleriz
+                       ValidateIssuer = true,//oluşturulacak token değerini kimin dağıttığının belirlendiği yerdir
+                       ValidateLifetime = true,//oluşturulan token değerinin süresini kontrol edecek olan doğrulama
+                       ValidateIssuerSigningKey = true,//üretilecek token değerinin uygulamamıza ait bir değer olduğunu ifade eden security key  verisinin doğrulanmasıdır
+                       ValidAudience = configuration["Token:Audience"],
+                       ValidIssuer = configuration["Token:Issuer"],
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
+                       LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
+                       //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
+
+                   };
+                   options.Events = new JwtBearerEvents
+                   {
+                       OnTokenValidated = context =>
+                       {
+                           var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+                           // Kontrol etmek istediğiniz roller veya izinler burada belirtilir.
+                           if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "ForgetPassword"))
+                           {
+                               context.Fail("Unauthorized");
+                           }
+                           var email = context.Principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                           if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Email && c.Value == email))
+                           {
+                               context.Fail("Unauthorized");
+                           }
                            return Task.CompletedTask;
                        }
                    };

@@ -9,14 +9,17 @@ using AtSepete.Results;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
+using System.Text;
+using System.Web;
 using IResult = AtSepete.Results.IResult;
 
 namespace AtSepete.Api.Controllers
 {
     [Route("AtSepeteApi/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Admin")]
+    //[Authorize(AuthenticationSchemes = "Admin")]
     public class userController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -66,13 +69,19 @@ namespace AtSepete.Api.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<IDataResult<string>> ResetPasswordEmailSender([FromBody]string email)
+        public async Task<IDataResult<string>> ForgetPasswordEmailSender(ForgetPasswordEmailDto emailDto)
         {
-            return await _userService.ResetPasswordEmailSender(email);
+            return await _userService.ForgetPasswordEmailSenderAsync(emailDto);
 
         }
-
-
+        [HttpPost]
+        [Route("[action]")]
+        [Authorize(AuthenticationSchemes = "ForgetPassword")]
+        public async Task<IResult> ResetPassword(NewPasswordDto newPasswordDto)
+        {
+            return await _userService.ResetPasswordAsync(newPasswordDto);
+        }
+  
         [HttpPost]
         [Route("[action]")]
         public async Task<IResult> UserChangePassword(ChangePasswordDto changePasswordDto)

@@ -32,6 +32,12 @@ namespace AtSepete.Business.Mapper.Profiles
                 config => config.MapFrom(src => src.Email))
                 .ForMember(dest => dest.CurrentPassword,
                 config => config.Ignore());
+            CreateMap<NewPasswordDto, User>()
+                .ForMember(dest => dest.Password,
+                config => config.MapFrom(src => src.Password))
+                .ForMember(dest => dest.Email,
+                config => config.Ignore());
+                
         }
     }
 }

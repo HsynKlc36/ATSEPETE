@@ -533,27 +533,26 @@ namespace AtSepete.Business.Concrete
             return new ErrorDataResult<UserDto>(userDto.Data, Messages.EmailOrPasswordInvalid);//hatalı şifre veya email döneriz
         }
 
-        public async Task<IDataResult<string>> ResetPasswordEmailSender(string email)
+        public async Task<IDataResult<string>> ForgetPasswordEmailSenderAsync(ForgetPasswordEmailDto emailDto)
         {
             try
             {
-                var user = await FindUserByEmailAsync(email);
+                var user = await FindUserByEmailAsync(emailDto.Email);
                 if (user.Data == null)
                 {
                     _loggerService.LogWarning(LogMessages.User_Email_Fail);//bu mailde kullanıcı bullanılamadı
                     return new ErrorDataResult<string>(Messages.EmailFailed);//kullanıcı mail'i hatalı
                 }
 
-                Token token = _tokenHandler.ResetPasswordToken(10);
-                string encodedToken = HttpUtility.UrlEncode(token.ToString()); // URL ile gönderileceği için bazı karakterlerin bozulmaması için encode ediliyor             
-                string encodedEmail = HttpUtility.UrlEncode(email); // URL ile gönderileceği için bazı karakterlerin bozulmaması için encode ediliyor             
-                
+                Token token = _tokenHandler.ResetPasswordToken(20,emailDto);
+         
+                string url = $"https://localhost:7290/Home/NewPassword?token={token.AccessToken}";
                 var content = $"Merhaba, <br />" +
                     $"Şifreni yenilemek için linke tıklayabilirsin: " +
-                    $"<a href='https://localhost:7290/Login/NewPasword?email={encodedEmail}&token={encodedToken}{token}'>Şifre Yenile</a>" +
-                    $"İyi çalışmalar dileriz.. <br /> <br />" +
+                    $"<a href='{url}'> Şifre Yenile </a>" +
+                    $"İyi alışverişler dileriz.. <br /> <br />" +
                     $"AtSepete";
-                await _emailSender.SendEmailAsync(email, "Şifre Yenile", content); //Mail gönderiliyor
+                await _emailSender.SendEmailAsync(emailDto.Email, "Şifre Yenile", content); //Mail gönderiliyor
                 _loggerService.LogInfo(LogMessages.User_ResetPasswordEmailSender_Success);
                 return new SuccessDataResult<string>(content, Messages.ResetPasswordEmailSender_Success);
             }
@@ -565,10 +564,64 @@ namespace AtSepete.Business.Concrete
             }
 
         }
-
-        public Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)
+        protected async Task<string> ToEncodedString(Token token)// bu metot sadece token'ı encoded etmek için buraya özel yazılmıştır
         {
-            throw new NotImplementedException();
+            // Token'ın byte dizisi olarak temsilini al
+            byte[] tokenBytes = Encoding.UTF8.GetBytes(token.ToString());
+
+            // Base64 kodlaması yaparak byte dizisini string'e dönüştür
+            string encodedToken = Convert.ToBase64String(tokenBytes);
+
+            // URL-encoding yap ve sonucu döndür
+            return HttpUtility.UrlEncode(encodedToken);
+        }
+        protected async Task<string>  FromEncodedString(string encodedToken)//bu metot sadece encode olan token'ı decoded etmek için buraya özel yazılmıştır...
+        {
+            // URL-decoding yap
+            string decodedToken = HttpUtility.UrlDecode(encodedToken);
+
+            // Base64 kodlamasını çözerek byte dizisine dönüştür
+            byte[] tokenBytes = Convert.FromBase64String(decodedToken);
+
+            // Byte dizisini string'e çevirerek sonucu döndür
+            return Encoding.UTF8.GetString(tokenBytes);
+        }
+
+        public async Task<IResult> ResetPasswordAsync(NewPasswordDto newPasswordDto)
+        {
+            try
+            {
+                if (newPasswordDto is null)
+                {
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Valid);
+                    return new ErrorResult(Messages.ObjectNotValid);
+                }
+                var userDto = await FindUserByEmailAsync(newPasswordDto.Email);
+                if (userDto.Data is null)
+                {
+                    _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
+                    return new ErrorResult(Messages.ObjectNotFound);
+                }
+                if (string.IsNullOrEmpty(newPasswordDto.Token))
+                {
+                    _loggerService.LogWarning(LogMessages.User_Token_Not_Found);
+                    return new ErrorResult(Messages.UserTokenNotFound);
+                }
+                var user=await _userRepository.GetByIdAsync(userDto.Data.Id);
+
+                newPasswordDto.Password = await PasswordHashAsync(newPasswordDto.Password);
+                var updateUser=_mapper.Map(newPasswordDto,user);
+                var result=await _userRepository.UpdateAsync(updateUser);
+                await _userRepository.SaveChangesAsync();
+
+                _loggerService.LogInfo(LogMessages.User_ResetPassword_Success);
+                return new SuccessResult(Messages.ResetPasswordSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.User_ResetPassword_Fail);
+                return new ErrorResult(Messages.ResetPasswordFail);
+            }
         }
 
         public async Task<IDataResult<Token>> SignInAsync(UserDto userDto, bool IsSuccess)//buradan claimsPrincipal tipinde gönderilen veri login controllerda yakalanacak ve //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal); metot ile login işlemi başarılı olacak!!!
@@ -629,176 +682,9 @@ namespace AtSepete.Business.Concrete
         }
 
 
-        #region Şifremi unuttum deneme
-        //        [HttpPost]
-        //        public async Task<IResult> SifremiUnuttum(string email)
-        //        {
-        //            //apideki send mail metoduna ui dan ailınan mail adresi gönderme işlemi yapılır
-        //            sendMailForRestPass(email); //apinin restpass metoduna eamili gönder
-        //        }
-        //        public async Task sendMailForRestPass(string email)//apinin mail gönderme metodu
-        //        {
-        //            //burada bana ui tarafından mail adresi gelir ben token üretirim mail adresiyle tokenı karıştırır kullanıcıya mail atarım ki şiğfresini değiştirebilsimn
-        //            var token = handlerToken();
-        //            //kullanıcıya mail gönder(mailin url'inde token olacak kullanıcının mail adresi olacak)
-        //            //burada url üzerinden nesne olarak email ve token gönderilecek.
-        //        }
-        //        [HttpGet]
-        //        public async Task şifremiDeğiştir(string email, string token)//UI controller
-        //        {
-        //            ///kullanıcı mail adresindeki linke tıklar bana gelir ben sayfanın arka planında mail adresi ve token bilgilkerini tutarım ben bir ui controlleryım
+ 
+   
 
-        //        }
-        //        [HttpPost]
-        //        public async Task şifremiDeğiştir(string email, string token, string pass1, string pass2)//uı controller
-        //        {//bende bir ui controlrıyım getten gelen bilgilerle birlikte kullanıcının yeni şifresini alrım
-
-        //            ///buraya api ile bağlanmak içiçn bir kod yazarım kullanıcın yeni şifresini mail adresini token bilgisini api ye gönderirim ben bir ui controllerıyım
-        //            using (var httpClient = new HttpClient())//api ile localhosttan bağlantı kurarak istekleri yönetir.
-        //            {
-        //                using (var answer = await httpClient.GetAsync("https://localhost:7286/AtSepeteApi/user/apiresetpass"))
-        //                {
-        //                    string apiAnswer = await
-        ////post et apiye email token pnewwpass
-        //answer.Content.ReadAsStringAsync();
-        //                    products = JsonConvert.DeserializeObject<Product>(apiAnswer);
-        //                }
-
-
-        //            }
-        //        }
-        //        public async Task apicontroller(string email, string token, string pass1, string pass2)
-        //        {
-        //            _userservice.apiResetPass(string email, string token, string pass1, string pass2)// burada aşağıdaki servis metoduna bağlanacak
-        //        }
-        //        public async Task apiResetPass(string email, string token, string pass1, string pass2)//user apiservis metodu
-        //        {
-        //            ///ben bir api servisiyimapi contollerımdan gelen kullanıcı mail adresi token ı şifresini burda kontrol eder ve değiştiritim
-        //            ///
-        //            AppUser user = await _userManager.FindByEmailAsync(vm.Email);
-        //            user.UpdateDate = DateTime.Now;
-        //            string decodedtoken = HttpUtility.UrlDecode(vm.Token); // Encode edilen token decode ediliyor
-        //            IdentityResult passwordChangeResult = await _userManager.ResetPasswordAsync(user, decodedtoken, vm.Password);
-        //            if (passwordChangeResult.Succeeded)
-        //            {
-        //                await _userManager.UpdateSecurityStampAsync(user);
-        //                TempData["Message"] = "Şifreniz Değiştirildi";
-        //            }
-        //            else
-        //            {
-        //                TempData["Message2"] = "Şifreniz Değiştirilemedi";
-        //            }
-        //            return RedirectToAction("Login");
-        //        }
-        #endregion
-
-
-        //public async Task<IResult> ResetPasswordAsync(UserDto user, string token, string newPassword)//unutulan şifreyi sıfırlama
-        //{
-        //    var currentUser = await _userRepository.GetByDefaultAsync(x => x.Id == user.Id);
-
-        //    string uniqueName = $"{Guid.NewGuid().ToString().ToLower()}";
-
-
-
-        //    if (currentUser is not null)
-        //    {
-        //        var fromAddress = new MailAddress("i_am_hr@outlook.com");
-        //        var toAddress = new MailAddress(user.Email);
-        //        string encodedToken = HttpUtility.UrlEncode(token);
-        //        var Link = $"Merhaba {currentUser.GetFullName()} , <br />" +
-        //                    $"Şifreni yenilemek için linke tıklayabilirsin: " +
-        //                    $"<a href='https://localhost:7286{Url.Action("NewPassword", "Login", new { email = currentUser.Email, token = encodedToken })}'>Şifre Yenile</a> <br />" +
-        //                    $"İyi alışverişler dileriz.. <br /> <br />";
-        //        //Email yerine Guid veya token ile değişiklik yapılacak
-        //        string resetPass = "Şifre Yenileme Bağlantınız";
-        //        using (var smtp = new SmtpClient
-        //        {
-        //            Host = "smtp-mail.outlook.com",
-        //            /**/
-        //            Port = 587,
-        //            EnableSsl = true,
-        //            DeliveryMethod = SmtpDeliveryMethod.Network,
-        //            UseDefaultCredentials = false,
-
-
-        //            Credentials = new NetworkCredential(fromAddress.Address, "ik-123456")
-        //        }) ;
-        //        //try
-        //        //{
-        //        //    {
-        //        //        using (var message = new MailMessage(fromAddress, toAddress) { Subject = resetPass, Body = Link, IsBodyHtml = true })
-        //        //        {
-        //        //            smtp.Send(message);
-        //        //        }
-        //        //    }
-        //        //    ViewBag.Sonuc = "Mail Başarıyla Gönderildi.";
-        //        //}
-        //        //catch (Exception)
-        //        //{
-        //        //    ViewBag.Sonuc = "Mail Gönderiminde Hata Oluştu.";
-        //        //}
-        //    }
-        //    return new SuccessResult(Messages.DeleteSuccess);
-        //}
-
-        //public Task<IResult> SignInAsync(UserDto user, bool isPersistent, string authenticationMethod = null)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<IResult> SignInAsync(UserDto user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public async Task<IResult> SignOutAsyncA()
-        //{
-        //    await SignOutAsyncMethod(IdentityConstants.ApplicationScheme);
-
-        //    return new SuccessResult(result);
-        //}
-        //protected async Task SignOutAsyncMethod(string scheme)
-        //{
-        //    var result = await _httpContextAccessor.HttpContext.AuthenticateAsync(scheme);
-        //    if (result?.Principal != null)
-        //    {
-
-        //        var properties = result.Properties;
-        //        var options = SchemeOptions.Get(scheme);
-        //        if (options?.Events != null)
-        //        {
-        //            await options.Events.SigningOut(new AuthenticationProperties(properties), Context.Request.HttpContext);
-        //            properties = new AuthenticationProperties(options.Cookie);
-        //        }
-        //        await Context.SignOutAsync(scheme, properties);
-        //    }
-        //}
-
-        //public async Task<IResult> SoftDeleteUserAsync(Guid id)
-        //{
-        //    var user = await _userRepository.GetByIdAsync(id);
-        //    if (user is null)
-        //    {
-        //        return new ErrorResult(Messages.ProductNotFound);
-        //    }
-        //    else
-        //    {
-        //        user.IsActive = false;
-        //        user.DeletedDate = DateTime.Now;
-        //        await _userRepository.UpdateAsync(user);
-        //        await _userRepository.SaveChangesAsync();
-        //        return new SuccessResult(Messages.DeleteSuccess);
-        //    }
-        //}
-        /// <summary>
-        ///login olan kullanıcı token oluşturduktan sonra Updaterefreshtoken metodu ile refresh token üretir
-        /// </summary>
-        /// <param name="refreshToken">token.RefreshToken</param>
-        /// <param name="userDto">user</param>
-        /// <param name="accessTokenDate">token.Expiration</param>
-        /// <param name="AddOnAccessTokenDate">accessToken'a eklenecek süre yani refresh token süresi</param>
-        /// <returns></returns>
 
     }
 }

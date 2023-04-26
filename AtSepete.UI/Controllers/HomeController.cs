@@ -10,6 +10,8 @@ using AtSepete.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace AtSepete.UI.Controllers
@@ -113,6 +115,18 @@ namespace AtSepete.UI.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpGet]
+        public IActionResult NewPassword(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token); 
+            Claim emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type ==ClaimTypes.Email); 
+            if (emailClaim != null) 
+            { string emailValue = emailClaim.Value; }
+
+            return View();
         }
     }
 
