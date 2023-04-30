@@ -24,6 +24,11 @@ namespace AtSepete.UI.Areas.Admin.Controllers
         {
             return View();
         }
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            return View();
+        }
         //[HttpPost]
         //public async Task<IActionResult> AdminUpdate()
         //{

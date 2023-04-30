@@ -1,8 +1,9 @@
 using AtSepete.Api.Extensions;
-using AtSepete.Api.Middlewares;
+
 using AtSepete.Business.Abstract;
 using AtSepete.Business.Concrete;
 using AtSepete.Business.Extensions;
+using AtSepete.Business.Logger;
 using AtSepete.Business.Mapper.Profiles;
 using AtSepete.DataAccess.Extensions;
 using AtSepete.DataAccess.SeedData;
@@ -81,6 +82,7 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "AtSepeteApi v1");
     });
+   
 }
 
 //app.UseMiddleware<Mid>();

@@ -15,7 +15,7 @@ namespace AtSepete.Business.Mapper.Profiles
             CreateMap<User,UpdateUserDto>();
             CreateMap<UpdateUserDto,User>();
             CreateMap<User, CreateUserDto>();
-            CreateMap<CreateUserDto,User>();
+            CreateMap<CreateUserDto, User>();
             CreateMap<User, UserListDto>();
             CreateMap<UserListDto, User>();
             CreateMap<UserDto,User>();

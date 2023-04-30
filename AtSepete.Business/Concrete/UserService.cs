@@ -34,6 +34,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
+
 namespace AtSepete.Business.Concrete
 {
     // hatalar ve data dönülmeye gerek olmayan tüm resultları kontrol et düzenle!!
@@ -57,6 +58,7 @@ namespace AtSepete.Business.Concrete
         }
         public async Task<IDataResult<CreateUserDto>> AddUserAsync(CreateUserDto entity)//kullanıcı ekler
         {
+
             try
             {
                 if (entity == null)
@@ -77,6 +79,7 @@ namespace AtSepete.Business.Concrete
 
                 _loggerService.LogInfo(LogMessages.User_Added_Success);
                 return new SuccessDataResult<CreateUserDto>(_mapper.Map<User, CreateUserDto>(userMap), Messages.AddUserSuccess);
+              
             }
             catch (Exception)
             {
@@ -216,6 +219,7 @@ namespace AtSepete.Business.Concrete
         }
         public async Task<IDataResult<UserDto>> FindUserByEmailAsync(string email)// email ile user getirir
         {
+
             try
             {
                 var user = await _userRepository.GetByDefaultAsync(x => x.Email == email);

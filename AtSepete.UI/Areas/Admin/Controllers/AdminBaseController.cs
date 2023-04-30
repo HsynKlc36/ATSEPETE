@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AtSepete.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = "Admin")]
     public class AdminBaseController:BaseController
     {
     }

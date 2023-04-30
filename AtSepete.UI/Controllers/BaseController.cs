@@ -4,36 +4,15 @@ using AtSepete.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using System.Text;
 
 namespace AtSepete.UI.Controllers
 {
     public class BaseController:Controller
     {
-
-        public BaseController()
-        {
-            
-        }
-        [HttpGet]
-        public async Task<IActionResult> Login()
-        {
-           return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> Login(CheckPasswordDto checkPasswordDto)
-        {
-            using (var httpClient = new HttpClient())
-            {
-                StringContent content = new StringContent(JsonConvert.SerializeObject(checkPasswordDto), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/user/CheckUserSign",content))
-                {
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    UserApiResponse user = JsonConvert.DeserializeObject<UserApiResponse>(apiResponse);
-                    return View(user);
-                };
-            };
-        }
+        protected string? UserIdentityId => User.FindFirstValue(ClaimTypes.NameIdentifier);
+      
         //protected INotyfService NotyfService => HttpContext.RequestServices.GetService(typeof(INotyfService)) as INotyfService;
         //protected IStringLocalizer<SharedModelResource> Localizer => HttpContext.RequestServices.GetService(typeof(IStringLocalizer<SharedModelResource>)) as IStringLocalizer<SharedModelResource>;// dil değişimleri için kullanıldı fakat 
 

@@ -42,16 +42,24 @@ namespace AtSepete.Business.Concrete
         }
         public async Task<IDataResult<List<CategoryListDto>>> GetAllCategoryAsync()
         {
-
-            var tempEntity = await _categoryRepository.GetAllAsync();
-            if (!tempEntity.Any())
+            try
             {
-                _loggerService.LogWarning(LogMessages.Category_Object_Not_Found);
-                return new ErrorDataResult<List<CategoryListDto>>(Messages.ObjectNotFound);
+                var tempEntity = await _categoryRepository.GetAllAsync();
+                if (!tempEntity.Any())
+                {
+                    _loggerService.LogWarning(LogMessages.Category_Object_Not_Found);
+                    return new ErrorDataResult<List<CategoryListDto>>(Messages.ObjectNotFound);
+                }
+                var result = _mapper.Map<IEnumerable<Category>, List<CategoryListDto>>(tempEntity);
+                _loggerService.LogInfo(LogMessages.Category_Listed_Success);
+                return new SuccessDataResult<List<CategoryListDto>>(result, Messages.ListedSuccess);
+
             }
-            var result = _mapper.Map<IEnumerable<Category>, List<CategoryListDto>>(tempEntity);
-            _loggerService.LogInfo(LogMessages.Category_Listed_Success);
-            return new SuccessDataResult<List<CategoryListDto>>(result, Messages.ListedSuccess);
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.Category_Listed_Failed);
+                return new ErrorDataResult<List<CategoryListDto>>(Messages.ListedFailed);
+            }
 
         }
 

@@ -38,10 +38,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\AdminVMs\" />
-    <Folder Include="Areas\Admin\ViewComponents\" />
-    <Folder Include="Areas\Admin\Views\" />
     <Folder Include="Areas\Customer\Controllers\" />
-    <Folder Include="Areas\Customer\ViewComponents\" />
     <Folder Include="Areas\Customer\Models\" />
     <Folder Include="Areas\Customer\Views\" />
     <Folder Include="NewFolder\" />
