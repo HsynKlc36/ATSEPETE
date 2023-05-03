@@ -1,9 +1,12 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using AtSepete.Business.JWT;
 using AtSepete.Dtos.Dto.Users;
+using AtSepete.UI.ApiResponses;
 using AtSepete.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
@@ -11,8 +14,13 @@ namespace AtSepete.UI.Controllers
 {
     public class BaseController:Controller
     {
+
         protected string? UserIdentityId => User.FindFirstValue(ClaimTypes.NameIdentifier);
-      
+        protected string? UserIdentityRole => User.FindFirstValue(ClaimTypes.Role);
+        protected string? UserIdentityName => User.FindFirstValue(ClaimTypes.Name);
+        protected string? UserIdentityEmail => User.FindFirstValue(ClaimTypes.Email);
+
+
         //protected INotyfService NotyfService => HttpContext.RequestServices.GetService(typeof(INotyfService)) as INotyfService;
         //protected IStringLocalizer<SharedModelResource> Localizer => HttpContext.RequestServices.GetService(typeof(IStringLocalizer<SharedModelResource>)) as IStringLocalizer<SharedModelResource>;// dil değişimleri için kullanıldı fakat 
 

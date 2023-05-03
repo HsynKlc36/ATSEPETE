@@ -634,6 +634,7 @@ namespace AtSepete.Business.Concrete
             {
                 if (IsSuccess && userDto is not null)
                 {
+                  
                     var claims = new List<Claim>()
                     {
                         new Claim("ID", userDto.Id.ToString()),
@@ -642,7 +643,7 @@ namespace AtSepete.Business.Concrete
                         new Claim(ClaimTypes.Email, userDto.Email),
                         new Claim(ClaimTypes.Role, userDto.Role.ToString())
                     };
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var identity = new ClaimsIdentity(claims);
                     ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
                     Token token = _tokenHandler.CreateAccessToken(30, principal);
@@ -651,9 +652,6 @@ namespace AtSepete.Business.Concrete
 
                     _loggerService.LogInfo(LogMessages.User_Login_Success);
                     return new SuccessDataResult<Token>(token, Messages.LoginSuccess);
-
-                    // Kullanıcının kimlik bilgileri doğru ise HTTP yanıtına bir kimlik belirtimi ekleyin
-
 
                 }
                 else

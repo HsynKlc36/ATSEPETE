@@ -31,7 +31,7 @@ namespace AtSepete.Api.Controllers
         }
         [HttpGet]
         [Route("[action]")]
-
+        [Authorize(AuthenticationSchemes = "Customer")]
         public async Task<IDataResult<List<UserListDto>>> GetAllUser()
         {
             return await _userService.GetAllUserAsync();
