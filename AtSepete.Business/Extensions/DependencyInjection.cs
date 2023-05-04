@@ -26,7 +26,7 @@ namespace AtSepete.Business.Extensions
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddBusinessServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddJWTBusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHttpContextAccessor();//servislerde httpContext'e ulaşabilmek için
             services.AddScoped<ITokenHandler, JWT.TokenHandler>();
@@ -51,8 +51,8 @@ namespace AtSepete.Business.Extensions
                     LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
                     //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
                     NameClaimType = ClaimTypes.NameIdentifier, //=>jwt üzerinde Name claim'e karşılık gelen değeri User.Identity.Name propertysinden elde edebiliriz.Yani hangi kullanıcının istek yaptığını bu property sayesinde user.Identity.Name ile cağırdığımız yerde yakalamamıza yardımcı olur
-                    RoleClaimType=ClaimTypes.Role
-                    
+                    RoleClaimType = ClaimTypes.Role
+
                 };
                 options.Events = new JwtBearerEvents
                 {
@@ -134,8 +134,46 @@ namespace AtSepete.Business.Extensions
                        }
                    };
                });
-               //.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 
+
+
+            services.AddAutoMapper(
+            Assembly.GetExecutingAssembly(),
+            typeof(CategoryProfile).Assembly,
+            typeof(MarketProfile).Assembly,
+            typeof(OrderProfile).Assembly,
+            typeof(OrderDetailProfile).Assembly,
+            typeof(ProductMarketProfile).Assembly,
+            typeof(ProductProfile).Assembly,
+            typeof(UserProfile).Assembly
+            );
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IMarketService, MarketService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IProductMarketService, ProductMarketService>();
+            services.AddScoped<IOrderDetailService, OrderDetailService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddSingleton<ILoggerService, LoggerService>();
+            services.AddSingleton<IEmailSender, EmailSenderService>();
+
+            return services;
+        }
+        public static IServiceCollection AddCookieBusinessServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHttpContextAccessor();//servislerde httpContext'e ulaşabilmek için
+            services.AddScoped<ITokenHandler, JWT.TokenHandler>();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.SlidingExpiration = false;
+                options.Cookie.Name = "AtSepeteCookie";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(135);
+                options.AccessDeniedPath = "/Home/ErişimEngellendi";
+                options.LoginPath = "/Login/Login"; // Kimlik doğrulama başarısız olduğunda yönlendirme yapılacak sayfa
+                options.Cookie.HttpOnly = true;
+            });
 
             services.AddAutoMapper(
             Assembly.GetExecutingAssembly(),

@@ -20,7 +20,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services
     .AddDataAccessServices(builder.Configuration)
-    .AddBusinessServices(builder.Configuration)
+    .AddCookieBusinessServices(builder.Configuration)
     .AddRepositoriesServices()
     .AddMvcServices();
 

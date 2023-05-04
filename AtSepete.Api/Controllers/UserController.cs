@@ -38,6 +38,7 @@ namespace AtSepete.Api.Controllers
         }
         [HttpGet]
         [Route("[action]/{id:Guid}")]
+        [Authorize(AuthenticationSchemes = "Customer")]
         public async Task<IDataResult<UserDto>> GetByIdUser(Guid id)
         {
             return await _userService.FindUserByIdAsync(id);

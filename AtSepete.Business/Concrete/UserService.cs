@@ -646,7 +646,7 @@ namespace AtSepete.Business.Concrete
                     var identity = new ClaimsIdentity(claims);
                     ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
-                    Token token = _tokenHandler.CreateAccessToken(30, principal);
+                    Token token = _tokenHandler.CreateAccessToken(120, principal);
                     await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 15);
                     /*await _httpContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);*///=>bunu ui da yazmamız gerekecek.Gönderirken ne olarak gönderecek buna bakılacak!!
 
