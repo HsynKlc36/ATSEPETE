@@ -19,10 +19,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services
-    .AddDataAccessServices(builder.Configuration)
-    .AddCookieBusinessServices(builder.Configuration)
-    .AddRepositoriesServices()
-    .AddMvcServices();
+    .AddCookieMVCServices(builder.Configuration)
+    .AddMvcServices()
+    .AddGoogleMVCServices(builder.Configuration);
 
 
 

@@ -159,43 +159,46 @@ namespace AtSepete.Business.Extensions
 
             return services;
         }
-        public static IServiceCollection AddCookieBusinessServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddHttpContextAccessor();//servislerde httpContext'e ulaşabilmek için
-            services.AddScoped<ITokenHandler, JWT.TokenHandler>();
+        #region CookieServices
+//public static IServiceCollection AddCookieMVCServices(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    services.AddHttpContextAccessor();//servislerde httpContext'e ulaşabilmek için
+        //    services.AddScoped<ITokenHandler, JWT.TokenHandler>();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options =>
-            {
-                options.SlidingExpiration = false;
-                options.Cookie.Name = "AtSepeteCookie";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(135);
-                options.AccessDeniedPath = "/Home/ErişimEngellendi";
-                options.LoginPath = "/Login/Login"; // Kimlik doğrulama başarısız olduğunda yönlendirme yapılacak sayfa
-                options.Cookie.HttpOnly = true;
-            });
+        //    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        //    .AddCookie(options =>
+        //    {
+        //        options.SlidingExpiration = false;
+        //        options.Cookie.Name = "AtSepeteCookie";
+        //        options.ExpireTimeSpan = TimeSpan.FromMinutes(135);
+        //        options.AccessDeniedPath = "/Home/ErişimEngellendi";
+        //        options.LoginPath = "/Login/Login"; // Kimlik doğrulama başarısız olduğunda yönlendirme yapılacak sayfa
+        //        options.Cookie.HttpOnly = true;
+        //    });
 
-            services.AddAutoMapper(
-            Assembly.GetExecutingAssembly(),
-            typeof(CategoryProfile).Assembly,
-            typeof(MarketProfile).Assembly,
-            typeof(OrderProfile).Assembly,
-            typeof(OrderDetailProfile).Assembly,
-            typeof(ProductMarketProfile).Assembly,
-            typeof(ProductProfile).Assembly,
-            typeof(UserProfile).Assembly
-            );
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<IMarketService, MarketService>();
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IProductMarketService, ProductMarketService>();
-            services.AddScoped<IOrderDetailService, OrderDetailService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddSingleton<ILoggerService, LoggerService>();
-            services.AddSingleton<IEmailSender, EmailSenderService>();
+        //    services.AddAutoMapper(
+        //    Assembly.GetExecutingAssembly(),
+        //    typeof(CategoryProfile).Assembly,
+        //    typeof(MarketProfile).Assembly,
+        //    typeof(OrderProfile).Assembly,
+        //    typeof(OrderDetailProfile).Assembly,
+        //    typeof(ProductMarketProfile).Assembly,
+        //    typeof(ProductProfile).Assembly,
+        //    typeof(UserProfile).Assembly
+        //    );
+        //    services.AddScoped<ICategoryService, CategoryService>();
+        //    services.AddScoped<IMarketService, MarketService>();
+        //    services.AddScoped<IProductService, ProductService>();
+        //    services.AddScoped<IOrderService, OrderService>();
+        //    services.AddScoped<IProductMarketService, ProductMarketService>();
+        //    services.AddScoped<IOrderDetailService, OrderDetailService>();
+        //    services.AddScoped<IUserService, UserService>();
+        //    services.AddSingleton<ILoggerService, LoggerService>();
+        //    services.AddSingleton<IEmailSender, EmailSenderService>();
 
-            return services;
-        }
+        //    return services;
+        //}
+        #endregion
+        
     }
 }

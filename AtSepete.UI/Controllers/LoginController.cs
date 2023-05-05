@@ -75,7 +75,11 @@ namespace AtSepete.UI.Controllers
                     
                         return RedirectToAction("Privacy","Home");
                     }
-                    return RedirectToAction("Login", "Login");
+                    else
+                    {
+                        return RedirectToAction("SignUp", "Login");// eğer böyle bir kullanıcı yoksa(loginvm de gönderilecek)
+                    }
+                  
 
                 };
             };
