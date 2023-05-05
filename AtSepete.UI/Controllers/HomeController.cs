@@ -29,6 +29,7 @@ namespace AtSepete.UI.Controllers
             _mapper = mapper;
         }
         //user dan get işlemi ile veri getirme denendi
+
         public async Task<IActionResult> Index()
         {
             //token'ı headers'ta taşımak için gerekli
@@ -110,7 +111,7 @@ namespace AtSepete.UI.Controllers
             return Json(user);
 
         }
-        [Authorize(Roles ="Customer")]
+        [Authorize(Roles = "Customer")]
         public IActionResult Privacy()
         {
             return View();

@@ -17,11 +17,11 @@ namespace AtSepete.UI.Controllers
 {
     public class LoginController : BaseController
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LoginController(IHttpContextAccessor httpContextAccessor)
+
+        public LoginController()
         {
-            _httpContextAccessor = httpContextAccessor;
+          
         }
         [HttpGet]
         public async Task<IActionResult> SignUp()
@@ -56,20 +56,23 @@ namespace AtSepete.UI.Controllers
                     {
                         var tokenHandler = new JwtSecurityTokenHandler();
                         var decodeToken = tokenHandler.ReadJwtToken(loginUser.Data.AccessToken);
-                        var role = decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                        var userRole = decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                        var userEmail = decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                        var userName = decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+                        var userId = decodeToken.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
 
                         var claims = new List<Claim>
                         {
-                                new Claim("AccessToken", loginUser.Data.AccessToken), // Token burada eklenir
-                                new Claim(ClaimTypes.Role, role) // Token burada eklenir
+                                new Claim("Token", loginUser.Data.AccessToken), // Token burada eklenir
+                                new Claim(ClaimTypes.Role, userRole),
+                                new Claim(ClaimTypes.Email, userEmail),
+                                new Claim("ID", userId),
+                                new Claim(ClaimTypes.Name, userName)
                         };
 
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                        await _httpContextAccessor.HttpContext.SignInAsync(
-                            CookieAuthenticationDefaults.AuthenticationScheme,
-                            new ClaimsPrincipal(identity));
-
+                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+                    
                         return RedirectToAction("Privacy","Home");
                     }
                     return RedirectToAction("Login", "Login");
@@ -80,9 +83,8 @@ namespace AtSepete.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> LogOut()
         {
-           //api den gelecek dataresult ın mesajı başarılıysa
-            
-                await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             
             return RedirectToAction("Privacy", "Home");
         }
