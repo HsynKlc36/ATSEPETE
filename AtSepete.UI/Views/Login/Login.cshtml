@@ -1,7 +1,9 @@
 ﻿@model AtSepete.UI.Models.LoginVM
+@*@inject IConfiguration configuration;*@
 
 @{
     ViewData["Title"] = "Login";
+    //var clientId = configuration["AppGoogle:GoogleClientId"];
 }
 
 <h1>Login</h1>
@@ -31,7 +33,8 @@
              
         </div>
         <div>
-            <a class="btn btn-danger" asp-area="" asp-controller="Login" asp-action="LogOut"><i class="fa fa-user"></i> Google</a>
+<a class="btn btn-outline-secondary" href="https://accounts.google.com/o/oauth2/v2/auth?client_id=607235410100-i0sted81d99qd8dk34lm25vehg7fpj3b.apps.googleusercontent.com&redirect_uri=https://localhost:7290/signin-google&response_type=code&scope=openid%20email%20profile"><i class="fa fa-user"></i> Google</a>
+
         </div>
     </div>
 </div>

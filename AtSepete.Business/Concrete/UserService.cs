@@ -637,9 +637,7 @@ namespace AtSepete.Business.Concrete
                   
                     var claims = new List<Claim>()
                     {
-                        new Claim("ID", userDto.Id.ToString()),
-                        new Claim(ClaimTypes.Name, userDto.FirstName),
-                        new Claim(ClaimTypes.Surname, userDto.LastName),
+
                         new Claim(ClaimTypes.Email, userDto.Email),
                         new Claim(ClaimTypes.Role, userDto.Role.ToString())
                     };
@@ -648,7 +646,7 @@ namespace AtSepete.Business.Concrete
 
                     Token token = _tokenHandler.CreateAccessToken(120, principal);
                     await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 15);
-                    /*await _httpContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);*///=>bunu ui da yazmamız gerekecek.Gönderirken ne olarak gönderecek buna bakılacak!!
+
 
                     _loggerService.LogInfo(LogMessages.User_Login_Success);
                     return new SuccessDataResult<Token>(token, Messages.LoginSuccess);

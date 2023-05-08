@@ -1,8 +1,13 @@
 ﻿using AtSepete.Dtos.Dto.Users;
 using AtSepete.UI.ApiResponses;
 using AtSepete.UI.Models;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Oauth2.v2;
+using Google.Apis.Oauth2.v2.Data;
+using Google.Apis.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -21,7 +27,7 @@ namespace AtSepete.UI.Controllers
 
         public LoginController()
         {
-          
+
         }
         [HttpGet]
         public async Task<IActionResult> SignUp()
@@ -66,30 +72,31 @@ namespace AtSepete.UI.Controllers
                                 new Claim("Token", loginUser.Data.AccessToken), // Token burada eklenir
                                 new Claim(ClaimTypes.Role, userRole),
                                 new Claim(ClaimTypes.Email, userEmail),
-                                new Claim("ID", userId),
+                                new Claim("UserId", userId),
                                 new Claim(ClaimTypes.Name, userName)
                         };
 
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-                    
-                        return RedirectToAction("Privacy","Home");
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+
+                        return RedirectToAction("Privacy", "Home");
                     }
                     else
                     {
                         return RedirectToAction("SignUp", "Login");// eğer böyle bir kullanıcı yoksa(loginvm de gönderilecek)
                     }
-                  
+
 
                 };
             };
         }
+
         [HttpGet]
         public async Task<IActionResult> LogOut()
         {
 
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            
+
             return RedirectToAction("Privacy", "Home");
         }
     }

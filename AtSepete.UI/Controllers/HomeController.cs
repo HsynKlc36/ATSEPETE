@@ -13,12 +13,13 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
 
 namespace AtSepete.UI.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
      
         private readonly IMapper _mapper;
@@ -71,7 +72,9 @@ namespace AtSepete.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateCategory()
         {
+            //client.Headers.Add(System.Net.HttpRequestHeader.Authorization, $"Bearer {token}");
 
+          
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/Category/GetByIdCategory/ef43c461-6948-4939-cc3b-08db393cda8a");
             string apiResponse = await response.Content.ReadAsStringAsync();
@@ -113,7 +116,7 @@ namespace AtSepete.UI.Controllers
         }
         [Authorize(Roles = "Customer")]
         public IActionResult Privacy()
-        {
+        {        
             return View();
         }
 

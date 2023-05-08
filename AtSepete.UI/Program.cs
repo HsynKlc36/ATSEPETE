@@ -12,6 +12,7 @@ using AtSepete.Business.Extensions;
 using AtSepete.Repositories.Extensions;
 using AspNetCoreHero.ToastNotification.Extensions;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -36,6 +37,7 @@ else
 {
     app.UseDeveloperExceptionPage();//Bu metot, geliþtirme ortamýnda çalýþýrken herhangi bir hata meydana geldiðinde, kullanýcýya ayrýntýlý bir hata sayfasý gösterir.
 }
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

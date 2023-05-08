@@ -16,7 +16,7 @@ namespace AtSepete.UI.Controllers
     public class BaseController:Controller
     {
 
-        protected string? UserId => HttpContext.User.FindFirstValue("ID");
+        protected string? UserId => HttpContext.User.FindFirstValue("UserId");
         protected string? UserRole => HttpContext.User.FindFirstValue(ClaimTypes.Role);
         protected string? UserName => HttpContext.User.FindFirstValue(ClaimTypes.Name);
         protected string? UserEmail => HttpContext.User.FindFirstValue(ClaimTypes.Email);

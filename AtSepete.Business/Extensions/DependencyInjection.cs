@@ -35,7 +35,7 @@ namespace AtSepete.Business.Extensions
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                
             })
             .AddJwtBearer("Admin", options =>
             {
@@ -51,7 +51,7 @@ namespace AtSepete.Business.Extensions
                     LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
                     //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
                     NameClaimType = ClaimTypes.NameIdentifier, //=>jwt üzerinde Name claim'e karşılık gelen değeri User.Identity.Name propertysinden elde edebiliriz.Yani hangi kullanıcının istek yaptığını bu property sayesinde user.Identity.Name ile cağırdığımız yerde yakalamamıza yardımcı olur
-                    RoleClaimType = ClaimTypes.Role
+                  
 
                 };
                 options.Events = new JwtBearerEvents
@@ -81,8 +81,7 @@ namespace AtSepete.Business.Extensions
                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
                        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
                        //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
-                       NameClaimType = ClaimTypes.NameIdentifier,
-                       RoleClaimType = ClaimTypes.Role
+                      
                    };
                    options.Events = new JwtBearerEvents
                    {
@@ -94,6 +93,10 @@ namespace AtSepete.Business.Extensions
                            if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Customer"))
                            {
                                context.Fail("Unauthorized");
+                           }
+                           if (true)
+                           {
+                               context.Response.Redirect("/Login/RefreshTokenLogin");
                            }
 
                            return Task.CompletedTask;
@@ -113,7 +116,7 @@ namespace AtSepete.Business.Extensions
                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
                        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
                        //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
-                       NameClaimType = ClaimTypes.NameIdentifier
+                      
                    };
                    options.Events = new JwtBearerEvents
                    {
@@ -124,6 +127,7 @@ namespace AtSepete.Business.Extensions
                            if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "ForgetPassword"))
                            {
                                context.Fail("Unauthorized");
+                              
                            }
                            var email = context.Principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
                            if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Email && c.Value == email))

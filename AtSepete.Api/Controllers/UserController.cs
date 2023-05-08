@@ -63,8 +63,17 @@ namespace AtSepete.Api.Controllers
         [AllowAnonymous]
         public async Task<IDataResult<Token>> LoginSignIn(CheckPasswordDto checkPasswordDto)
         {
-            var userDto= await _userService.CheckUserSignAsync(checkPasswordDto, true);
-            return await _userService.SignInAsync(userDto.Data,userDto.IsSuccess);
+             var responseUserDto= await _userService.CheckUserSignAsync(checkPasswordDto, true);//userDto elimize ulaşır 
+             return   await _userService.SignInAsync(responseUserDto.Data, responseUserDto.IsSuccess);
+
+        }
+        [HttpPost]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public async Task<IDataResult<Token>> LoginApiSignIn(CheckPasswordDto checkPasswordDto)
+        {
+            var userDto = await _userService.CheckUserSignAsync(checkPasswordDto, true);//userDto elimize ulaşır 
+            return await _userService.SignInAsync(userDto.Data, userDto.IsSuccess);
 
         }
         [HttpPost]

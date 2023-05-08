@@ -7,6 +7,7 @@ using AtSepete.Business.Logger;
 using AtSepete.Business.Mapper.Profiles;
 using AtSepete.UI.MapperUI.Profiles;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Reflection;
 
@@ -28,21 +29,7 @@ namespace AtSepete.UI.Extensions
                 options.HasRippleEffect = true;
             });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = new PathString("/Login/Index");
-                options.LogoutPath = new PathString("/Login/SignOut");
-                options.Cookie = new CookieBuilder
-                {
-                    Name = "AtSepeteCookie",
-                    HttpOnly = false,
-                    SameSite = SameSiteMode.Lax,
-                    SecurePolicy = CookieSecurePolicy.Always
-                };
-                options.SlidingExpiration = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                options.AccessDeniedPath = new PathString("/AccessDenied");
-            });
+          
 
             return services;
         }
@@ -63,11 +50,18 @@ namespace AtSepete.UI.Extensions
         }
         public static IServiceCollection AddGoogleMVCServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAuthentication()
+            services.AddAuthentication(options=>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            })
                 .AddGoogle(options =>
                 {
                     options.ClientId = configuration["AppGoogle:GoogleClientId"];
                     options.ClientSecret = configuration["AppGoogle:GoogleClientSecret"];
+                    options.Scope.Add("openid");
+                    options.Scope.Add("email");
+                    options.Scope.Add("profile");
                 });
             
 
