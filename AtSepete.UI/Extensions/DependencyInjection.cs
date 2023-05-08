@@ -9,6 +9,8 @@ using AtSepete.UI.MapperUI.Profiles;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using SendGrid;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 
 namespace AtSepete.UI.Extensions
@@ -40,32 +42,16 @@ namespace AtSepete.UI.Extensions
             {
                 options.SlidingExpiration = false;
                 options.Cookie.Name = "AtSepeteCookie";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(135);
-                options.AccessDeniedPath = "/Home/ErişimEngellendi";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                //options.AccessDeniedPath = "/Home/ErişimEngellendi";
                 options.LoginPath = "/Login/Login"; // Kimlik doğrulama başarısız olduğunda yönlendirme yapılacak sayfa
                 options.Cookie.HttpOnly = true;
             });
 
-            return services;
-        }
-        public static IServiceCollection AddGoogleMVCServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddAuthentication(options=>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-            })
-                .AddGoogle(options =>
-                {
-                    options.ClientId = configuration["AppGoogle:GoogleClientId"];
-                    options.ClientSecret = configuration["AppGoogle:GoogleClientSecret"];
-                    options.Scope.Add("openid");
-                    options.Scope.Add("email");
-                    options.Scope.Add("profile");
-                });
             
 
             return services;
         }
+       
     }
 }

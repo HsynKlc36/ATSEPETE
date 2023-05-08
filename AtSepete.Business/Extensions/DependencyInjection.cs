@@ -21,6 +21,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
 
 namespace AtSepete.Business.Extensions
 {
@@ -88,16 +89,23 @@ namespace AtSepete.Business.Extensions
                        OnTokenValidated = context =>
                        {
                            var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+                           //süresi dolan tokeni yönlendirir.
+                           var expirationClaim = claimsIdentity.FindFirst("exp");
+
+                           if (expirationClaim != null && DateTime.TryParse(expirationClaim.Value, out var expirationDate))
+                           {
+                               if (expirationDate < DateTime.UtcNow)
+                               {
+                                   context.Response.Redirect("https://localhost:7286/AtSepeteApi/Login/RefreshTokenLogin");
+                               }
+                           }
 
                            // Kontrol etmek istediğiniz roller veya izinler burada belirtilir.
                            if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Customer"))
                            {
                                context.Fail("Unauthorized");
                            }
-                           if (true)
-                           {
-                               context.Response.Redirect("/Login/RefreshTokenLogin");
-                           }
+
 
                            return Task.CompletedTask;
                        }
@@ -138,7 +146,50 @@ namespace AtSepete.Business.Extensions
                        }
                    };
                });
+            //public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+            //{
 
+            //    app.Use(async (context, next) =>
+            //    {
+            //        if (!context.Request.Path.StartsWithSegments("/login") &&
+            //        !context.Request.Path.StartsWithSegments("/logout"))
+            //        {
+            //            var cookieValue = context.Request.Cookies["AtSepeteCookie"]; // mycookie yerine kendi cookie adınızı kullanın
+
+            //            if (string.IsNullOrEmpty(cookieValue))
+            //            {
+            //                context.Response.Redirect("/login"); // Cookie yoksa login sayfasına yönlendir
+            //                return;
+            //            }
+
+            //            try
+            //            {
+            //                var token = JwtSecurityTokenHandler().ReadJwtToken(cookieValue);
+
+
+            //                if (token.ValidTo <= DateTime.UtcNow)
+            //                {
+            //                    context.Response.Redirect("/login"); // Token süresi dolmuşsa login sayfasına yönlendir
+            //                    return;
+            //                }
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                // Token doğrulama hatası, kullanıcıyı login sayfasına yönlendir
+            //                context.Response.Redirect("/login");
+            //                return;
+            //            }
+            //        }
+
+
+
+            //        await next();
+            //    });
+
+
+
+            //    ...
+            //}
 
 
             services.AddAutoMapper(

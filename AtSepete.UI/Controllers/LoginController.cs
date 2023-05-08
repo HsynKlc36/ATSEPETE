@@ -41,7 +41,52 @@ namespace AtSepete.UI.Controllers
 
             return View();
         }
+        [HttpGet]
+        public async Task<IActionResult> RefreshTokenLogin()
+        {
 
+            using (var httpClient = new HttpClient())
+            {
+                StringContent content =new StringContent(JsonConvert.SerializeObject(UserRefreshToken), Encoding.UTF8, "application/Json");
+                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/user/RefreshTokenLoginSignIn", content))
+                {
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    LoginUserResponse loginUser = JsonConvert.DeserializeObject<LoginUserResponse>(apiResponse);
+                    if (loginUser.IsSuccess)
+                    {
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var decodeToken = tokenHandler.ReadJwtToken(loginUser.Data.AccessToken);
+                        var userRole = decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                        var userEmail = decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                        var userName = decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+                        var userId = decodeToken.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
+
+                        var claims = new List<Claim>
+                        {
+                                new Claim("Token", loginUser.Data.AccessToken), // Token burada eklenir
+                                new Claim("RefreshToken", loginUser.Data.RefreshToken),
+                                new Claim(ClaimTypes.Role, userRole),
+                                new Claim(ClaimTypes.Email, userEmail),
+                                new Claim("UserId", userId),
+                                new Claim(ClaimTypes.Name, userName)
+                        };
+
+
+                        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        HttpContext.Response.Cookies.Delete("AtSepeteCookie");
+
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+
+                        return RedirectToAction("Privacy", "Home");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Login", "Login");// eğer böyle bir kullanıcı yoksa(loginvm de gönderilecek)
+                    }
+
+                }
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> Login()
         {
@@ -70,6 +115,7 @@ namespace AtSepete.UI.Controllers
                         var claims = new List<Claim>
                         {
                                 new Claim("Token", loginUser.Data.AccessToken), // Token burada eklenir
+                                new Claim("RefreshToken", loginUser.Data.RefreshToken), // Token burada eklenir
                                 new Claim(ClaimTypes.Role, userRole),
                                 new Claim(ClaimTypes.Email, userEmail),
                                 new Claim("UserId", userId),
@@ -79,7 +125,7 @@ namespace AtSepete.UI.Controllers
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
-                        return RedirectToAction("Privacy", "Home");
+                        return RedirectToAction("Privacy", "Home");//login olunca yönleneceği sayfa
                     }
                     else
                     {

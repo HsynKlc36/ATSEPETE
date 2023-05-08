@@ -19,6 +19,7 @@ namespace AtSepete.Business.Abstract
     public interface IUserService 
     {
         Task<IDataResult<Token>> SignInAsync(UserDto user, bool IsSuccess);// giriş yapma işlemini dener
+         Task<IDataResult<Token>> RefreshTokenSignInAsync(string refreshToken);//refresh token süresi geçerliyse access token oluşturur.
         Task<IResult> SignOutAsync();
         //yukarıdaki satırlar giriş ve çıkış işlemleri için kullanılır
         Task<IDataResult<List<UserListDto>>> GetAllUserAsync();//tüm user'ları getirir

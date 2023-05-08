@@ -47,7 +47,7 @@ namespace AtSepete.Business.Concrete
         private readonly ITokenHandler _tokenHandler;
         private readonly IEmailSender _emailSender;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, ILoggerService loggerService, ITokenHandler tokenHandler,IEmailSender emailSender, IHttpContextAccessor httpContextAccessor = null)
+        public UserService(IUserRepository userRepository, IMapper mapper, ILoggerService loggerService, ITokenHandler tokenHandler, IEmailSender emailSender, IHttpContextAccessor httpContextAccessor = null)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -79,7 +79,7 @@ namespace AtSepete.Business.Concrete
 
                 _loggerService.LogInfo(LogMessages.User_Added_Success);
                 return new SuccessDataResult<CreateUserDto>(_mapper.Map<User, CreateUserDto>(userMap), Messages.AddUserSuccess);
-              
+
             }
             catch (Exception)
             {
@@ -548,8 +548,8 @@ namespace AtSepete.Business.Concrete
                     return new ErrorDataResult<string>(Messages.EmailFailed);//kullanıcı mail'i hatalı
                 }
 
-                Token token = _tokenHandler.ResetPasswordToken(20,emailDto);
-         
+                Token token = _tokenHandler.ResetPasswordToken(20, emailDto);
+
                 string url = $"https://localhost:7290/Home/NewPassword?token={token.AccessToken}";
                 var content = $"Merhaba, <br />" +
                     $"Şifreni yenilemek için linke tıklayabilirsin: " +
@@ -579,7 +579,7 @@ namespace AtSepete.Business.Concrete
             // URL-encoding yap ve sonucu döndür
             return HttpUtility.UrlEncode(encodedToken);
         }
-        protected async Task<string>  FromEncodedString(string encodedToken)//bu metot sadece encode olan token'ı decoded etmek için buraya özel yazılmıştır...
+        protected async Task<string> FromEncodedString(string encodedToken)//bu metot sadece encode olan token'ı decoded etmek için buraya özel yazılmıştır...
         {
             // URL-decoding yap
             string decodedToken = HttpUtility.UrlDecode(encodedToken);
@@ -611,11 +611,11 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(LogMessages.User_Token_Not_Found);
                     return new ErrorResult(Messages.UserTokenNotFound);
                 }
-                var user=await _userRepository.GetByIdAsync(userDto.Data.Id);
+                var user = await _userRepository.GetByIdAsync(userDto.Data.Id);
 
                 newPasswordDto.Password = await PasswordHashAsync(newPasswordDto.Password);
-                var updateUser=_mapper.Map(newPasswordDto,user);
-                var result=await _userRepository.UpdateAsync(updateUser);
+                var updateUser = _mapper.Map(newPasswordDto, user);
+                var result = await _userRepository.UpdateAsync(updateUser);
                 await _userRepository.SaveChangesAsync();
 
                 _loggerService.LogInfo(LogMessages.User_ResetPassword_Success);
@@ -628,24 +628,65 @@ namespace AtSepete.Business.Concrete
             }
         }
 
-        public async Task<IDataResult<Token>> SignInAsync(UserDto userDto, bool IsSuccess)//buradan claimsPrincipal tipinde gönderilen veri login controllerda yakalanacak ve //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal); metot ile login işlemi başarılı olacak!!!
+        public async Task<IDataResult<Token>> RefreshTokenSignInAsync(string refreshToken)//refresh token geçerliyse token süresini uzatır
         {
             try
             {
-                if (IsSuccess && userDto is not null)
+                User? user = await _userRepository.GetByDefaultAsync(x => x.RefreshToken == refreshToken);
+                var userDto=_mapper.Map<User,UserDto>(user);
+                if (user!=null && user?.RefreshTokenEndDate>DateTime.UtcNow)
                 {
-                  
                     var claims = new List<Claim>()
                     {
-
+                        new Claim("ID", userDto.Id.ToString()),
+                        new Claim(ClaimTypes.Name, userDto.FirstName),
+                        new Claim(ClaimTypes.Surname, userDto.LastName),
                         new Claim(ClaimTypes.Email, userDto.Email),
                         new Claim(ClaimTypes.Role, userDto.Role.ToString())
                     };
                     var identity = new ClaimsIdentity(claims);
                     ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
-                    Token token = _tokenHandler.CreateAccessToken(120, principal);
-                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 15);
+                    Token token = _tokenHandler.CreateAccessToken(3, principal);
+                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition,2);
+
+                    _loggerService.LogInfo(LogMessages.User_Login_Success);
+                    return new SuccessDataResult<Token>(token, Messages.LoginSuccess);
+                }
+                else
+                {
+                    _loggerService.LogWarning(LogMessages.User_Login_Fail);
+                    return new ErrorDataResult<Token>(Messages.LoginFailed);
+                }
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.User_Login_Fail);
+                return new ErrorDataResult<Token>(Messages.LoginFailed);
+            }
+
+        }
+
+        public async Task<IDataResult<Token>> SignInAsync(UserDto userDto, bool IsSuccess)//buradan claimsPrincipal tipinde gönderilen veri login controllerda yakalanacak ve //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal); metot ile login işlemi başarılı olacak!!!
+        {
+            try
+            {
+                if (IsSuccess && userDto is not null)
+                {
+
+                    var claims = new List<Claim>()
+                    {
+                        new Claim("ID", userDto.Id.ToString()),
+                        new Claim(ClaimTypes.Name, userDto.FirstName),
+                        new Claim(ClaimTypes.Surname, userDto.LastName),
+                        new Claim(ClaimTypes.Email, userDto.Email),
+                        new Claim(ClaimTypes.Role, userDto.Role.ToString())
+                    };
+                    var identity = new ClaimsIdentity(claims);
+                    ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+
+                    Token token = _tokenHandler.CreateAccessToken(3, principal);
+                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 2);
 
 
                     _loggerService.LogInfo(LogMessages.User_Login_Success);
@@ -682,8 +723,8 @@ namespace AtSepete.Business.Concrete
         }
 
 
- 
-   
+
+
 
 
     }

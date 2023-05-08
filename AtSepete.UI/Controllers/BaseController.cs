@@ -21,6 +21,7 @@ namespace AtSepete.UI.Controllers
         protected string? UserName => HttpContext.User.FindFirstValue(ClaimTypes.Name);
         protected string? UserEmail => HttpContext.User.FindFirstValue(ClaimTypes.Email);
         protected string? UserToken => HttpContext.User.FindFirstValue("Token");
+        protected string? UserRefreshToken => HttpContext.User.FindFirstValue("RefreshToken");
 
         
         //protected INotyfService NotyfService => HttpContext.RequestServices.GetService(typeof(INotyfService)) as INotyfService;

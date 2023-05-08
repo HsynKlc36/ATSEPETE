@@ -21,8 +21,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services
     .AddCookieMVCServices(builder.Configuration)
-    .AddMvcServices()
-    .AddGoogleMVCServices(builder.Configuration);
+    .AddMvcServices();
+   
 
 
 

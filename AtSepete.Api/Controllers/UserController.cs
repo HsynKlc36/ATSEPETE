@@ -6,6 +6,7 @@ using AtSepete.Dtos.Dto.Products;
 using AtSepete.Dtos.Dto.Users;
 using AtSepete.Entities.Data;
 using AtSepete.Results;
+using AtSepete.Results.Concrete;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ namespace AtSepete.Api.Controllers
 
         public userController(IUserService userService)
         {
-          
+
             _userService = userService;
         }
         [HttpGet]
@@ -55,26 +56,25 @@ namespace AtSepete.Api.Controllers
         [Route("[action]")]
         public async Task<IDataResult<UserDto>> CheckUserSignIn(CheckPasswordDto checkPasswordDto)
         {
-            return await _userService.CheckUserSignAsync(checkPasswordDto,true);
-           
+            return await _userService.CheckUserSignAsync(checkPasswordDto, true);
+
         }
+
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
         public async Task<IDataResult<Token>> LoginSignIn(CheckPasswordDto checkPasswordDto)
         {
-             var responseUserDto= await _userService.CheckUserSignAsync(checkPasswordDto, true);//userDto elimize ulaşır 
-             return   await _userService.SignInAsync(responseUserDto.Data, responseUserDto.IsSuccess);
+            var responseUserDto = await _userService.CheckUserSignAsync(checkPasswordDto, true);//userDto elimize ulaşır               
+            return await _userService.SignInAsync(responseUserDto.Data, responseUserDto.IsSuccess);
 
         }
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<IDataResult<Token>> LoginApiSignIn(CheckPasswordDto checkPasswordDto)
+        public async Task<IDataResult<Token>> RefreshTokenLoginSignIn([FromBody]string refreshToken)
         {
-            var userDto = await _userService.CheckUserSignAsync(checkPasswordDto, true);//userDto elimize ulaşır 
-            return await _userService.SignInAsync(userDto.Data, userDto.IsSuccess);
-
+            return await _userService.RefreshTokenSignInAsync(refreshToken);
         }
         [HttpPost]
         [Route("[action]")]
@@ -91,13 +91,13 @@ namespace AtSepete.Api.Controllers
         {
             return await _userService.ResetPasswordAsync(newPasswordDto);
         }
-  
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IResult> UserChangePassword(ChangePasswordDto changePasswordDto)
         {
             return await _userService.ChangePasswordAsync(changePasswordDto);
-            
+
         }
 
         [HttpPost]
@@ -110,7 +110,7 @@ namespace AtSepete.Api.Controllers
         [Route("[action]/{id:Guid}")]
         public async Task<IDataResult<UpdateUserDto>> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserDto updateUserDto)
         {
-            return await _userService.UpdateUserAsync(id, updateUserDto); 
+            return await _userService.UpdateUserAsync(id, updateUserDto);
         }
 
         [HttpDelete]
