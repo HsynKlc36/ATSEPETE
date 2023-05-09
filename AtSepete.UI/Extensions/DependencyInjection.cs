@@ -48,7 +48,6 @@ namespace AtSepete.UI.Extensions
                 options.Cookie.HttpOnly = true;
             });
 
-            
 
             return services;
         }

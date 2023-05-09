@@ -72,7 +72,7 @@ namespace AtSepete.Api.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<IDataResult<Token>> RefreshTokenLoginSignIn([FromBody]string refreshToken)
+        public async Task<IDataResult<Token>> RefreshTokenLoginSignIn([FromForm]string refreshToken)
         {
             return await _userService.RefreshTokenSignInAsync(refreshToken);
         }

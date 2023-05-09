@@ -52,7 +52,8 @@ namespace AtSepete.Business.Extensions
                     LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
                     //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
                     NameClaimType = ClaimTypes.NameIdentifier, //=>jwt üzerinde Name claim'e karşılık gelen değeri User.Identity.Name propertysinden elde edebiliriz.Yani hangi kullanıcının istek yaptığını bu property sayesinde user.Identity.Name ile cağırdığımız yerde yakalamamıza yardımcı olur
-                  
+                    ClockSkew = TimeSpan.Zero
+
 
                 };
                 options.Events = new JwtBearerEvents
@@ -81,31 +82,22 @@ namespace AtSepete.Business.Extensions
                        ValidIssuer = configuration["Token:Issuer"],
                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
                        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
-                       //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
-                      
+                       ClockSkew = TimeSpan.Zero
+
+                       //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.süre geçmişse expires null gelir
+
                    };
                    options.Events = new JwtBearerEvents
                    {
                        OnTokenValidated = context =>
                        {
                            var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
-                           //süresi dolan tokeni yönlendirir.
-                           var expirationClaim = claimsIdentity.FindFirst("exp");
-
-                           if (expirationClaim != null && DateTime.TryParse(expirationClaim.Value, out var expirationDate))
-                           {
-                               if (expirationDate < DateTime.UtcNow)
-                               {
-                                   context.Response.Redirect("https://localhost:7286/AtSepeteApi/Login/RefreshTokenLogin");
-                               }
-                           }
 
                            // Kontrol etmek istediğiniz roller veya izinler burada belirtilir.
                            if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Customer"))
                            {
                                context.Fail("Unauthorized");
                            }
-
 
                            return Task.CompletedTask;
                        }
@@ -123,8 +115,9 @@ namespace AtSepete.Business.Extensions
                        ValidIssuer = configuration["Token:Issuer"],
                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
                        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
+                       ClockSkew = TimeSpan.Zero
                        //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
-                      
+
                    };
                    options.Events = new JwtBearerEvents
                    {
@@ -146,50 +139,7 @@ namespace AtSepete.Business.Extensions
                        }
                    };
                });
-            //public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-            //{
-
-            //    app.Use(async (context, next) =>
-            //    {
-            //        if (!context.Request.Path.StartsWithSegments("/login") &&
-            //        !context.Request.Path.StartsWithSegments("/logout"))
-            //        {
-            //            var cookieValue = context.Request.Cookies["AtSepeteCookie"]; // mycookie yerine kendi cookie adınızı kullanın
-
-            //            if (string.IsNullOrEmpty(cookieValue))
-            //            {
-            //                context.Response.Redirect("/login"); // Cookie yoksa login sayfasına yönlendir
-            //                return;
-            //            }
-
-            //            try
-            //            {
-            //                var token = JwtSecurityTokenHandler().ReadJwtToken(cookieValue);
-
-
-            //                if (token.ValidTo <= DateTime.UtcNow)
-            //                {
-            //                    context.Response.Redirect("/login"); // Token süresi dolmuşsa login sayfasına yönlendir
-            //                    return;
-            //                }
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                // Token doğrulama hatası, kullanıcıyı login sayfasına yönlendir
-            //                context.Response.Redirect("/login");
-            //                return;
-            //            }
-            //        }
-
-
-
-            //        await next();
-            //    });
-
-
-
-            //    ...
-            //}
+            
 
 
             services.AddAutoMapper(
