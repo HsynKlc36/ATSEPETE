@@ -628,11 +628,11 @@ namespace AtSepete.Business.Concrete
             }
         }
 
-        public async Task<IDataResult<Token>> RefreshTokenSignInAsync(string refreshToken)//refresh token geçerliyse token süresini uzatır
+        public async Task<IDataResult<Token>> RefreshTokenSignInAsync(RefreshTokenLoginDto refreshTokenLoginDto)//refresh token geçerliyse token süresini uzatır
         {
             try
             {
-                User? user = await _userRepository.GetByDefaultAsync(x => x.RefreshToken == refreshToken);
+                User? user = await _userRepository.GetByDefaultAsync(x => x.RefreshToken == refreshTokenLoginDto.RefreshTokenLogin);
                 var userDto=_mapper.Map<User,UserDto>(user);
                 if (user!=null && user?.RefreshTokenEndDate>DateTime.UtcNow)
                 {
@@ -647,8 +647,8 @@ namespace AtSepete.Business.Concrete
                     var identity = new ClaimsIdentity(claims);
                     ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
-                    Token token = _tokenHandler.CreateAccessToken(3, principal);
-                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition,2);
+                    Token token = _tokenHandler.CreateAccessToken(2, principal);
+                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition,8);
 
                     _loggerService.LogInfo(LogMessages.User_Login_Success);
                     return new SuccessDataResult<Token>(token, Messages.LoginSuccess);
@@ -685,8 +685,8 @@ namespace AtSepete.Business.Concrete
                     var identity = new ClaimsIdentity(claims);
                     ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
-                    Token token = _tokenHandler.CreateAccessToken(3, principal);
-                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 2);
+                    Token token = _tokenHandler.CreateAccessToken(2, principal);
+                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 8);
 
 
                     _loggerService.LogInfo(LogMessages.User_Login_Success);

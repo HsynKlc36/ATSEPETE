@@ -31,7 +31,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddRepositoriesServices()
-    .AddJWTBusinessServices(builder.Configuration)
+    .AddJWTBusinessServices(builder.Configuration,new HttpContextAccessor())
     .AddDataAccessServices(builder.Configuration)
     .AddApiServices(builder.Configuration);
 

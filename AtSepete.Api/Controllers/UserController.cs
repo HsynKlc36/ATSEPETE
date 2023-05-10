@@ -39,7 +39,7 @@ namespace AtSepete.Api.Controllers
         }
         [HttpGet]
         [Route("[action]/{id:Guid}")]
-        [Authorize(AuthenticationSchemes = "Customer")]
+        [Authorize(AuthenticationSchemes = "Admin,Customer")]
         public async Task<IDataResult<UserDto>> GetByIdUser(Guid id)
         {
             return await _userService.FindUserByIdAsync(id);
@@ -72,9 +72,9 @@ namespace AtSepete.Api.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<IDataResult<Token>> RefreshTokenLoginSignIn([FromForm]string refreshToken)
+        public async Task<IDataResult<Token>> RefreshTokenLoginSignIn(RefreshTokenLoginDto refreshTokenLoginDto)
         {
-            return await _userService.RefreshTokenSignInAsync(refreshToken);
+            return await _userService.RefreshTokenSignInAsync(refreshTokenLoginDto);
         }
         [HttpPost]
         [Route("[action]")]

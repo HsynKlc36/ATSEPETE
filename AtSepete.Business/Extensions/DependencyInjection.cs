@@ -22,12 +22,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace AtSepete.Business.Extensions
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddJWTBusinessServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddJWTBusinessServices(this IServiceCollection services, IConfiguration configuration,IHttpContextAccessor httpContextAccessor)
         {
             services.AddHttpContextAccessor();//servislerde httpContext'e ulaşabilmek için
             services.AddScoped<ITokenHandler, JWT.TokenHandler>();
@@ -36,7 +38,7 @@ namespace AtSepete.Business.Extensions
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                
+
             })
             .AddJwtBearer("Admin", options =>
             {
@@ -58,6 +60,13 @@ namespace AtSepete.Business.Extensions
                 };
                 options.Events = new JwtBearerEvents
                 {
+                    OnAuthenticationFailed = context =>
+                    {
+                        httpContextAccessor.HttpContext.Response.Redirect("https://localhost:7290/Login/RefreshTokenLogin");
+
+
+                        return Task.FromResult(0);
+                    },
                     OnTokenValidated = context =>
                     {
                         var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
@@ -72,27 +81,33 @@ namespace AtSepete.Business.Extensions
             })
                .AddJwtBearer("Customer", options =>
                {
-                   options.TokenValidationParameters = new()
-                   {
-                       ValidateAudience = true,// hangi sitelerin veya kimlerin kullancağını belirleriz
-                       ValidateIssuer = true,//oluşturulacak token değerini kimin dağıttığının belirlendiği yerdir
-                       ValidateLifetime = true,//oluşturulan token değerinin süresini kontrol edecek olan doğrulama
-                       ValidateIssuerSigningKey = true,//üretilecek token değerinin uygulamamıza ait bir değer olduğunu ifade eden security key  verisinin doğrulanmasıdır
-                       ValidAudience = configuration["Token:Audience"],
-                       ValidIssuer = configuration["Token:Issuer"],
-                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
-                       LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
-                       ClockSkew = TimeSpan.Zero
-
-                       //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.süre geçmişse expires null gelir
-
+               options.TokenValidationParameters = new()
+               {
+                   ValidateAudience = true,// hangi sitelerin veya kimlerin kullancağını belirleriz
+                   ValidateIssuer = true,//oluşturulacak token değerini kimin dağıttığının belirlendiği yerdir
+                   ValidateLifetime = true,//oluşturulan token değerinin süresini kontrol edecek olan doğrulama
+                   ValidateIssuerSigningKey = true,//üretilecek token değerinin uygulamamıza ait bir değer olduğunu ifade eden security key  verisinin doğrulanmasıdır
+                   ValidAudience = configuration["Token:Audience"],
+                   ValidIssuer = configuration["Token:Issuer"],
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
+                   LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
+                   ClockSkew = TimeSpan.Zero
+                       //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.süre geçmişse expires 
                    };
                    options.Events = new JwtBearerEvents
                    {
+                       
+                       OnAuthenticationFailed = context =>
+                       {
+                           httpContextAccessor.HttpContext.Response.Redirect("https://localhost:7290/Login/RefreshTokenLogin");
+                          
+
+                           return Task.FromResult(0);
+                       },
                        OnTokenValidated = context =>
                        {
                            var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
-
+                           //var tokenDate=claimsIdentity.FindFirst("Exp");
                            // Kontrol etmek istediğiniz roller veya izinler burada belirtilir.
                            if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Customer"))
                            {
@@ -116,13 +131,17 @@ namespace AtSepete.Business.Extensions
                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])),
                        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
                        ClockSkew = TimeSpan.Zero
+                       
                        //expires=> gelen jwt=token=accessToken nin ömrüne bakar.eğer ki süresini doldurmuşsa kullanılamaz.
 
                    };
+                   
                    options.Events = new JwtBearerEvents
                    {
                        OnTokenValidated = context =>
-                       {
+                       { 
+                           
+
                            var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
                            // Kontrol etmek istediğiniz roller veya izinler burada belirtilir.
                            if (!claimsIdentity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "ForgetPassword"))
@@ -164,46 +183,7 @@ namespace AtSepete.Business.Extensions
 
             return services;
         }
-        #region CookieServices
-//public static IServiceCollection AddCookieMVCServices(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.AddHttpContextAccessor();//servislerde httpContext'e ulaşabilmek için
-        //    services.AddScoped<ITokenHandler, JWT.TokenHandler>();
 
-        //    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        //    .AddCookie(options =>
-        //    {
-        //        options.SlidingExpiration = false;
-        //        options.Cookie.Name = "AtSepeteCookie";
-        //        options.ExpireTimeSpan = TimeSpan.FromMinutes(135);
-        //        options.AccessDeniedPath = "/Home/ErişimEngellendi";
-        //        options.LoginPath = "/Login/Login"; // Kimlik doğrulama başarısız olduğunda yönlendirme yapılacak sayfa
-        //        options.Cookie.HttpOnly = true;
-        //    });
-
-        //    services.AddAutoMapper(
-        //    Assembly.GetExecutingAssembly(),
-        //    typeof(CategoryProfile).Assembly,
-        //    typeof(MarketProfile).Assembly,
-        //    typeof(OrderProfile).Assembly,
-        //    typeof(OrderDetailProfile).Assembly,
-        //    typeof(ProductMarketProfile).Assembly,
-        //    typeof(ProductProfile).Assembly,
-        //    typeof(UserProfile).Assembly
-        //    );
-        //    services.AddScoped<ICategoryService, CategoryService>();
-        //    services.AddScoped<IMarketService, MarketService>();
-        //    services.AddScoped<IProductService, ProductService>();
-        //    services.AddScoped<IOrderService, OrderService>();
-        //    services.AddScoped<IProductMarketService, ProductMarketService>();
-        //    services.AddScoped<IOrderDetailService, OrderDetailService>();
-        //    services.AddScoped<IUserService, UserService>();
-        //    services.AddSingleton<ILoggerService, LoggerService>();
-        //    services.AddSingleton<IEmailSender, EmailSenderService>();
-
-        //    return services;
-        //}
-        #endregion
         
     }
 }

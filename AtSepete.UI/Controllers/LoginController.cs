@@ -24,7 +24,6 @@ namespace AtSepete.UI.Controllers
     public class LoginController : BaseController
     {
 
-
         public LoginController()
         {
 
@@ -42,13 +41,15 @@ namespace AtSepete.UI.Controllers
             return View();
         }
         [HttpGet]
-        public async Task<IActionResult> RefreshTokenLogin()
+        public async Task<IActionResult> RefreshTokenLogin(string returnUrl)
         {
 
             using (var httpClient = new HttpClient())
             {
-                StringContent content =new StringContent(JsonConvert.SerializeObject(UserRefreshToken), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/user/RefreshTokenLoginSignIn", content))
+                RefreshTokenLoginDto refreshTokenLoginDto = new();
+                refreshTokenLoginDto.RefreshTokenLogin = UserRefreshToken;
+                StringContent content =new StringContent(JsonConvert.SerializeObject(refreshTokenLoginDto), Encoding.UTF8, "application/Json");
+                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/user/RefreshTokenLoginSignIn",content))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     LoginUserResponse loginUser = JsonConvert.DeserializeObject<LoginUserResponse>(apiResponse);
@@ -76,8 +77,8 @@ namespace AtSepete.UI.Controllers
                         HttpContext.Response.Cookies.Delete("AtSepeteCookie");
 
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-
-                        return RedirectToAction("Privacy", "Home");
+                        return Redirect(returnUrl);
+                        
                     }
                     else
                     {

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
@@ -21,25 +22,28 @@ namespace AtSepete.UI.Controllers
 {
     public class HomeController : BaseController
     {
-     
+
         private readonly IMapper _mapper;
 
         public HomeController(IMapper mapper)
         {
-           
+
             _mapper = mapper;
         }
         //user dan get işlemi ile veri getirme denendi
 
         public async Task<IActionResult> Index()
         {
-            //token'ı headers'ta taşımak için gerekli
-            //HttpContext.Request.Headers.Add("Authorization", $"Bearer {UserToken}");
+            
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
             HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/user/GetByIdUser/46b44b12-afdb-4a46-f2b0-08db3e8adba2");
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("RefreshTokenLogin", "Login",new { returnUrl = HttpContext.Request.Path });
+            }
             string apiResponse = await response.Content.ReadAsStringAsync();
-            UserApiResponse user = JsonConvert.DeserializeObject<UserApiResponse>(apiResponse);           
+            UserApiResponse user = JsonConvert.DeserializeObject<UserApiResponse>(apiResponse);
             return View(user);
 
         }
@@ -50,7 +54,7 @@ namespace AtSepete.UI.Controllers
         }
         [HttpPost]
         //post işlemi ile category ekleme işlemi ve dönen sonucu yakalayıp view da gösterme denendi!!
-        public async Task<IActionResult> AddCategory(Category category )
+        public async Task<IActionResult> AddCategory(Category category)
         {
             CreateCategoryDto dto = new CreateCategoryDto();
             dto.Description = category.Description;
@@ -62,19 +66,19 @@ namespace AtSepete.UI.Controllers
                 {
                     string apiAnswer = await answer.Content.ReadAsStringAsync();
                     AddCategoryResponse categoryResponse = JsonConvert.DeserializeObject<AddCategoryResponse>(apiAnswer);
-                    ViewBag.cevap = categoryResponse.Message; 
+                    ViewBag.cevap = categoryResponse.Message;
                 }
             }
-           
+
             return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateCategory()
         {
-          
 
-          
+
+
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/Category/GetByIdCategory/ef43c461-6948-4939-cc3b-08db393cda8a");
             string apiResponse = await response.Content.ReadAsStringAsync();
@@ -87,8 +91,8 @@ namespace AtSepete.UI.Controllers
         {
 
             CreateCategoryDto dto = new CreateCategoryDto();
-            var updateCategoryDto=_mapper.Map( category.Data ,dto);
-          
+            var updateCategoryDto = _mapper.Map(category.Data, dto);
+
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(updateCategoryDto), Encoding.UTF8, "application/Json");
@@ -114,9 +118,9 @@ namespace AtSepete.UI.Controllers
             return Json(user);
 
         }
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer,Admin")]
         public IActionResult Privacy()
-        {        
+        {
             return View();
         }
 
@@ -130,9 +134,9 @@ namespace AtSepete.UI.Controllers
         public IActionResult NewPassword(string token)
         {
             var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token); 
-            Claim emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type ==ClaimTypes.Email); 
-            if (emailClaim != null) 
+            var jwtToken = handler.ReadJwtToken(token);
+            Claim emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+            if (emailClaim != null)
             { string emailValue = emailClaim.Value; }
 
             return View();

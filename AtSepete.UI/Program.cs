@@ -24,8 +24,6 @@ builder.Services
     .AddMvcServices();
    
 
-
-
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -45,10 +43,16 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+
+
 app.UseNotyf();
+//app.MapControllerRoute(
+//    name: "default",
+//     pattern: "{area:exists}/{controller=Login}/{action=Login}/{id?}");
 app.MapControllerRoute(
-    name: "default",
-     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+    name: "LoginPath",
+     pattern: "{controller=Login}/{action=Login}/{id?}");
 app.MapDefaultControllerRoute();
 
 app.Run();
