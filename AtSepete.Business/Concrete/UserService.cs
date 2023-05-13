@@ -431,7 +431,7 @@ namespace AtSepete.Business.Concrete
             {
                 var user = await _userRepository.GetByIdAsync(userDto.Id);
                 user.RefreshToken = refreshToken;
-                user.RefreshTokenEndDate = accessTokenDate.AddMinutes(AddOnAccessTokenDate);
+                user.RefreshTokenEndDate = accessTokenDate.AddHours(AddOnAccessTokenDate);
                 await _userRepository.UpdateAsync(user);
                 await _userRepository.SaveChangesAsync();
                 _loggerService.LogInfo($"Updated refresh token");
@@ -550,7 +550,7 @@ namespace AtSepete.Business.Concrete
 
                 Token token = _tokenHandler.ResetPasswordToken(20, emailDto);
 
-                string url = $"https://localhost:7290/Home/NewPassword?token={token.AccessToken}";
+                string url = $"https://localhost:7290/Login/NewPassword?token={token.AccessToken}";
                 var content = $"Merhaba, <br />" +
                     $"Şifreni yenilemek için linke tıklayabilirsin: " +
                     $"<a href='{url}'> Şifre Yenile </a>" +
@@ -647,8 +647,8 @@ namespace AtSepete.Business.Concrete
                     var identity = new ClaimsIdentity(claims);
                     ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
-                    Token token = _tokenHandler.CreateAccessToken(2, principal);
-                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition,8);
+                    Token token = _tokenHandler.CreateAccessToken(24, principal);
+                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition,6);
 
                     _loggerService.LogInfo(LogMessages.User_Login_Success);
                     return new SuccessDataResult<Token>(token, Messages.LoginSuccess);
@@ -685,8 +685,8 @@ namespace AtSepete.Business.Concrete
                     var identity = new ClaimsIdentity(claims);
                     ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
-                    Token token = _tokenHandler.CreateAccessToken(2, principal);
-                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 8);
+                    Token token = _tokenHandler.CreateAccessToken(24, principal);
+                    await UpdateRefreshToken(token.RefreshToken, userDto, token.Expirition, 6);
 
 
                     _loggerService.LogInfo(LogMessages.User_Login_Success);

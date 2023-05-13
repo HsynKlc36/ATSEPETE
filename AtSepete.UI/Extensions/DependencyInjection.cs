@@ -42,7 +42,7 @@ namespace AtSepete.UI.Extensions
             {
                 options.SlidingExpiration = false;
                 options.Cookie.Name = "AtSepeteCookie";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                options.ExpireTimeSpan = TimeSpan.FromHours(30);
                 //options.AccessDeniedPath = "/Home/ErişimEngellendi";
                 options.LoginPath = "/Login/Login/"; // Kimlik doğrulama başarısız olduğunda yönlendirme yapılacak sayfa
                 options.Cookie.HttpOnly = true;

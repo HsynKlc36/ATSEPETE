@@ -22,7 +22,7 @@ namespace AtSepete.Business.JWT
             _configuration = configuration;
         }
 
-        public Token ResetPasswordToken(int minute,ForgetPasswordEmailDto emailDto)
+        public Token ResetPasswordToken(int hour,ForgetPasswordEmailDto emailDto)
         {
             var claims = new List<Claim>()
                     {   
@@ -35,7 +35,7 @@ namespace AtSepete.Business.JWT
             Token token = new();
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));// security key'in simetriğini alıyoruz
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);//şifrelenmiş kimlik oluşturduk 
-            token.Expirition = DateTime.UtcNow.AddMinutes(minute);
+            token.Expirition = DateTime.UtcNow.AddHours(hour);
             JwtSecurityToken securityToken = new(
                 audience: _configuration["Token:Audience"],
                 issuer: _configuration["Token:Issuer"],
@@ -48,7 +48,7 @@ namespace AtSepete.Business.JWT
             token.AccessToken = tokenHandler.WriteToken(securityToken);
             return token;
         }
-        public Token CreateAccessToken(int minute,ClaimsPrincipal claimsPrincipal)
+        public Token CreateAccessToken(int hour,ClaimsPrincipal claimsPrincipal)
         {
 
             Token token = new();
@@ -56,7 +56,7 @@ namespace AtSepete.Business.JWT
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);//şifrelenmiş kimlik oluşturduk 
 
             //oluşturulacak token ayarlarını vereceğiz!
-            token.Expirition = DateTime.UtcNow.AddMinutes(minute);
+            token.Expirition = DateTime.UtcNow.AddHours(hour);
             //ürettiğimiz token içeriği
             JwtSecurityToken securityToken = new(
                 audience: _configuration["Token:Audience"],

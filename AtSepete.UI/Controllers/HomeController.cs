@@ -5,7 +5,7 @@ using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Results;
 using AtSepete.Results.Concrete;
-using AtSepete.UI.ApiResponses;
+using AtSepete.UI.ApiResponses.CategoryApiResponse;
 using AtSepete.UI.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +31,7 @@ namespace AtSepete.UI.Controllers
             _mapper = mapper;
         }
         //user dan get işlemi ile veri getirme denendi
-
+        [Authorize(Roles ="Admin,Customer")] 
         public async Task<IActionResult> Index()
         {
             
@@ -109,7 +109,6 @@ namespace AtSepete.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response = await httpClient.DeleteAsync($"https://localhost:7286/AtSepeteApi/user/SoftDeleteUser/{id}");
             string apiResponse = await response.Content.ReadAsStringAsync();
@@ -124,23 +123,7 @@ namespace AtSepete.UI.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        [HttpGet]
-        public IActionResult NewPassword(string token)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-            Claim emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-            if (emailClaim != null)
-            { string emailValue = emailClaim.Value; }
-
-            return View();
-        }
+  
     }
 
 }

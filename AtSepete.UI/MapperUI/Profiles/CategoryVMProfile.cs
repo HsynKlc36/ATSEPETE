@@ -1,5 +1,5 @@
 ﻿using AtSepete.Dtos.Dto.Categories;
-using AtSepete.UI.ApiResponses;
+using AtSepete.UI.ApiResponses.CategoryApiResponse;
 
 namespace AtSepete.UI.MapperUI.Profiles
 {
@@ -7,8 +7,8 @@ namespace AtSepete.UI.MapperUI.Profiles
     {
         public CategoryVMProfile()
         {
-            CreateMap<AddCategoryResponse, UpdateCategoryDto>();
-            CreateMap<UpdateCategoryDto, AddCategoryResponse>();
+            CreateMap<AddCategoryResponse, UpdateCategoryDto>().ReverseMap();
+         
         }
     }
 }

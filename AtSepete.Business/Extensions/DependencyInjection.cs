@@ -100,8 +100,7 @@ namespace AtSepete.Business.Extensions
                        OnAuthenticationFailed = context =>
                        {
                            httpContextAccessor.HttpContext.Response.Redirect("https://localhost:7290/Login/RefreshTokenLogin");
-                          
-
+                        
                            return Task.FromResult(0);
                        },
                        OnTokenValidated = context =>

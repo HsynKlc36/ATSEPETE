@@ -94,7 +94,8 @@ namespace AtSepete.Api.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<IResult> UserChangePassword(ChangePasswordDto changePasswordDto)
+        [Authorize(AuthenticationSchemes = "Admin,Customer")]
+        public async Task<IResult> ChangePassword(ChangePasswordDto changePasswordDto)
         {
             return await _userService.ChangePasswordAsync(changePasswordDto);
 
