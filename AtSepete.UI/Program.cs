@@ -10,8 +10,7 @@ using AtSepete.UI.Extensions;
 using AtSepete.UI.MapperUI.Profiles;
 using AtSepete.Business.Extensions;
 using AtSepete.Repositories.Extensions;
-using AspNetCoreHero.ToastNotification.Extensions;
-
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,14 +34,24 @@ else
 {
     app.UseDeveloperExceptionPage();//Bu metot, geliþtirme ortamýnda çalýþýrken herhangi bir hata meydana geldiðinde, kullanýcýya ayrýntýlý bir hata sayfasý gösterir.
 }
+var cultures = new List<CultureInfo>
+{
+    new CultureInfo("tr")
+};
 
+app.UseRequestLocalization(options =>
+{
+    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("tr");
+    options.SupportedCultures = cultures;
+    options.SupportedUICultures = cultures;
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseNotyf();
+app.UseNToastNotify();
 //app.MapControllerRoute(
 //    name: "default",
 //     pattern: "{area:exists}/{controller=Login}/{action=Login}/{id?}");

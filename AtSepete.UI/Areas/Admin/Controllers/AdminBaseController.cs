@@ -6,7 +6,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(AuthenticationSchemes = "Admin")]
-    public class AdminBaseController:BaseController
+    public class AdminBaseController:Controller
     {
     }
 }

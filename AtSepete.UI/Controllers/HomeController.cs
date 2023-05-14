@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using NToastNotify;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -26,7 +27,7 @@ namespace AtSepete.UI.Controllers
 
         private readonly IMapper _mapper;
 
-        public HomeController(IMapper mapper)
+        public HomeController(IMapper mapper,IToastNotification toastNotification):base(toastNotification)
         {
 
             _mapper = mapper;

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NToastNotify;
 using SendGrid;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -26,7 +27,7 @@ namespace AtSepete.UI.Controllers
     {
         private readonly IMapper _mapper;
 
-        public LoginController(IMapper mapper)
+        public LoginController(IMapper mapper,IToastNotification toastNotification):base(toastNotification)
         {
             _mapper = mapper;
         }
@@ -69,6 +70,7 @@ namespace AtSepete.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> ForgetPassword()
         {
+            
             return View();
         }
         [HttpPost]
@@ -237,11 +239,13 @@ namespace AtSepete.UI.Controllers
 
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-
+                        NotifySuccessLocalized(loginUser.Message);
                         return RedirectToAction("Privacy", "Home");//login olunca yönleneceği sayfa areasına göre yöneleceği ilk sayfa!
+                       
                     }
                     else
                     {
+                        NotifyErrorLocalized(loginUser.Message);
                         return RedirectToAction("Login", "Login");//giriş yapılamazsa!!
                     }
 

@@ -38,7 +38,7 @@
             @RenderBody()
         </main>
     </div>
-
+    @await Component.InvokeAsync("NToastNotify")
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2023 - AtSepete.UI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
