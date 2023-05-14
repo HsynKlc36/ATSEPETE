@@ -18,9 +18,7 @@ namespace AtSepete.Business.Abstract
 {
     public interface IUserService 
     {
-        Task<IDataResult<Token>> SignInAsync(UserDto user, bool IsSuccess);// giriş yapma işlemini dener
-         Task<IDataResult<Token>> RefreshTokenSignInAsync(RefreshTokenLoginDto refreshTokenLoginDto);//refresh token süresi geçerliyse access token oluşturur.
-        Task<IResult> SignOutAsync();
+
         //yukarıdaki satırlar giriş ve çıkış işlemleri için kullanılır
         Task<IDataResult<List<UserListDto>>> GetAllUserAsync();//tüm user'ları getirir
         Task<IDataResult<UserDto>> FindUserByIdAsync(Guid id);// id ye göre user getirir
@@ -29,17 +27,10 @@ namespace AtSepete.Business.Abstract
         Task<IDataResult<List<UserDto>>> FindUsersByRoleAsync(string roleName);//role gore user'ları getirir
         Task<IDataResult<CreateUserDto>> AddUserAsync(CreateUserDto entity);//user ekleme
         Task<IDataResult<UpdateUserDto>> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto);//user güncelleme
-        Task<IDataResult<ChangePasswordDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto);//user parolasını değiştirmek
-        Task<IResult> ResetPasswordAsync(NewPasswordDto newPasswordDto);//user parolasını sıfırlamak
+ 
         Task<IResult> HardDeleteUserAsync(Guid id);//veritabanından siler
         Task<IResult> SoftDeleteUserAsync(Guid id);//IsActive false' a çeker
-        Task<IResult> CheckPasswordAsync(CheckPasswordDto checkPasswordDto);//user'ın şifresini kontrol eder!
-        Task<IDataResult<string>> ForgetPasswordEmailSenderAsync(ForgetPasswordEmailDto emailDto);
-        Task<IDataResult<UserDto>> CheckUserSignAsync(CheckPasswordDto checkPasswordDto,bool lockoutOnFailure);//giriş yapmak isteyen kullanıcıyı database'den kontrol edecek!
-        Task<IResult> UpdateRefreshToken(string refreshToken, UserDto userDto, DateTime accessTokenDate, int AddOnAccessTokenDate);//user login olunca verilecek refresh tokenı belirler.dto ya RefreshToken ve süresi parametreleri eklenmeli!!
-
-
-        //public virtual Task<IdentityResult> AddClaimAsync(TUser user, Claim claim);
+       
 
     }
 }

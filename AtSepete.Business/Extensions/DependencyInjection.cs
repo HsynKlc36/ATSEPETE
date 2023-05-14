@@ -170,6 +170,7 @@ namespace AtSepete.Business.Extensions
             typeof(ProductProfile).Assembly,
             typeof(UserProfile).Assembly
             );
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IMarketService, MarketService>();
             services.AddScoped<IProductService, ProductService>();

@@ -51,56 +51,6 @@ namespace AtSepete.Api.Controllers
             return await _userService.FindUserByEmailAsync(email);
         }
 
-
-        [HttpPost]
-        [Route("[action]")]
-        public async Task<IDataResult<UserDto>> CheckUserSignIn(CheckPasswordDto checkPasswordDto)
-        {
-            return await _userService.CheckUserSignAsync(checkPasswordDto, true);
-
-        }
-
-        [HttpPost]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<IDataResult<Token>> LoginSignIn(CheckPasswordDto checkPasswordDto)
-        {
-            var responseUserDto = await _userService.CheckUserSignAsync(checkPasswordDto, true);//userDto elimize ulaşır               
-            return await _userService.SignInAsync(responseUserDto.Data, responseUserDto.IsSuccess);
-
-        }
-        [HttpPost]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<IDataResult<Token>> RefreshTokenLoginSignIn(RefreshTokenLoginDto refreshTokenLoginDto)
-        {
-            return await _userService.RefreshTokenSignInAsync(refreshTokenLoginDto);
-        }
-        [HttpPost]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<IDataResult<string>> ForgetPasswordEmailSender(ForgetPasswordEmailDto emailDto)
-        {
-            return await _userService.ForgetPasswordEmailSenderAsync(emailDto);
-
-        }
-        [HttpPost]
-        [Route("[action]")]
-        [Authorize(AuthenticationSchemes = "ForgetPassword")]
-        public async Task<IResult> ResetPassword(NewPasswordDto newPasswordDto)
-        {
-            return await _userService.ResetPasswordAsync(newPasswordDto);
-        }
-
-        [HttpPost]
-        [Route("[action]")]
-        [Authorize(AuthenticationSchemes = "Admin,Customer")]
-        public async Task<IResult> ChangePassword(ChangePasswordDto changePasswordDto)
-        {
-            return await _userService.ChangePasswordAsync(changePasswordDto);
-
-        }
-
         [HttpPost]
         [Route("[action]")]
         public async Task<IDataResult<CreateUserDto>> AddUser([FromBody] CreateUserDto createUserDto)

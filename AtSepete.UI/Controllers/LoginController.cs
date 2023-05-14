@@ -4,10 +4,6 @@ using AtSepete.Entities.Data;
 using AtSepete.UI.ApiResponses.LoginApiResponse;
 using AtSepete.UI.ApiResponses.UserApiResponse;
 using AtSepete.UI.Models;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Oauth2.v2;
-using Google.Apis.Oauth2.v2.Data;
-using Google.Apis.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -53,7 +49,7 @@ namespace AtSepete.UI.Controllers
 
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
                 StringContent content = new StringContent(JsonConvert.SerializeObject(changePasswordDto), Encoding.UTF8, "application/Json");
-                using (var response = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/User/ChangePassword", content))
+                using (var response = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/Auth/ChangePassword", content))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
@@ -68,7 +64,7 @@ namespace AtSepete.UI.Controllers
                 }
             }
 
-            return View();
+            return RedirectToAction("Home","Privacy");
         }
         [HttpGet]
         public async Task<IActionResult> ForgetPassword()
@@ -83,7 +79,7 @@ namespace AtSepete.UI.Controllers
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(forgetPasswordEmailDto), Encoding.UTF8, "application/Json");
-                using (var answer = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/User/ForgetPasswordEmailSender", content))
+                using (var answer = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/Auth/ForgetPasswordEmailSender", content))
                 {
                     string apiAnswer = await answer.Content.ReadAsStringAsync();
                     ForgetPasswordResponse forgetPasswordResponse = JsonConvert.DeserializeObject<ForgetPasswordResponse>(apiAnswer);
@@ -114,7 +110,7 @@ namespace AtSepete.UI.Controllers
 
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", newPasswordDto.Token);
                 StringContent content = new StringContent(JsonConvert.SerializeObject(newPasswordDto), Encoding.UTF8, "application/Json");
-                using (var response = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/User/ResetPassword", content))
+                using (var response = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/Auth/ResetPassword", content))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
@@ -166,7 +162,7 @@ namespace AtSepete.UI.Controllers
                 RefreshTokenLoginDto refreshTokenLoginDto = new();
                 refreshTokenLoginDto.RefreshTokenLogin = UserRefreshToken;
                 StringContent content =new StringContent(JsonConvert.SerializeObject(refreshTokenLoginDto), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/user/RefreshTokenLoginSignIn",content))
+                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/Auth/RefreshTokenLoginSignIn",content))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     LoginUserResponse loginUser = JsonConvert.DeserializeObject<LoginUserResponse>(apiResponse);
@@ -216,7 +212,7 @@ namespace AtSepete.UI.Controllers
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(loginVM), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/user/LoginSignIn", content))
+                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/Auth/LoginSignIn", content))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     LoginUserResponse loginUser = JsonConvert.DeserializeObject<LoginUserResponse>(apiResponse);
@@ -257,9 +253,8 @@ namespace AtSepete.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> LogOut()
         {
-
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
+            HttpContext.Response.Cookies.Delete("AtSepeteCookie");// var olan cookie tarayıcıdan temizlenir!!
             return RedirectToAction("Index", "Home");
         }
     }

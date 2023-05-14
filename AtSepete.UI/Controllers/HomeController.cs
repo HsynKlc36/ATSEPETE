@@ -6,6 +6,7 @@ using AtSepete.Repositories.Abstract;
 using AtSepete.Results;
 using AtSepete.Results.Concrete;
 using AtSepete.UI.ApiResponses.CategoryApiResponse;
+using AtSepete.UI.Areas.Admin.Controllers;
 using AtSepete.UI.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
