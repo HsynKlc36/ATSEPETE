@@ -29,7 +29,6 @@ namespace AtSepete.UI.Controllers
         protected string? UserToken => HttpContext.User.FindFirstValue("Token");
         protected string? UserRefreshToken => HttpContext.User.FindFirstValue("RefreshToken");
 
-
         protected INotyfService NotyfService => HttpContext.RequestServices.GetService(typeof(INotyfService)) as INotyfService;
         /*protected IStringLocalizer<SharedModelResource> Localizer => HttpContext.RequestServices.GetService(typeof(IStringLocalizer<SharedModelResource>)) as IStringLocalizer<SharedModelResource>;*/
 
