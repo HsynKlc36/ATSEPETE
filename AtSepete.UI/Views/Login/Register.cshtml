@@ -1,91 +1,179 @@
-﻿
-
-@model AtSepete.UI.Models.RegisterVM
+﻿@model AtSepete.UI.Models.RegisterVM
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Kayıt Ol";
+    Layout = null;
 }
 
 
-<div style="display:flex; justify-content:center;">
-    <div style="width:50%;">
-        <h4 style="text-align:center;">Kayıt Ol</h4>
-        <hr />
-        <form asp-action="Register">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SecondName" class="control-label"></label>
-                <input asp-for="SecondName" class="form-control" />
-                <span asp-validation-for="SecondName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SecondLastName" class="control-label"></label>
-                <input asp-for="SecondLastName" class="form-control" />
-                <span asp-validation-for="SecondLastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RetypedPassword" class="control-label"></label>
-                <input asp-for="RetypedPassword" class="form-control" />
-                <span asp-validation-for="RetypedPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Gender" class="control-label">Cinsiyet</label>
-                <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control">
-                    <option value="">Seçiniz</option>
-                </select>
-                <i class="fa fa-caret-down"></i>
-                <span asp-validation-for="Gender" class="text-danger"></span>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="Adress" class="control-label"></label>
-                <input asp-for="Adress" class="form-control" />
-                <span asp-validation-for="Adress" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BirthDate" class="control-label"></label>
-                <input asp-for="BirthDate" class="form-control" type="date" />
-                <span asp-validation-for="BirthDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group mt-4">
-                <button type="submit" class="btn btn-primary rounded-pill px-4">
-                    Kayıt Ol
-                </button>
-            </div>
-        </form>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        @ViewData["Title"];
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- MATERIAL DESIGN ICONIC FONT -->
+    <link rel="stylesheet" href="fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
+
+    <!-- STYLE CSS -->
+    @*    <link rel="stylesheet" href="css/style.css">*@
+    <link href="~/css/registerstyle.css" rel="stylesheet" />
+</head>
+
+@*<body>
+
+    <div class="wrapper">
+        <div class="inner content">
+            <form asp-action="Register" class="text">
+                <h3>Kayıt Ol</h3>
+                <div class="form-wrapper">
+                    <label asp-for="FirstName">Adı</label>
+                    <input asp-for="FirstName" type="text" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="SecondName">İkinci Adı</label>
+                    <input asp-for="SecondName" type="text" class="form-control" />
+                    <span asp-validation-for="SecondName" class="text-danger"></span>
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="LastName">Soyadı</label>
+                    <input asp-for="LastName" type="text" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="SecondLastName">İkinci Soyadı</label>
+                    <input asp-for="SecondLastName" type="text" class="form-control" />
+                    <span asp-validation-for="SecondLastName" class="text-danger"></span>
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" type="text" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="Password">Şifre</label>
+                    <input asp-for="Password" type="password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="RetypedPassword">Şifre(Tekrar)</label>
+                    <input asp-for="RetypedPassword" type="password" class="form-control" />
+                    <span asp-validation-for="RetypedPassword" class="text-danger"></span>
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="Gender">Cinsiyet</label>
+                    <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control">
+                        <option value="">Seçiniz</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="Adress">Adress</label>
+                    <textarea asp-for="Adress" rows="10" class="form-control" ></textarea>
+                    <span asp-validation-for="Adress" class="text-danger"></span>
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="BirthDate">Doğum Tarihi</label>
+                    <span asp-validation-for="BirthDate" class="text-danger"></span>
+                    <input asp-for="BirthDate" class="form-control" type="date" />
+                </div>
+                <div class="form-wrapper">
+                    <label asp-for="PhoneNumber">Telefon Numarası</label>
+                    <input asp-for="PhoneNumber" type="number" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <button>Kayıt Ol</button>
+            </form>
+        </div>
     </div>
-</div>
+    @await Component.InvokeAsync("NToastNotify")
+</body>*@
+<body>
+    <div class="wrapper">
+        <div class="inner content">
+            <div class="row">
+                <form asp-action="Register" class="text">
+                        <h3>Kayıt Ol</h3>
+                    <div class="form-group">
+                        <div class="form-wrapper">
+                            <input asp-for="FirstName" type="text" placeholder="Adı" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="form-wrapper">
+                            <input asp-for="SecondName" type="text" placeholder="Soyadı" class="form-control" />
+                            <span asp-validation-for="SecondName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-wrapper">
+                            <input asp-for="LastName" type="text" placeholder="İkinci Adı" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="form-wrapper">
+                            <input asp-for="SecondLastName" type="text" placeholder="İkinci Soyadı" class="form-control" />
+                            <span asp-validation-for="SecondLastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        
+                        <div class="form-wrapper">
+                            <input asp-for="Password" type="password" placeholder="Şifre" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-wrapper">
+                            <input asp-for="RetypedPassword" type="password" placeholder="Şifre(Tekrar)" class="form-control" />
+                            <span asp-validation-for="RetypedPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-wrapper">
+                            <input asp-for="Email" type="text" placeholder="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-wrapper">
+                            <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control">
+                                <option value="">Cinsiyet Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group"> 
+                        <div class="form-wrapper">
+                            <input asp-for="PhoneNumber" type="text" placeholder="Telefon Numarası" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-wrapper">
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
+                            <input asp-for="BirthDate" class="form-control" type="date" />
+                        </div>
+                    </div>
+                    <div class="form-wrapper">
+                        <textarea asp-for="Adress" rows="10" placeholder="Adres" class="form-control"></textarea>
+                        <span asp-validation-for="Adress" class="text-danger"></span>
+                    </div>
+
+                    <button style="width:33%;">Kayıt Ol</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    @await Component.InvokeAsync("NToastNotify")
+</body>
+
+
+</html>
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 
 
 
-               

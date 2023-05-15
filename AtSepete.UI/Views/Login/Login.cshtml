@@ -2,44 +2,38 @@
 @*@inject IConfiguration configuration;*@
 
 @{
-    ViewData["Title"] = "Login";
-  
+    ViewData["Title"] = "AtSepete Giriş";
+    Layout = "_LoginLayout";
+
 }
 
-<h1>Giriş Yap</h1>
 
-
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Login">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Giriş Yap" class="btn btn-primary" />
-            </div>
-        </form>
-
-        <div>
-            <a class="btn btn-danger" asp-area="" asp-controller="Login" asp-action="ForgetPassword"><i class="fa fa-user"></i> Şifremi Unuttum </a>
-        </div>
-        <div>
-            <a class="btn btn-dark" asp-area="" asp-controller="Login" asp-action="Register"><i class="fa fa-user"></i> Kayıt Ol </a>
-        </div>
+<div class="content">
+    <div class="text">
+        Giriş 
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+    <form asp-action="Login">
+        <div class="field">
+            <input asp-for="Email" type="text" class="form-control" required/>
+            <label asp-for="Email">Email</label>
+            <span class="fas fa-user"></span>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="field">
+            <input asp-for="Password" type="password" class="form-control" required/>
+            <label asp-for="Password">Şifre </label>
+            <span class="fas fa-lock"></span>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="forgot-pass">
+            <a asp-area="" asp-controller="Login" asp-action="ForgetPassword">Şifremi Unuttum</a>
+        </div>
+        <button>Giriş Yap</button>
+        <div class="sign-up">
+             Üye değil misin?
+            <a asp-area="" asp-controller="Login" asp-action="Register">Kayıt Ol</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

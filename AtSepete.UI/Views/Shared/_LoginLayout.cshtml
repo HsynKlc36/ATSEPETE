@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<!-- Created By CodingNepal -->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link href="~/css/loginstyle.css" rel="stylesheet" />
+</head>
+<body >
+    <header>
+       
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    @await Component.InvokeAsync("NToastNotify")
+    <footer class="border-top footer text-muted">
+        <div class="container">
+          
+        </div>
+    </footer>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

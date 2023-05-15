@@ -96,12 +96,16 @@ namespace AtSepete.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> NewPassword(string token)
         {
+            if (token is null)
+            {
+                return RedirectToAction("ForgetPassword", "Login");
+            }
             var tokenHandler = new JwtSecurityTokenHandler();
             var decodeToken = tokenHandler.ReadJwtToken(token);
             NewPasswordVM newPassword = new();
             newPassword.Token=token;
             newPassword.Email= decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            return View(newPassword);
+            return View(newPassword); 
         }
         [HttpPost]
         public async Task<IActionResult> NewPassword(NewPasswordVM newPasswordVM)

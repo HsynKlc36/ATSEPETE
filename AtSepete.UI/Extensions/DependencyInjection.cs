@@ -25,7 +25,6 @@ namespace AtSepete.UI.Extensions
                 TimeOut=5000,
                 ShowDuration = 1000, // Bildirimin görüntülenme animasyon süresini milisaniye cinsinden belirler
                 HideDuration = 1000, // Bildirimin kapanma animasyon süresini milisaniye cinsinden belirler
-                ProgressBar = true
             })
             .AddRazorRuntimeCompilation().AddMvcLocalization(LanguageViewLocationExpanderFormat.Suffix,
             opt => opt.DataAnnotationLocalizerProvider = (type, factory) =>
