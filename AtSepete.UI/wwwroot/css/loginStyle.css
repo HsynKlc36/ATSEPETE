@@ -1,5 +1,10 @@
 ﻿@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 
+
+
+
+
+
 * {
     margin: 0;
     padding: 0;
@@ -15,7 +20,7 @@ html, body {
 body {
     display: grid;
     place-items: center;
-    background-image: url('../image/pexels-rdne-stock-project-6785045.jpg');
+    background-image: url('../image/atsepeteloginpage2.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -31,6 +36,7 @@ body {
     border-radius: 10px;
     box-shadow: -3px -3px 7px #ffffff73, 2px 2px 5px rgba(94,104,121,0.288);
 }
+  
 
     .content .text {
         font-size: 33px;

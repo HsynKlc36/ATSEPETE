@@ -24,15 +24,15 @@ body {
     color: #666;
     font-size: 13px;
     margin: 0;
-
     display: grid;
     place-items: center;
-    background-image: url('../image/pexels-rdne-stock-project-6785045.jpg');
+    background-image: url('../image/atsepeteloginpage2.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     text-align: center;
-
+    filter: grayscale(50%);
+    opacity: 0.85;
 }
 .content {
     width: 330px;
@@ -40,7 +40,6 @@ body {
     background: #dde1e7;
     border-radius: 10px;
     box-shadow: -3px -3px 7px #ffffff73, 2px 2px 5px rgba(94,104,121,0.288);
-    opacity:0.85;
 }
     .content label {
         font-size: 20px;

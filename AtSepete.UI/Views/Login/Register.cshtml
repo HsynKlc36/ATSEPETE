@@ -24,78 +24,9 @@
     <link href="~/css/registerstyle.css" rel="stylesheet" />
 </head>
 
-@*<body>
-
-    <div class="wrapper">
-        <div class="inner content">
-            <form asp-action="Register" class="text">
-                <h3>Kayıt Ol</h3>
-                <div class="form-wrapper">
-                    <label asp-for="FirstName">Adı</label>
-                    <input asp-for="FirstName" type="text" class="form-control" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="SecondName">İkinci Adı</label>
-                    <input asp-for="SecondName" type="text" class="form-control" />
-                    <span asp-validation-for="SecondName" class="text-danger"></span>
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="LastName">Soyadı</label>
-                    <input asp-for="LastName" type="text" class="form-control" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="SecondLastName">İkinci Soyadı</label>
-                    <input asp-for="SecondLastName" type="text" class="form-control" />
-                    <span asp-validation-for="SecondLastName" class="text-danger"></span>
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="Email">Email</label>
-                    <input asp-for="Email" type="text" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="Password">Şifre</label>
-                    <input asp-for="Password" type="password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="RetypedPassword">Şifre(Tekrar)</label>
-                    <input asp-for="RetypedPassword" type="password" class="form-control" />
-                    <span asp-validation-for="RetypedPassword" class="text-danger"></span>
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="Gender">Cinsiyet</label>
-                    <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control">
-                        <option value="">Seçiniz</option>
-                    </select>
-                    <span asp-validation-for="Gender" class="text-danger"></span>
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="Adress">Adress</label>
-                    <textarea asp-for="Adress" rows="10" class="form-control" ></textarea>
-                    <span asp-validation-for="Adress" class="text-danger"></span>
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="BirthDate">Doğum Tarihi</label>
-                    <span asp-validation-for="BirthDate" class="text-danger"></span>
-                    <input asp-for="BirthDate" class="form-control" type="date" />
-                </div>
-                <div class="form-wrapper">
-                    <label asp-for="PhoneNumber">Telefon Numarası</label>
-                    <input asp-for="PhoneNumber" type="number" class="form-control" />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-                <button>Kayıt Ol</button>
-            </form>
-        </div>
-    </div>
-    @await Component.InvokeAsync("NToastNotify")
-</body>*@
 <body>
     <div class="wrapper">
-        <div class="inner content">
+        <div class="inner content" style="background-color:#FCD7A6">
             <div class="row">
                 <form asp-action="Register" class="text">
                         <h3>Kayıt Ol</h3>
