@@ -57,7 +57,7 @@ app.UseNToastNotify();
 //     pattern: "{area:exists}/{controller=Login}/{action=Login}/{id?}");
 app.MapControllerRoute(
     name: "LoginPath",
-     pattern: "{controller=Login}/{action=Login}/{id?}");
+     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapDefaultControllerRoute();
 
 app.Run();
