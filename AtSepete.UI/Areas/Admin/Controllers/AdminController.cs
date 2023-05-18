@@ -1,12 +1,17 @@
 ﻿using AtSepete.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using NToastNotify;
 
 namespace AtSepete.UI.Areas.Admin.Controllers
 {
     //adminin kendiyle ilgili işlemlerini yönettiğimiz controller
     public class AdminController : AdminBaseController
     {
+        public AdminController(IToastNotification toastNotification):base(toastNotification) 
+        {
+            
+        }
         public async Task<IActionResult> AdminDetail(Guid id)
         {
             using (var httpClient = new HttpClient())
