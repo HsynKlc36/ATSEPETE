@@ -54,7 +54,7 @@ app.UseAuthorization();
 app.UseNToastNotify();
 app.MapControllerRoute(
     name: "default",
-     pattern: "{area:exists}/{controller=Login}/{action=Login}/{id?}");
+     pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "LoginPath",
      pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -13,7 +13,7 @@ namespace AtSepete.Api.Controllers
 {
     [Route("AtSepeteApi/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize(AuthenticationSchemes = "Admin,Customer")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
