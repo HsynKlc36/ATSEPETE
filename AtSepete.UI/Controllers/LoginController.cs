@@ -27,19 +27,19 @@ namespace AtSepete.UI.Controllers
     {
         private readonly IMapper _mapper;
 
-        public LoginController(IMapper mapper,IToastNotification toastNotification):base(toastNotification)
+        public LoginController(IMapper mapper, IToastNotification toastNotification) : base(toastNotification)
         {
             _mapper = mapper;
         }
         [HttpGet]
-        [Authorize(Roles ="Customer,Admin")]
+        [Authorize(Roles = "Customer,Admin")]
         public async Task<IActionResult> ChangePassword()
         {
             ChangePasswordVM changePasswordVM = new();
-            changePasswordVM.Email =UserEmail;
+            changePasswordVM.Email = UserEmail;
             return View(changePasswordVM);
             //< partial name = "~/Views/Partials/LoginPartials/_ChangePassword.cshtml" > 
-            //
+
         }
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordVM changePasswordVM)
@@ -54,23 +54,25 @@ namespace AtSepete.UI.Controllers
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path});//notify ile tekrardan email al demeliyiz
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path });//notify ile tekrardan email al demeliyiz
                     }
                     string apiAnswer = await response.Content.ReadAsStringAsync();
                     ChangePasswordResponse changePasswordResponse = JsonConvert.DeserializeObject<ChangePasswordResponse>(apiAnswer);
                     if (!changePasswordResponse.IsSuccess)
                     {
+                        NotifyError(changePasswordResponse.Message);
                         return View(changePasswordVM);
                     }
+                    NotifySuccess(changePasswordResponse.Message);
+                    return RedirectToAction("Home", "Privacy");
                 }
             }
 
-            return RedirectToAction("Home","Privacy");
         }
         [HttpGet]
         public async Task<IActionResult> ForgetPassword()
         {
-            
+
             return View();
         }
         [HttpPost]
@@ -87,11 +89,13 @@ namespace AtSepete.UI.Controllers
                     ForgetPasswordResponse forgetPasswordResponse = JsonConvert.DeserializeObject<ForgetPasswordResponse>(apiAnswer);
                     if (!forgetPasswordResponse.IsSuccess)
                     {
+                        NotifyError(forgetPasswordResponse.Message);
                         return View(forgetPasswordVM);
                     }
+                    NotifySuccess(forgetPasswordResponse.Message);
+                    return RedirectToAction("Login", "Login");
                 }
             }
-            return RedirectToAction("Login", "Login");
         }
         [HttpGet]
         public async Task<IActionResult> NewPassword(string token)
@@ -103,16 +107,16 @@ namespace AtSepete.UI.Controllers
             var tokenHandler = new JwtSecurityTokenHandler();
             var decodeToken = tokenHandler.ReadJwtToken(token);
             NewPasswordVM newPassword = new();
-            newPassword.Token=token;
-            newPassword.Email= decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            return View(newPassword); 
+            newPassword.Token = token;
+            newPassword.Email = decodeToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            return View(newPassword);
         }
         [HttpPost]
         public async Task<IActionResult> NewPassword(NewPasswordVM newPasswordVM)
         {
             using (var httpClient = new HttpClient())
             {
-                var newPasswordDto=_mapper.Map<NewPasswordVM,NewPasswordDto>(newPasswordVM);
+                var newPasswordDto = _mapper.Map<NewPasswordVM, NewPasswordDto>(newPasswordVM);
 
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", newPasswordDto.Token);
                 StringContent content = new StringContent(JsonConvert.SerializeObject(newPasswordDto), Encoding.UTF8, "application/Json");
@@ -126,12 +130,14 @@ namespace AtSepete.UI.Controllers
                     NewPasswordResponse newPasswordResponse = JsonConvert.DeserializeObject<NewPasswordResponse>(apiAnswer);
                     if (!newPasswordResponse.IsSuccess)
                     {
+                        NotifyError(newPasswordResponse.Message);
                         return RedirectToAction("ForgetPassword", "Login");
                     }
+                    NotifySuccess(newPasswordResponse.Message);
+                    return RedirectToAction("Login", "Login");
                 }
             }
 
-            return View();
         }
 
         [HttpGet]
@@ -142,7 +148,7 @@ namespace AtSepete.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM registerVM)
         {
-            var createUserDto=_mapper.Map<RegisterVM,CreateUserDto>(registerVM);
+            var createUserDto = _mapper.Map<RegisterVM, CreateUserDto>(registerVM);
 
             using (var httpClient = new HttpClient())
             {
@@ -153,11 +159,13 @@ namespace AtSepete.UI.Controllers
                     CreateUserResponse createUserResponse = JsonConvert.DeserializeObject<CreateUserResponse>(apiAnswer);
                     if (!createUserResponse.IsSuccess)
                     {
+                        NotifyError(createUserResponse.Message);
                         return View(registerVM);
                     }
+                    NotifySuccess(createUserResponse.Message);
+                    return RedirectToAction("Login", "Login");
                 }
             }
-            return RedirectToAction("Login","Login");
         }
         [HttpGet]
         public async Task<IActionResult> RefreshTokenLogin(string returnUrl)
@@ -167,8 +175,8 @@ namespace AtSepete.UI.Controllers
             {
                 RefreshTokenLoginDto refreshTokenLoginDto = new();
                 refreshTokenLoginDto.RefreshTokenLogin = UserRefreshToken;
-                StringContent content =new StringContent(JsonConvert.SerializeObject(refreshTokenLoginDto), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/Auth/RefreshTokenLoginSignIn",content))
+                StringContent content = new StringContent(JsonConvert.SerializeObject(refreshTokenLoginDto), Encoding.UTF8, "application/Json");
+                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/Auth/RefreshTokenLoginSignIn", content))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     LoginUserResponse loginUser = JsonConvert.DeserializeObject<LoginUserResponse>(apiResponse);
@@ -190,14 +198,11 @@ namespace AtSepete.UI.Controllers
                                 new Claim("UserId", userId),
                                 new Claim(ClaimTypes.Name, userName)
                         };
-
-
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         HttpContext.Response.Cookies.Delete("AtSepeteCookie");
 
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
                         return Redirect(returnUrl);
-                        
                     }
                     else
                     {
@@ -245,7 +250,7 @@ namespace AtSepete.UI.Controllers
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
                         NotifySuccessLocalized(loginUser.Message);
                         return RedirectToAction("Privacy", "Home");//login olunca yönleneceği sayfa areasına göre yöneleceği ilk sayfa!
-                       
+
                     }
                     else
                     {
@@ -263,6 +268,7 @@ namespace AtSepete.UI.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Response.Cookies.Delete("AtSepeteCookie");// var olan cookie tarayıcıdan temizlenir!!
+            NotifySuccess("Çıkış Başarılı");
             return RedirectToAction("Index", "Home");
         }
     }

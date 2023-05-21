@@ -27,6 +27,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             {
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
                 using (HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/user/GetByIdUser/{UserId}"))
+                
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
@@ -34,8 +35,17 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     DetailUserResponse user = JsonConvert.DeserializeObject<DetailUserResponse>(apiResponse);
+                    if (user.IsSuccess)
+                    {
                     var userDetail = _mapper.Map<UserDto, AdminAdminDetailVM>(user.Data);
+                        NotifySuccess(user.Message);
                     return View(userDetail);
+                    }
+                    else
+                    {
+                        NotifyError(user.Message);
+                        return RedirectToAction("LogOut", "Login");
+                    }
                 };
 
             }

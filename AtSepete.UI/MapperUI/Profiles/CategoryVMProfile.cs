@@ -10,6 +10,9 @@ namespace AtSepete.UI.MapperUI.Profiles
         {
             CreateMap<AddCategoryResponse, UpdateCategoryDto>().ReverseMap();
             CreateMap<CategoryListDto,AdminCategoryListVM>().ReverseMap();
+            CreateMap<CategoryDto,AdminCategoryUpdateVM>().ReverseMap();
+            CreateMap<AdminCategoryUpdateVM,UpdateCategoryDto>().ReverseMap();
+            CreateMap<AdminCategoryCreateVM,CreateCategoryDto>().ReverseMap();
          
         }
     }

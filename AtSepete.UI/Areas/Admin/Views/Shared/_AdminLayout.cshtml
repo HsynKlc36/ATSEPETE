@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <title>Yönetici Anasayfa</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+   
+    
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.9.55/css/materialdesignicons.min.css">
     <!-- Bootstrap 3.3.2 -->
     <link href="~/bootstrap/css/adminindexstyle.css" rel="stylesheet" />
@@ -315,10 +317,8 @@
                             <i class="fa fa-dashboard"></i> <span>KATEGORİ</span> <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i>KATEGORİ EKLE</a></li>
-                            <li><a href="index2.html"><i class="fa fa-circle-o"></i>KATEGORİ SİL</a></li>
-                            <li><a href="index2.html"><i class="fa fa-circle-o"></i>KATEGORİ GÜNCELLE</a></li>
-                            <li><a asp-area="Admin" asp-controller="Category" asp-action="CategoryList"><i class="fa fa-circle-o"></i>KATEGORİLERİ LİSTELE</a></li>
+                            <li class="active"><a asp-area="Admin" asp-controller="Category" asp-action="AddCategory"><i class="fa fa-circle-o"></i>KATEGORİ EKLE</a></li>
+                            <li><a asp-area="Admin" asp-controller="Category" asp-action="CategoryList"><i class="fa fa-circle-o"></i>KATEGORİ LİSTELE</a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -328,10 +328,8 @@
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="pages/layout/top-nav.html"><i class="fa fa-circle-o"></i> MARKET EKLE</a></li>
-                            <li><a href="pages/layout/boxed.html"><i class="fa fa-circle-o"></i> MARKET SİL</a></li>
-                            <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> MARKET GÜNCELLE</a></li>
-                            <li><a href="pages/layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> MARKET LİSTELE</a></li>
+                            <li><a asp-area="Admin" asp-controller="Market" asp-action="MarketList"><i class="fa fa-circle-o"></i> MARKET EKLE</a></li>
+                            <li><a asp-area="Admin" asp-controller="Market" asp-action="MarketList"><i class="fa fa-circle-o"></i> MARKET LİSTELE</a></li>
                         </ul>
                     </li>
                     <li>
@@ -339,8 +337,8 @@
                             <i class="fa fa-th"></i> <span>SİPARİŞ</span><i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> SİPARİŞ GÜNCELLE</a></li>
-                            <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> SİPARİŞ İPTAL</a></li>
+@*                            <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> SİPARİŞ GÜNCELLE</a></li>
+                            <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> SİPARİŞ İPTAL</a></li>*@
                             <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i>SİPARİŞ LİSTELE</a></li>
                         </ul>
                     </li>
@@ -352,8 +350,8 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> ÜRÜN EKLE</a></li>
-                            <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> ÜRÜN SİL</a></li>
-                            <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> ÜRÜN GÜNCELLE</a></li>
+@*                            <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> ÜRÜN SİL</a></li>
+                            <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> ÜRÜN GÜNCELLE</a></li>*@
                             <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> ÜRÜN LİSTELE</a></li>
                         </ul>
                     </li>
@@ -405,7 +403,7 @@
 
         @await Component.InvokeAsync("NToastNotify")
         <!-- Right side column. Contains the navbar and content of the page -->
-        <footer class="bg-dark text-light" style="color:white">
+        <footer class="bg-dark text-light position-fixed" style="color:white">
             <div class="container py-5">
                 <div class="row">
                     <div class="col-md-4 mb-3">
@@ -446,6 +444,8 @@
             <strong>Copyright &copy; 2014-2015 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved.
         </footer>*@
     </div><!-- ./wrapper -->
+    <!-- delete  için alert-->
+   
     <!-- jQuery 2.1.3 -->
     <script src="~/bootstrap/js/jquery-2.1.3.min.js"></script>
     <!-- jQuery UI 1.11.2 -->
@@ -494,6 +494,8 @@
 
     <!-- AdminLTE for demo purposes -->
     <script src="~/bootstrap/js/demo.js"></script>
+
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
