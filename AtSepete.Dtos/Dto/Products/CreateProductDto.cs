@@ -10,7 +10,6 @@ namespace AtSepete.Dtos.Dto.Products
 {
     public class CreateProductDto
     {
-        public Guid Id { get; set; }
         public string Barcode { get; set; }
 
         public string Title { get; set; }
@@ -19,7 +18,8 @@ namespace AtSepete.Dtos.Dto.Products
         public string Unit { get; set; }//birim
         public string Description { get; set; }
 
-        public IFormFile? Photo { get; set; }
+        public IFormFile Photo { get; set; }
+        //public byte[] Photo { get; set; }
         public string? PhotoPath { get; set; }
         public Guid CategoryId { get; set; }
         public DateTime? CreatedDate { get; set; } = DateTime.Now;// bunlar tüm dto lar da olacak mı yoksa servislerde mi verilmeli sonradan bak!

@@ -19,10 +19,12 @@ namespace AtSepete.UI.Controllers
     public class BaseController : Controller
     {
         protected readonly IToastNotification _toastNotification;
+        private readonly IConfiguration _configuration;
 
-        public BaseController(IToastNotification toastNotification)
+        public BaseController(IToastNotification toastNotification,IConfiguration configuration)
         {
             _toastNotification = toastNotification;
+            _configuration = configuration;
         }
         #region Protected Kullanımı!
         //Öncelikle protected erişim belirleyicisini hatırlama mahiyetinde ele alalım.
@@ -37,6 +39,7 @@ namespace AtSepete.UI.Controllers
         protected string? UserToken => HttpContext.User.FindFirstValue("Token");
         protected string? UserRefreshToken => HttpContext.User.FindFirstValue("RefreshToken");
 
+        protected string? ApiBaseUrl => _configuration["Host:ApiBaseUrl"];
 
         protected IStringLocalizer<SharedModelResource> Localizer => HttpContext.RequestServices.GetService(typeof(IStringLocalizer<SharedModelResource>)) as IStringLocalizer<SharedModelResource>;
 

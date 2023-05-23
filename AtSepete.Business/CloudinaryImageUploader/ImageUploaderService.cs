@@ -37,5 +37,25 @@ namespace AtSepete.Business.CloudinaryImageUploader
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);//resmi yükler
             return uploadResult.Url.ToString();//resmin sonucunda json içindeki url'i çeker.
         }
+
+        //public static async Task<string> SaveImageAsync(byte[] imageBytes, string fileName)
+        //{
+        //    if (imageBytes == null || imageBytes.Length == 0) return null;
+
+        //    using (var memoryStream = new MemoryStream(imageBytes))
+        //    {
+        //        var formFile = new FormFile(memoryStream, 0, imageBytes.Length, null, fileName); // FormFile'u oluşturuyoruz
+
+        //        var uploadParams = new ImageUploadParams
+        //        {
+        //            File = new FileDescription(fileName, formFile.OpenReadStream()), // FormFile'un stream'ini kullanıyoruz
+        //            PublicId = fileName // Dosya ismi
+        //        };
+
+        //        var uploadResult = await _cloudinary.UploadAsync(uploadParams); // Resmi yüklüyoruz
+        //        return uploadResult.Url.ToString(); // Resmin URL'sini döndürüyoruz
+        //    }
+        //}
+
     }
 }

@@ -9,7 +9,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminBaseController:BaseController
     {
-        public AdminBaseController(IToastNotification toastNotification) : base(toastNotification)
+        public AdminBaseController(IToastNotification toastNotification,IConfiguration configuration) : base(toastNotification,configuration)
         {
 
         }

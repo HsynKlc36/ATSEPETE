@@ -2,6 +2,7 @@
 using AtSepete.Business.Concrete;
 using AtSepete.Dtos.Dto.Products;
 using AtSepete.Results;
+using AtSepete.Results.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using IResult = AtSepete.Results.IResult;
@@ -32,8 +33,23 @@ namespace AtSepete.Api.Controllers
         }
         [HttpPost]
         [Route("[action]")]
-        public async Task<IDataResult<CreateProductDto>> AddProduct([FromBody] CreateProductDto createProductDto)
+        public async Task<IDataResult<CreateProductDto>> AddProduct([FromForm] MultipartFormDataContent formData)
         {
+            var form = await Request.ReadFormAsync();
+            // Form verisinden ilgili değerleri alın
+            var createProductDto = new CreateProductDto
+            {
+                Title = form["Title"],
+                Barcode = form["Barcode"],
+                ProductName = form["ProductName"],
+                Quantity = form["Quantity"],
+                Unit = form["Unit"],
+                Description = form["Description"],
+                Photo = form.Files["Photo"],
+                PhotoPath = form["PhotoPath"],
+                CategoryId = Guid.Parse(form["CategoryId"]),
+                CreatedDate = DateTime.Parse(form["CreatedDate"])
+            };
             return await _productService.AddProductAsync(createProductDto);
         }
         [HttpPut]

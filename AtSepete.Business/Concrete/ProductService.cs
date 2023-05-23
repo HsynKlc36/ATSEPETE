@@ -74,7 +74,7 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(LogMessages.Product_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateProductDto>(Messages.AddFailAlreadyExists);
                 }
-                string photoUrl = entity.Photo  == null ? entity.PhotoPath : await ImageUploaderService.SaveImageAsync(entity.Photo);
+                string photoUrl = entity.Photo == null ? entity.PhotoPath : await ImageUploaderService.SaveImageAsync(entity.Photo);
                 entity.PhotoPath = photoUrl;
 
                 var product = _mapper.Map<CreateProductDto, Product>(entity);

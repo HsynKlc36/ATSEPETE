@@ -25,7 +25,7 @@ namespace AtSepete.UI.Controllers
     public class HomeController : BaseController
     {
         private readonly IMapper _mapper;
-        public HomeController(IMapper mapper,IToastNotification toastNotification):base(toastNotification)
+        public HomeController(IMapper mapper,IToastNotification toastNotification,IConfiguration configuration):base(toastNotification, configuration)
         {
             _mapper = mapper;
         }

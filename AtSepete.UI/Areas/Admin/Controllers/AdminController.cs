@@ -14,11 +14,11 @@ namespace AtSepete.UI.Areas.Admin.Controllers
     {
         private readonly IMapper _mapper;
 
-        public AdminController(IToastNotification toastNotification,IMapper mapper):base(toastNotification) 
+        public AdminController(IToastNotification toastNotification,IConfiguration configuration, IMapper mapper) : base(toastNotification, configuration)
         {
             _mapper = mapper;
         }
-       
+
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -26,20 +26,20 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                using (HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/user/GetByIdUser/{UserId}"))
-                
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/user/GetByIdUser/{UserId}"))
+
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path });
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     DetailUserResponse user = JsonConvert.DeserializeObject<DetailUserResponse>(apiResponse);
                     if (user.IsSuccess)
                     {
-                    var userDetail = _mapper.Map<UserDto, AdminAdminDetailVM>(user.Data);
+                        var userDetail = _mapper.Map<UserDto, AdminAdminDetailVM>(user.Data);
                         NotifySuccess(user.Message);
-                    return View(userDetail);
+                        return View(userDetail);
                     }
                     else
                     {
@@ -50,6 +50,6 @@ namespace AtSepete.UI.Areas.Admin.Controllers
 
             }
         }
-      
+
     }
 }

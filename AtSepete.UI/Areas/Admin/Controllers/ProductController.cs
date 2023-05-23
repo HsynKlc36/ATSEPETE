@@ -1,10 +1,17 @@
-﻿using AtSepete.Dtos.Dto.Categories;
+﻿using AtSepete.DataAccess.Migrations;
+using AtSepete.Dtos.Dto.Categories;
 using AtSepete.Dtos.Dto.Markets;
+using AtSepete.Dtos.Dto.Products;
+using AtSepete.Entities.Data;
 using AtSepete.UI.ApiResponses.CategoryApiResponse;
 using AtSepete.UI.ApiResponses.MarketApiResponse;
+using AtSepete.UI.ApiResponses.ProductApiResponse;
+using AtSepete.UI.ApiResponses.ProductResponse;
 using AtSepete.UI.Areas.Admin.Models.CategoryVMs;
 using AtSepete.UI.Areas.Admin.Models.MarketVMs;
+using AtSepete.UI.Areas.Admin.Models.ProductVMs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using NToastNotify;
 using System.Net;
@@ -12,38 +19,37 @@ using System.Text;
 
 namespace AtSepete.UI.Areas.Admin.Controllers
 {
-    public class MarketController : AdminBaseController
+    public class ProductController : AdminBaseController
     {
         private readonly IMapper _mapper;
 
-        public MarketController(IToastNotification toastNotification, IConfiguration configuration, IMapper mapper) : base(toastNotification, configuration)
+        public ProductController(IToastNotification toastNotification, IConfiguration configuration, IMapper mapper) : base(toastNotification, configuration)
         {
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> MarketList()
+        public async Task<IActionResult> ProductList()
         {
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Market/GetAllMarket"))
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Product/GetAllProduct"))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    MarketListResponse marketList = JsonConvert.DeserializeObject<MarketListResponse>(apiResponse);
-                    if (marketList.IsSuccess)
+                    ProductListResponse productList = JsonConvert.DeserializeObject<ProductListResponse>(apiResponse);
+                    if (productList.IsSuccess)
                     {
-                        var markets = _mapper.Map<List<MarketListDto>, List<AdminMarketListVM>>(marketList.Data);
-                        NotifySuccess(marketList.Message);
+                        var markets = _mapper.Map<List<ProductListDto>, List<AdminProductListVM>>(productList.Data);
+                        NotifySuccess(productList.Message);
                         return View(markets);
                     }
                     else
                     {
-                        NotifyError(marketList.Message);
+                        NotifyError(productList.Message);
                         return RedirectToAction("Index", "Admin");
                     }
                 };
@@ -51,42 +57,61 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> AddMarket()
+        public async Task<IActionResult> AddProduct()
         {
-            return View();
+            AdminProductCreateVM adminProductCreateVM = new() { Categories = await GetCategoriesAsync() };
+            if (adminProductCreateVM.Categories is null)
+            {
+                return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
+            }
+            return View(adminProductCreateVM);
+
         }
         [HttpPost]
-        public async Task<IActionResult> AddMarket(AdminMarketCreateVM adminMarketCreateVM)
+        public async Task<IActionResult> AddProduct(AdminProductCreateVM adminProductCreateVM)
         {
             using (var httpClient = new HttpClient())
             {
-                CreateMarketDto createMarketDto = _mapper.Map<AdminMarketCreateVM, CreateMarketDto>(adminMarketCreateVM);
+                CreateProductDto createProductDto = _mapper.Map<AdminProductCreateVM, CreateProductDto>(adminProductCreateVM);
+                MultipartFormDataContent formData = new MultipartFormDataContent();
+                formData.Add(new StringContent(createProductDto.Title), "Title");
+                formData.Add(new StringContent(createProductDto.Barcode), "Barcode");
+                formData.Add(new StringContent(createProductDto.ProductName), "ProductName");
+                formData.Add(new StringContent(createProductDto.Quantity), "Quantity");
+                formData.Add(new StringContent(createProductDto.Unit), "Unit");
+                formData.Add(new StringContent(createProductDto.Description), "Description");
+                formData.Add(new StreamContent(createProductDto.Photo.OpenReadStream()), "Photo", createProductDto.Photo.FileName);
+                formData.Add(new StringContent(createProductDto.PhotoPath ?? ""), "PhotoPath");
+                formData.Add(new StringContent(createProductDto.CategoryId.ToString()), "CategoryId");
+                formData.Add(new StringContent(createProductDto.CreatedDate?.ToString()), "CreatedDate");
+
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                StringContent content = new StringContent(JsonConvert.SerializeObject(createMarketDto), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseUrl}/Market/AddMarket", content))
+                //StringContent content = new StringContent(JsonConvert.SerializeObject(createProductDto), Encoding.UTF8, "application/Json");
+                using (HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseUrl}/Product/AddProduct", formData))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    AddMarketResponse addedMarket = JsonConvert.DeserializeObject<AddMarketResponse>(apiResponse);
-                    if (addedMarket.IsSuccess)
+                    AddProductResponse addedProduct = JsonConvert.DeserializeObject<AddProductResponse>(apiResponse);//burası patlıyor!!!
+                    if (addedProduct.IsSuccess)
                     {
-                        NotifySuccess(addedMarket.Message);
-                        return RedirectToAction("MarketList");
+                        NotifySuccess(addedProduct.Message);
+                        return RedirectToAction("ProductList");
                     }
                     else
                     {
-                        NotifyError(addedMarket.Message);
-                        return View(adminMarketCreateVM);
+                        NotifyError(addedProduct.Message);
+                        adminProductCreateVM.Categories = await GetCategoriesAsync();
+                        return View(adminProductCreateVM);
                     }
                 };
 
             }
         }
         [HttpGet]
-        public async Task<IActionResult> DetailMarket(Guid id)
+        public async Task<IActionResult> DetailProduct(Guid id)
         {
             using (var httpClient = new HttpClient())
             {
@@ -115,7 +140,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> UpdateMarket(Guid id)
+        public async Task<IActionResult> UpdateProduct(Guid id)
         {
             using (var httpClient = new HttpClient())
             {
@@ -144,7 +169,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateMarket(AdminMarketUpdateVM adminMarketUpdateVM)
+        public async Task<IActionResult> UpdateProduct(AdminMarketUpdateVM adminMarketUpdateVM)
         {
             using (var httpClient = new HttpClient())
             {
@@ -175,7 +200,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> DeleteMarket(Guid id)
+        public async Task<IActionResult> DeleteProduct(Guid id)
         {
             using (HttpClient httpClient = new HttpClient())
             {
@@ -191,7 +216,39 @@ namespace AtSepete.UI.Areas.Admin.Controllers
 
                     return Json(deletedMarket);
                 };
+
             };
+
+
+        }
+        private async Task<SelectList?> GetCategoriesAsync(Guid? categoryId = null)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Category/GetAllCategory"))
+                {
+
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    CategoryListResponse categoryList = JsonConvert.DeserializeObject<CategoryListResponse>(apiResponse);
+                    if (categoryList is not null)
+                    {
+                        var categories = _mapper.Map<List<CategoryListDto>, List<AdminCategoryListVM>>(categoryList.Data);
+                        return new SelectList(categories.Select(x => new SelectListItem
+                        {
+                            Selected = x.Id == (categoryId != null ? categoryId.Value : categoryId),
+                            Value = x.Id.ToString(),
+                            Text = x.Name
+                        }).OrderBy(x => x.Text), "Value", "Text");
+                    }
+
+                    return null;
+
+                };
+
+            }
+
+
         }
     }
 }

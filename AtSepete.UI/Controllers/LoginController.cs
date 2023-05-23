@@ -26,10 +26,12 @@ namespace AtSepete.UI.Controllers
     public class LoginController : BaseController
     {
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public LoginController(IMapper mapper, IToastNotification toastNotification) : base(toastNotification)
+        public LoginController(IMapper mapper, IToastNotification toastNotification,IConfiguration configuration) : base(toastNotification,configuration)
         {
             _mapper = mapper;
+            _configuration = configuration;
         }
         [HttpGet]
         [Authorize(Roles = "Customer,Admin")]
@@ -50,7 +52,7 @@ namespace AtSepete.UI.Controllers
 
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
                 StringContent content = new StringContent(JsonConvert.SerializeObject(changePasswordDto), Encoding.UTF8, "application/Json");
-                using (var response = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/Auth/ChangePassword", content))
+                using (var response = await httpClient.PostAsync($"{ApiBaseUrl}/Auth/ChangePassword", content))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
@@ -64,7 +66,7 @@ namespace AtSepete.UI.Controllers
                         return View(changePasswordVM);
                     }
                     NotifySuccess(changePasswordResponse.Message);
-                    return RedirectToAction("Home", "Privacy");
+                    return RedirectToAction("Index", UserRole, new {area=UserRole});
                 }
             }
 
@@ -83,7 +85,7 @@ namespace AtSepete.UI.Controllers
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(forgetPasswordEmailDto), Encoding.UTF8, "application/Json");
-                using (var answer = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/Auth/ForgetPasswordEmailSender", content))
+                using (var answer = await httpClient.PostAsync($"{ApiBaseUrl}/Auth/ForgetPasswordEmailSender", content))
                 {
                     string apiAnswer = await answer.Content.ReadAsStringAsync();
                     ForgetPasswordResponse forgetPasswordResponse = JsonConvert.DeserializeObject<ForgetPasswordResponse>(apiAnswer);
@@ -120,7 +122,7 @@ namespace AtSepete.UI.Controllers
 
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", newPasswordDto.Token);
                 StringContent content = new StringContent(JsonConvert.SerializeObject(newPasswordDto), Encoding.UTF8, "application/Json");
-                using (var response = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/Auth/ResetPassword", content))
+                using (var response = await httpClient.PostAsync($"{ApiBaseUrl}/Auth/ResetPassword", content))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
@@ -153,7 +155,7 @@ namespace AtSepete.UI.Controllers
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(createUserDto), Encoding.UTF8, "application/Json");
-                using (var answer = await httpClient.PostAsync("https://localhost:7286/AtSepeteApi/User/AddUser", content))
+                using (var answer = await httpClient.PostAsync($"{ApiBaseUrl}/User/AddUser", content))
                 {
                     string apiAnswer = await answer.Content.ReadAsStringAsync();
                     CreateUserResponse createUserResponse = JsonConvert.DeserializeObject<CreateUserResponse>(apiAnswer);
@@ -176,7 +178,7 @@ namespace AtSepete.UI.Controllers
                 RefreshTokenLoginDto refreshTokenLoginDto = new();
                 refreshTokenLoginDto.RefreshTokenLogin = UserRefreshToken;
                 StringContent content = new StringContent(JsonConvert.SerializeObject(refreshTokenLoginDto), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/Auth/RefreshTokenLoginSignIn", content))
+                using (HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseUrl}/Auth/RefreshTokenLoginSignIn", content))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     LoginUserResponse loginUser = JsonConvert.DeserializeObject<LoginUserResponse>(apiResponse);
@@ -223,7 +225,7 @@ namespace AtSepete.UI.Controllers
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(loginVM), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/Auth/LoginSignIn", content))
+                using (HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseUrl}/Auth/LoginSignIn", content))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     LoginUserResponse loginUser = JsonConvert.DeserializeObject<LoginUserResponse>(apiResponse);
@@ -249,7 +251,7 @@ namespace AtSepete.UI.Controllers
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
                         NotifySuccessLocalized(loginUser.Message);
-                        return RedirectToAction("Privacy", "Home");//login olunca yönleneceği sayfa areasına göre yöneleceği ilk sayfa!
+                        return RedirectToAction("Index", userRole, new {area=userRole});//login olunca yönleneceği sayfa areasına göre yöneleceği ilk sayfa!
 
                     }
                     else

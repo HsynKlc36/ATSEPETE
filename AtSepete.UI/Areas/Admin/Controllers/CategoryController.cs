@@ -18,7 +18,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
     {
         private readonly IMapper _mapper;
 
-        public CategoryController(IToastNotification toastNotification, IMapper mapper) : base(toastNotification)
+        public CategoryController(IToastNotification toastNotification, IConfiguration configuration,IMapper mapper) : base(toastNotification, configuration)
         {
             _mapper = mapper;
         }
@@ -28,11 +28,11 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                using (HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/Category/GetAllCategory"))
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Category/GetAllCategory"))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path });
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     CategoryListResponse categoryList = JsonConvert.DeserializeObject<CategoryListResponse>(apiResponse);
@@ -64,11 +64,11 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             CreateCategoryDto createCategoryDto = _mapper.Map<AdminCategoryCreateVM,CreateCategoryDto>(adminCategoryCreateVM);
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
                 StringContent content = new StringContent(JsonConvert.SerializeObject(createCategoryDto), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"https://localhost:7286/AtSepeteApi/Category/AddCategory",content))
+                using (HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseUrl}/Category/AddCategory",content))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path });
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     AddCategoryResponse addedCategory = JsonConvert.DeserializeObject<AddCategoryResponse>(apiResponse);
@@ -93,14 +93,14 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                using (HttpResponseMessage response = await httpClient.GetAsync($"https://localhost:7286/AtSepeteApi/Category/GetByIdCategory/{id}"))
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Category/GetByIdCategory/{id}"))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path });
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    UpdateCategoryResponse updateCategory = JsonConvert.DeserializeObject<UpdateCategoryResponse>(apiResponse);
+                    DetailCategoryResponse updateCategory = JsonConvert.DeserializeObject<DetailCategoryResponse>(apiResponse);
                     if (updateCategory.IsSuccess)
                     {
                         var category = _mapper.Map<CategoryDto, AdminCategoryUpdateVM>(updateCategory.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
@@ -126,11 +126,11 @@ namespace AtSepete.UI.Areas.Admin.Controllers
 
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
                 StringContent content = new StringContent(JsonConvert.SerializeObject(updateCategoryDto), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PutAsync($"https://localhost:7286/AtSepeteApi/Category/UpdateCategory/{adminCategoryUpdateVM.Id}", content))
+                using (HttpResponseMessage response = await httpClient.PutAsync($"{ApiBaseUrl}/Category/UpdateCategory/{adminCategoryUpdateVM.Id}", content))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path });
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     UpdateCategoryResponse updateCategory = JsonConvert.DeserializeObject<UpdateCategoryResponse>(apiResponse);
@@ -154,21 +154,18 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             using (HttpClient httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                using (HttpResponseMessage response = await httpClient.DeleteAsync($"https://localhost:7286/AtSepeteApi/Category/SoftDeleteCategory/{id}"))
+                using (HttpResponseMessage response = await httpClient.DeleteAsync($"{ApiBaseUrl}/Category/SoftDeleteCategory/{id}"))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path });
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     DeleteCategoryResponse deletedCategory = JsonConvert.DeserializeObject<DeleteCategoryResponse>(apiResponse);
 
                     return Json(deletedCategory);
                 };
-
             };
-
-
         }
 
     }

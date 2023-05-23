@@ -60,6 +60,7 @@ namespace AtSepete.Business.Extensions
                 };
                 options.Events = new JwtBearerEvents
                 {
+                     
                     OnAuthenticationFailed = context =>
                     {
                         httpContextAccessor.HttpContext.Response.Redirect("https://localhost:7290/Login/RefreshTokenLogin");

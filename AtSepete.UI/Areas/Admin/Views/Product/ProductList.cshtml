@@ -1,11 +1,11 @@
-﻿@model IEnumerable<AtSepete.UI.Areas.Admin.Models.CategoryVMs.AdminCategoryListVM>
+﻿@model IEnumerable<AtSepete.UI.Areas.Admin.Models.ProductVMs.AdminProductListVM>
 
 @{
-    ViewData["Title"] = "Categori Listele";
+    ViewData["Title"] = "Ürün Listele";
     Layout = "_AdminLayout";
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.37/dist/sweetalert2.min.css" />
-<h1>Kategori Listesi</h1>
+<h1>Ürün Listesi</h1>
 
 <table class="table">
     <thead>
@@ -14,13 +14,27 @@
                 @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Barcode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Unit)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-           
-            <th>İşlemler</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryId)
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -30,14 +44,29 @@
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.Barcode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Unit)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
-            </td>           
+            </td>
             <td>
-                <a class="btn btn-github" asp-area="Admin" asp-controller="Category" asp-action="UpdateCategory" asp-route-id="@item.Id">Güncelle</a>
-
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryId)
+            </td>
+            <td>
+                    <a class="btn btn-github" asp-area="Admin" asp-controller="Product" asp-action="UpdateProduct" asp-route-id="@item.Id">Güncelle</a>
+                    <a class="btn btn-github" asp-area="Admin" asp-controller="Product" asp-action="DetailProduct" asp-route-id="@item.Id"> Detay </a>
                     <a class="btn btn-github me-3 cursor-pointer deleteAction" data-id="@item.Id"> Delete </a>
             </td>
         </tr>
@@ -64,7 +93,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     type: "GET",
-                    url: "@Url.Action("DeleteCategory")" + "?id=" + id,
+                    url: "@Url.Action("DeleteProduct")" + "?id=" + id,
                     success: function (result) {
                         if (result.isSuccess) {
                             Swal.fire(
@@ -72,17 +101,17 @@
                                 result.message,
                                 'success'
                             ).then(() => {
-                                window.location.replace("/Admin/Category/CategoryList");
+                                window.location.replace("/Admin/Market/MarketList");
                             });
-                            
+
                         } else {
-                         
+
                             Swal.fire(
                                 'Silinemedi!',
                                 result.message,
                                 'error'
                             ).then(() => {
-                                window.location.replace("/Admin/Category/CategoryList");
+                                window.location.replace("/Admin/Market/MarketList");
                             });
                         }
                     },

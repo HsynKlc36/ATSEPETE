@@ -75,7 +75,6 @@ namespace AtSepete.Business.Concrete
                 var hasCategory = await _categoryRepository.AnyAsync(c => c.Name.Trim().ToLower() == entity.Name.Trim().ToLower());
                 if (hasCategory)
                 {
-
                     _loggerService.LogWarning(LogMessages.Category_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateCategoryDto>(Messages.AddFailAlreadyExists);
                 }
