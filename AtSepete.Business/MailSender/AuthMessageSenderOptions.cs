@@ -8,6 +8,6 @@ namespace AtSepete.Business.MailSender
 {
     public class AuthMessageSenderOptions
     {
-        public string SendGridKey { get; } = "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";
+        public string SendGridKey { get; } = "api key";
     }
 }
