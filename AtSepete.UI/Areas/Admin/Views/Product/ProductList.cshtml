@@ -10,6 +10,10 @@
 <table class="table">
     <thead>
         <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Photo)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Id)
             </th>
@@ -38,39 +42,45 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Barcode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Unit)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryId)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+
+                    <img src="@item.PhotoPath" style="width:50px; height:50px; border-radius:50%;">
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Barcode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Unit)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryId)
+                </td>
+                <td>
                     <a class="btn btn-github" asp-area="Admin" asp-controller="Product" asp-action="UpdateProduct" asp-route-id="@item.Id">Güncelle</a>
                     <a class="btn btn-github" asp-area="Admin" asp-controller="Product" asp-action="DetailProduct" asp-route-id="@item.Id"> Detay </a>
                     <a class="btn btn-github me-3 cursor-pointer deleteAction" data-id="@item.Id"> Delete </a>
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

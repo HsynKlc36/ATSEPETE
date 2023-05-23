@@ -18,7 +18,8 @@ namespace AtSepete.Dtos.Dto.Products
         public string Unit { get; set; }
         public string Description { get; set; }
 
-        public IFormFile? Photo { get; set; }
+        //public IFormFile? Photo { get; set; }
+        public string? PhotoFileName { get; set; }
         public string? PhotoPath { get; set; }
         public string Title { get; set; }
         [ForeignKey("Category")]

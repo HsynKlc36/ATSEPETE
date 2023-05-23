@@ -15,6 +15,8 @@ using System.Security.Claims;
 using AtSepete.Dtos.Dto.Products;
 using AtSepete.Business.Logger;
 using AtSepete.Business.CloudinaryImageUploader;
+using Microsoft.AspNetCore.Http;
+using IResult = AtSepete.Results.IResult;
 
 namespace AtSepete.Business.Concrete
 {
@@ -74,7 +76,7 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(LogMessages.Product_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateProductDto>(Messages.AddFailAlreadyExists);
                 }
-                string photoUrl = entity.Photo == null ? entity.PhotoPath : await ImageUploaderService.SaveImageAsync(entity.Photo);
+                string photoUrl = entity.PhotoFileName == null ? entity.PhotoPath : await ImageUploaderService.SaveImageAsync(entity.PhotoFileName);
                 entity.PhotoPath = photoUrl;
 
                 var product = _mapper.Map<CreateProductDto, Product>(entity);
@@ -106,8 +108,8 @@ namespace AtSepete.Business.Concrete
                 }
                 if (updateProductDto.Barcode == product.Barcode && updateProductDto.Id == product.Id)
                 {
-                    
-                    string photoUrl = updateProductDto.Photo == null ? updateProductDto.PhotoPath : await ImageUploaderService.SaveImageAsync(updateProductDto.Photo);
+
+                    string photoUrl = updateProductDto.PhotoFileName == null ? updateProductDto.PhotoPath : await ImageUploaderService.SaveImageAsync(updateProductDto.PhotoFileName);
                     updateProductDto.PhotoPath = photoUrl;
 
                     var updateProduct = _mapper.Map(updateProductDto, product);

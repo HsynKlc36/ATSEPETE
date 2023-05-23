@@ -70,24 +70,22 @@ namespace AtSepete.UI.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProduct(AdminProductCreateVM adminProductCreateVM)
         {
+             CreateProductDto createProductDto = _mapper.Map<AdminProductCreateVM, CreateProductDto>(adminProductCreateVM);
             using (var httpClient = new HttpClient())
             {
-                CreateProductDto createProductDto = _mapper.Map<AdminProductCreateVM, CreateProductDto>(adminProductCreateVM);
-                MultipartFormDataContent formData = new MultipartFormDataContent();
-                formData.Add(new StringContent(createProductDto.Title), "Title");
-                formData.Add(new StringContent(createProductDto.Barcode), "Barcode");
-                formData.Add(new StringContent(createProductDto.ProductName), "ProductName");
-                formData.Add(new StringContent(createProductDto.Quantity), "Quantity");
-                formData.Add(new StringContent(createProductDto.Unit), "Unit");
-                formData.Add(new StringContent(createProductDto.Description), "Description");
-                formData.Add(new StreamContent(createProductDto.Photo.OpenReadStream()), "Photo", createProductDto.Photo.FileName);
-                formData.Add(new StringContent(createProductDto.PhotoPath ?? ""), "PhotoPath");
-                formData.Add(new StringContent(createProductDto.CategoryId.ToString()), "CategoryId");
-                formData.Add(new StringContent(createProductDto.CreatedDate?.ToString()), "CreatedDate");
-
+                byte[] resimBytes = null; // Byte dizisi olarak almak için
+                string resimBase64 = null; // Base64 encoded string olarak almak için
+                using (var memoryStream = new MemoryStream())
+                {
+                    adminProductCreateVM.Photo.CopyTo(memoryStream);
+                    resimBytes = memoryStream.ToArray();
+                    // Byte dizisini string olarak dönüştürmek için
+                    resimBase64 = Convert.ToBase64String(resimBytes);
+                    createProductDto.PhotoFileName = resimBase64;
+                }
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                //StringContent content = new StringContent(JsonConvert.SerializeObject(createProductDto), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseUrl}/Product/AddProduct", formData))
+                StringContent content = new StringContent(JsonConvert.SerializeObject(createProductDto), Encoding.UTF8, "application/Json");
+                using (HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseUrl}/Product/AddProduct", content))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
@@ -110,6 +108,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
 
             }
         }
+       
         [HttpGet]
         public async Task<IActionResult> DetailProduct(Guid id)
         {
