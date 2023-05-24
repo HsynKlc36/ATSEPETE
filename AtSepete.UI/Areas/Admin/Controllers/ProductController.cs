@@ -1,14 +1,14 @@
 ﻿using AtSepete.DataAccess.Migrations;
 using AtSepete.Dtos.Dto.Categories;
-using AtSepete.Dtos.Dto.Markets;
+using AtSepete.Dtos.Dto.Products;
 using AtSepete.Dtos.Dto.Products;
 using AtSepete.Entities.Data;
 using AtSepete.UI.ApiResponses.CategoryApiResponse;
-using AtSepete.UI.ApiResponses.MarketApiResponse;
+using AtSepete.UI.ApiResponses.ProductApiResponse;
 using AtSepete.UI.ApiResponses.ProductApiResponse;
 using AtSepete.UI.ApiResponses.ProductResponse;
 using AtSepete.UI.Areas.Admin.Models.CategoryVMs;
-using AtSepete.UI.Areas.Admin.Models.MarketVMs;
+using AtSepete.UI.Areas.Admin.Models.ProductVMs;
 using AtSepete.UI.Areas.Admin.Models.ProductVMs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -43,9 +43,9 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     ProductListResponse productList = JsonConvert.DeserializeObject<ProductListResponse>(apiResponse);
                     if (productList.IsSuccess)
                     {
-                        var markets = _mapper.Map<List<ProductListDto>, List<AdminProductListVM>>(productList.Data);
+                        var Products = _mapper.Map<List<ProductListDto>, List<AdminProductListVM>>(productList.Data);
                         NotifySuccess(productList.Message);
-                        return View(markets);
+                        return View(Products);
                     }
                     else
                     {
@@ -54,6 +54,34 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     }
                 };
 
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> DetailProduct(Guid id)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Product/GetByIdProduct/{id}"))
+                {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
+                    }
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    DetailProductResponse detailProduct = JsonConvert.DeserializeObject<DetailProductResponse>(apiResponse);
+                    if (detailProduct.IsSuccess)
+                    {
+                        var Product = _mapper.Map<ProductDto, AdminProductDetailVM>(detailProduct.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
+                        NotifySuccess(detailProduct.Message);
+                        return View(Product);
+                    }
+                    else
+                    {
+                        NotifyError(detailProduct.Message);
+                        return RedirectToAction("ProductList");
+                    }
+                };
             }
         }
         [HttpGet]
@@ -70,18 +98,22 @@ namespace AtSepete.UI.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProduct(AdminProductCreateVM adminProductCreateVM)
         {
-             CreateProductDto createProductDto = _mapper.Map<AdminProductCreateVM, CreateProductDto>(adminProductCreateVM);
+            //to do:validasyonda fotoğrafın null olmasını kontrol et foto boş geçilemeyecek eklerken!!
             using (var httpClient = new HttpClient())
             {
-                byte[] resimBytes = null; // Byte dizisi olarak almak için
-                string resimBase64 = null; // Base64 encoded string olarak almak için
-                using (var memoryStream = new MemoryStream())
+                CreateProductDto createProductDto = _mapper.Map<AdminProductCreateVM, CreateProductDto>(adminProductCreateVM);
+                if (adminProductCreateVM.Photo is not null)
                 {
-                    adminProductCreateVM.Photo.CopyTo(memoryStream);
-                    resimBytes = memoryStream.ToArray();
-                    // Byte dizisini string olarak dönüştürmek için
-                    resimBase64 = Convert.ToBase64String(resimBytes);
-                    createProductDto.PhotoFileName = resimBase64;
+                    byte[]? resimBytes = null; // Byte dizisi olarak almak için
+                    string? resimBase64 = null; // Base64 encoded string olarak almak için
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        adminProductCreateVM.Photo.CopyTo(memoryStream);
+                        resimBytes = memoryStream.ToArray();
+                        // Byte dizisini string olarak dönüştürmek için
+                        resimBase64 = Convert.ToBase64String(resimBytes);
+                        createProductDto.PhotoFileName = resimBase64;
+                    }
                 }
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
                 StringContent content = new StringContent(JsonConvert.SerializeObject(createProductDto), Encoding.UTF8, "application/Json");
@@ -108,91 +140,77 @@ namespace AtSepete.UI.Areas.Admin.Controllers
 
             }
         }
-       
-        [HttpGet]
-        public async Task<IActionResult> DetailProduct(Guid id)
-        {
-            using (var httpClient = new HttpClient())
-            {
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Market/GetByIdMarket/{id}"))
-                {
-                    if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
-                    }
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    DetailMarketResponse detailMarket = JsonConvert.DeserializeObject<DetailMarketResponse>(apiResponse);
-                    if (detailMarket.IsSuccess)
-                    {
-                        var market = _mapper.Map<MarketDto, AdminMarketDetailVM>(detailMarket.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
-                        NotifySuccess(detailMarket.Message);
-                        return View(market);
-                    }
-                    else
-                    {
-                        NotifyError(detailMarket.Message);
-                        return RedirectToAction("MarketList");
-                    }
-                };
 
-            }
-        }
+
         [HttpGet]
         public async Task<IActionResult> UpdateProduct(Guid id)
         {
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Market/GetByIdMarket/{id}"))
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Product/GetByIdProduct/{id}"))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    DetailMarketResponse updateMarket = JsonConvert.DeserializeObject<DetailMarketResponse>(apiResponse);
-                    if (updateMarket.IsSuccess)
+                    DetailProductResponse updateProduct = JsonConvert.DeserializeObject<DetailProductResponse>(apiResponse);
+                    if (updateProduct.IsSuccess)
                     {
-                        var market = _mapper.Map<MarketDto, AdminMarketUpdateVM>(updateMarket.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
-                        NotifySuccess(updateMarket.Message);
-                        return View(market);
+                        var product = _mapper.Map<ProductDto, AdminProductUpdateVM>(updateProduct.Data);
+                        product.Categories = await GetCategoriesAsync(product.CategoryId);
+                        NotifySuccess(updateProduct.Message);
+                        return View(product);
                     }
                     else
                     {
-                        NotifyError(updateMarket.Message);
-                        return RedirectToAction("MarketList");
+                        NotifyError(updateProduct.Message);
+                        return RedirectToAction("ProductList");
                     }
                 };
-
             }
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateProduct(AdminMarketUpdateVM adminMarketUpdateVM)
+        public async Task<IActionResult> UpdateProduct(AdminProductUpdateVM adminProductUpdateVM)
         {
             using (var httpClient = new HttpClient())
             {
-                var updateMarketDto = _mapper.Map<AdminMarketUpdateVM, UpdateMarketDto>(adminMarketUpdateVM);
+                var updateProductDto = _mapper.Map<AdminProductUpdateVM, UpdateProductDto>(adminProductUpdateVM);
+                if (adminProductUpdateVM.Photo is not null)
+                {
+                    byte[]? resimBytes = null; // Byte dizisi olarak almak için
+                    string? resimBase64 = null; // Base64 encoded string olarak almak için
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        adminProductUpdateVM.Photo.CopyTo(memoryStream);
+                        resimBytes = memoryStream.ToArray();
+                        // Byte dizisini string olarak dönüştürmek için
+                        resimBase64 = Convert.ToBase64String(resimBytes);
+                        updateProductDto.PhotoFileName = resimBase64;
+                    }
+                }
 
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                StringContent content = new StringContent(JsonConvert.SerializeObject(updateMarketDto), Encoding.UTF8, "application/Json");
-                using (HttpResponseMessage response = await httpClient.PutAsync($"{ApiBaseUrl}/Market/UpdateMarket/{adminMarketUpdateVM.Id}", content))
+                StringContent content = new StringContent(JsonConvert.SerializeObject(updateProductDto), Encoding.UTF8, "application/Json");
+                using (HttpResponseMessage response = await httpClient.PutAsync($"{ApiBaseUrl}/Product/UpdateProduct/{adminProductUpdateVM.Id}", content))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    UpdateMarketResponse updateMarket = JsonConvert.DeserializeObject<UpdateMarketResponse>(apiResponse);
-                    if (updateMarket.IsSuccess)
+                    UpdateProductResponse updateProduct = JsonConvert.DeserializeObject<UpdateProductResponse>(apiResponse);
+                    if (updateProduct.IsSuccess)
                     {
-                        NotifySuccess(updateMarket.Message);
-                        return RedirectToAction("MarketList");
+                        NotifySuccess(updateProduct.Message);
+                        return RedirectToAction("ProductList");
                     }
                     else
                     {
-                        NotifyError(updateMarket.Message);
-                        return RedirectToAction("UpdateMarket", new { id = adminMarketUpdateVM.Id });
+                        NotifyError(updateProduct.Message);
+                        adminProductUpdateVM.Categories = await GetCategoriesAsync(adminProductUpdateVM.CategoryId);
+                        return View(adminProductUpdateVM);
                     }
                 };
 
@@ -204,21 +222,17 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             using (HttpClient httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                using (HttpResponseMessage response = await httpClient.DeleteAsync($"{ApiBaseUrl}/Market/SoftDeleteMarket/{id}"))
+                using (HttpResponseMessage response = await httpClient.DeleteAsync($"{ApiBaseUrl}/Product/SoftDeleteProduct/{id}"))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    DeleteMarketResponse deletedMarket = JsonConvert.DeserializeObject<DeleteMarketResponse>(apiResponse);
-
-                    return Json(deletedMarket);
+                    DeleteProductResponse deletedProduct = JsonConvert.DeserializeObject<DeleteProductResponse>(apiResponse);
+                    return Json(deletedProduct);
                 };
-
             };
-
-
         }
         private async Task<SelectList?> GetCategoriesAsync(Guid? categoryId = null)
         {
@@ -227,7 +241,6 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
                 using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Category/GetAllCategory"))
                 {
-
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     CategoryListResponse categoryList = JsonConvert.DeserializeObject<CategoryListResponse>(apiResponse);
                     if (categoryList is not null)
@@ -240,14 +253,9 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                             Text = x.Name
                         }).OrderBy(x => x.Text), "Value", "Text");
                     }
-
                     return null;
-
                 };
-
             }
-
-
         }
     }
 }

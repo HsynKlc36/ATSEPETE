@@ -70,12 +70,14 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(LogMessages.Product_Object_Not_Valid);
                     return new ErrorDataResult<CreateProductDto>(Messages.ObjectNotValid);
                 }
-                var hasCategory = await _productRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == entity.Barcode.Trim().ToLower());
-                if (hasCategory)
+                var hasProductBarcode = await _productRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == entity.Barcode.Trim().ToLower());
+                var hasProduct = await _productRepository.AnyAsync(x => x.Unit.Trim().ToLower() == entity.Unit.Trim().ToLower() && x.Quantity.Trim().ToLower() == entity.Quantity.Trim().ToLower() && x.Title.Trim().ToLower() == entity.Title.Trim().ToLower() && x.ProductName.Trim().ToLower() == entity.ProductName.Trim().ToLower());
+                if (hasProductBarcode||hasProduct)
                 {
                     _loggerService.LogWarning(LogMessages.Product_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateProductDto>(Messages.AddFailAlreadyExists);
                 }
+
                 string photoUrl = entity.PhotoFileName == null ? entity.PhotoPath : await ImageUploaderService.SaveImageAsync(entity.PhotoFileName);
                 entity.PhotoPath = photoUrl;
 
@@ -183,7 +185,6 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(LogMessages.Product_Object_Not_Found);
                     return new ErrorResult(Messages.ProductNotFound);
                 }
-
                 product.IsActive = false;
                 product.DeletedDate = DateTime.Now;
                 await _productRepository.UpdateAsync(product);

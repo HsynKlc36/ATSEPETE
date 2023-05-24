@@ -12,9 +12,7 @@ namespace AtSepete.Entities.Data
 {
     public class Product:Base
     {
-
         public string Barcode { get; set; }
-
         public string ProductName { get; set; }
         public string Quantity { get; set; }
         public string Unit { get; set; }

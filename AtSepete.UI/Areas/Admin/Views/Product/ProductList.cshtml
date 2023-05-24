@@ -77,7 +77,7 @@
                 <td>
                     <a class="btn btn-github" asp-area="Admin" asp-controller="Product" asp-action="UpdateProduct" asp-route-id="@item.Id">Güncelle</a>
                     <a class="btn btn-github" asp-area="Admin" asp-controller="Product" asp-action="DetailProduct" asp-route-id="@item.Id"> Detay </a>
-                    <a class="btn btn-github me-3 cursor-pointer deleteAction" data-id="@item.Id"> Delete </a>
+                    <a class="btn btn-github me-3 cursor-pointer deleteAction" data-id="@item.Id"> Sil </a>
                 </td>
             </tr>
         }
@@ -111,7 +111,7 @@
                                 result.message,
                                 'success'
                             ).then(() => {
-                                window.location.replace("/Admin/Market/MarketList");
+                                window.location.replace("/Admin/Product/ProductList");
                             });
 
                         } else {
@@ -121,7 +121,7 @@
                                 result.message,
                                 'error'
                             ).then(() => {
-                                window.location.replace("/Admin/Market/MarketList");
+                                window.location.replace("/Admin/Product/ProductList");
                             });
                         }
                     },

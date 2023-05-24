@@ -138,11 +138,13 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     {
                         NotifySuccess(updateCategory.Message);
                         return RedirectToAction("CategoryList");
+
                     }
                     else
                     {
                         NotifyError(updateCategory.Message);
-                        return RedirectToAction("UpdateCategory",new{ id=adminCategoryUpdateVM.Id });
+                        return View(adminCategoryUpdateVM);
+
                     }
                 };
 

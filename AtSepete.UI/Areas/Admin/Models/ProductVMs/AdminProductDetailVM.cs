@@ -1,14 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AtSepete.Dtos.Dto.Products
+﻿namespace AtSepete.UI.Areas.Admin.Models.ProductVMs
 {
-    public class ProductDto
+    public class AdminProductDetailVM
     {
         public Guid Id { get; set; }
         public string Barcode { get; set; }
@@ -23,6 +15,5 @@ namespace AtSepete.Dtos.Dto.Products
         public DateTime? ModifiedDate { get; set; }
         public DateTime? DeletedDate { get; set; }
         public bool IsActive { get; set; }
-
     }
 }

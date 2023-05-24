@@ -168,7 +168,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     else
                     {
                         NotifyError(updateMarket.Message);
-                        return RedirectToAction("UpdateMarket", new { id = adminMarketUpdateVM.Id });
+                        return View(adminMarketUpdateVM);
                     }
                 };
 

@@ -2,8 +2,9 @@
 
 namespace AtSepete.UI.Areas.Admin.Models.ProductVMs
 {
-    public class AdminProductCreateVM
+    public class AdminProductUpdateVM
     {
+        public Guid Id { get; set; }
         public string Barcode { get; set; }
         public string Title { get; set; }
         public string ProductName { get; set; }
@@ -13,6 +14,6 @@ namespace AtSepete.UI.Areas.Admin.Models.ProductVMs
         public IFormFile? Photo { get; set; }
         public string? PhotoPath { get; set; }
         public Guid CategoryId { get; set; }
-        public SelectList Categories { get; set; }//buraya sonradan bakılacak!!kategorileri getirir
+        public SelectList Categories { get; set; }
     }
 }

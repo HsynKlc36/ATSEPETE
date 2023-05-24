@@ -1,0 +1,119 @@
+﻿@model AtSepete.UI.Areas.Admin.Models.ProductVMs.AdminProductDetailVM
+
+@{
+    ViewData["Title"] = "Ürün Detay";
+    Layout = "_AdminLayout";
+}
+
+<h1>Ürün Detay</h1>
+
+<div style="margin-left:50px;">
+    <dl class="row">
+        <div class="col col-md-4">
+            <dd class="col-sm-10">
+                <img src="@Model.PhotoPath" style="border-radius:50%;">
+            </dd>
+        </div>
+        <div class="col col-md-1"></div>
+        <div class="col col-md-6">
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Id)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Id)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Barcode)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Barcode)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ProductName)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ProductName)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Quantity)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Unit)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Unit)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.CategoryId)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.CategoryId)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.CreatedDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.CreatedDate)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ModifiedDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ModifiedDate)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.DeletedDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.DeletedDate)
+                </dd>
+            </div>
+            <div class="col col-md-12">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.IsActive)
+                </dd>
+            </div>
+        </div>
+    </dl>
+</div>
+
+
