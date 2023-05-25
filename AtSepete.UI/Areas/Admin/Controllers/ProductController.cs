@@ -27,7 +27,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
         {
             _mapper = mapper;
         }
-
+        [HttpGet]
         public async Task<IActionResult> ProductList()
         {
             using (var httpClient = new HttpClient())
@@ -98,7 +98,6 @@ namespace AtSepete.UI.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProduct(AdminProductCreateVM adminProductCreateVM)
         {
-            //to do:validasyonda fotoğrafın null olmasını kontrol et foto boş geçilemeyecek eklerken!!
             using (var httpClient = new HttpClient())
             {
                 CreateProductDto createProductDto = _mapper.Map<AdminProductCreateVM, CreateProductDto>(adminProductCreateVM);
@@ -137,7 +136,6 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                         return View(adminProductCreateVM);
                     }
                 };
-
             }
         }
 

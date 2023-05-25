@@ -1,0 +1,49 @@
+﻿@model AtSepete.UI.Areas.Admin.Models.ProductMarketVMs.AdminProductMarketCreateVM
+
+@{
+    ViewData["Title"] = "Markete Ürün Ekle";
+    Layout = "_AdminLayout";
+}
+
+<h1>Markete Ürün Ekle</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddProductMarket">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProductId" class="control-label"></label>
+                <select asp-for="ProductId" asp-items="Model.Products" class="form-select form-select-solid lh-1 py-3 form-control-solid">
+                    <option value="@Guid.Empty">Ürün Seçiniz</option>
+                </select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MarketId" class="control-label"></label>
+                <select asp-for="MarketId" asp-items="Model.Markets" class="form-select form-select-solid lh-1 py-3 form-control-solid">
+                    <option value="@Guid.Empty">Market Seçiniz</option>
+                </select>
+                <span asp-validation-for="MarketId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Stock" class="control-label"></label>
+                <input type="text" asp-for="Stock" class="form-control" />
+                <span asp-validation-for="Stock" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Ekle" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

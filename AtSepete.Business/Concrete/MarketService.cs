@@ -19,21 +19,21 @@ namespace AtSepete.Business.Concrete
 {
     public class MarketService : IMarketService
     {
-        private readonly IMarketRepository _productRepository;
+        private readonly IMarketRepository _marketRepository;
         private readonly IMapper _mapper;
         private readonly IProductMarketService _productMarketService;
         private readonly ILoggerService _loggerService;
 
         public MarketService(IMarketRepository marketRepository, IMapper mapper, IProductMarketService productMarketService, ILoggerService loggerService)
         {
-            _productRepository = marketRepository;
+            _marketRepository = marketRepository;
             _mapper = mapper;
             _productMarketService = productMarketService;
             _loggerService = loggerService;
         }
         public async Task<IDataResult<MarketDto>> GetByIdMarketAsync(Guid id)
         {
-            var market = await _productRepository.GetByDefaultAsync(x => x.Id == id);
+            var market = await _marketRepository.GetByDefaultAsync(x => x.Id == id);
             if (market is null)
             {
                 _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
@@ -47,7 +47,7 @@ namespace AtSepete.Business.Concrete
         {
             try
             {
-                var tempEntity = await _productRepository.GetAllAsync();
+                var tempEntity = await _marketRepository.GetAllAsync();
                 if (!tempEntity.Any())
                 {
                     _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
@@ -75,15 +75,15 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(LogMessages.Market_Object_Not_Valid);
                     return new ErrorDataResult<CreateMarketDto>(Messages.ObjectNotValid); ;
                 }
-                var hasMarket = await _productRepository.AnyAsync(c => c.MarketName.Trim().ToLower() == entity.MarketName.Trim().ToLower());
+                var hasMarket = await _marketRepository.AnyAsync(c => c.MarketName.Trim().ToLower() == entity.MarketName.Trim().ToLower());
                 if (hasMarket)
                 {
                     _loggerService.LogWarning(LogMessages.Market_Add_Fail_Already_Exists);
                     return new ErrorDataResult<CreateMarketDto>(Messages.AddFailAlreadyExists);
                 }
                 Market market = _mapper.Map<CreateMarketDto, Market>(entity);
-                var result = await _productRepository.AddAsync(market);
-                await _productRepository.SaveChangesAsync();
+                var result = await _marketRepository.AddAsync(market);
+                await _marketRepository.SaveChangesAsync();
 
                 CreateMarketDto createMarketDto = _mapper.Map<Market, CreateMarketDto>(result);
                 _loggerService.LogInfo(LogMessages.Market_Added_Success);
@@ -101,7 +101,7 @@ namespace AtSepete.Business.Concrete
         {
             try
             {
-                var market = await _productRepository.GetByIdAsync(id);
+                var market = await _marketRepository.GetByIdAsync(id);
                 if (market is null)
                 {
                     _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
@@ -111,13 +111,13 @@ namespace AtSepete.Business.Concrete
                 {
 
                     var updateMarket = _mapper.Map(updateMarketDto, market);
-                    await _productRepository.UpdateAsync(updateMarket);
-                    await _productRepository.SaveChangesAsync();
+                    await _marketRepository.UpdateAsync(updateMarket);
+                    await _marketRepository.SaveChangesAsync();
                     _loggerService.LogInfo(LogMessages.Market_Updated_Success);
                     return new SuccessDataResult<UpdateMarketDto>(_mapper.Map<Market, UpdateMarketDto>(updateMarket), Messages.UpdateSuccess);
                 }
 
-                var hasMarket = await _productRepository.AnyAsync(c => c.MarketName.Trim().ToLower() == updateMarketDto.MarketName.Trim().ToLower());
+                var hasMarket = await _marketRepository.AnyAsync(c => c.MarketName.Trim().ToLower() == updateMarketDto.MarketName.Trim().ToLower());
 
                 if (hasMarket)
                 {
@@ -127,8 +127,8 @@ namespace AtSepete.Business.Concrete
                 else
                 {
                     var updateMarket = _mapper.Map(updateMarketDto, market);
-                    await _productRepository.UpdateAsync(updateMarket);
-                    await _productRepository.SaveChangesAsync();
+                    await _marketRepository.UpdateAsync(updateMarket);
+                    await _marketRepository.SaveChangesAsync();
                     _loggerService.LogInfo(LogMessages.Market_Updated_Success);
                     return new SuccessDataResult<UpdateMarketDto>(_mapper.Map<Market, UpdateMarketDto>(updateMarket), Messages.UpdateSuccess);
                 }
@@ -145,15 +145,15 @@ namespace AtSepete.Business.Concrete
         {
             try
             {
-                var Market = await _productRepository.GetByIdActiveOrPassiveAsync(id);
+                var Market = await _marketRepository.GetByIdActiveOrPassiveAsync(id);
                 if (Market is null)
                 {
                     _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
                     return new ErrorResult(Messages.MarketNotFound);
                 }
 
-                await _productRepository.DeleteAsync(Market);
-                await _productRepository.SaveChangesAsync();
+                await _marketRepository.DeleteAsync(Market);
+                await _marketRepository.SaveChangesAsync();
                 _loggerService.LogInfo(LogMessages.Market_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }
@@ -169,7 +169,7 @@ namespace AtSepete.Business.Concrete
         {
             try
             {
-                var Market = await _productRepository.GetByIdAsync(id);
+                var Market = await _marketRepository.GetByIdAsync(id);
                 if (Market is null)
                 {
                     _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
@@ -178,8 +178,8 @@ namespace AtSepete.Business.Concrete
 
                 Market.IsActive = false;
                 Market.DeletedDate = DateTime.Now;
-                await _productRepository.UpdateAsync(Market);
-                await _productRepository.SaveChangesAsync();
+                await _marketRepository.UpdateAsync(Market);
+                await _marketRepository.SaveChangesAsync();
                 _loggerService.LogInfo(LogMessages.Market_Deleted_Success);
                 return new SuccessResult(Messages.DeleteSuccess);
             }

@@ -1,0 +1,111 @@
+﻿@model IEnumerable<AtSepete.UI.Areas.Admin.Models.ProductMarketVMs.AdminProductMarketListVM>
+
+@{
+    ViewData["Title"] = "Ürün-Market Listele";
+    Layout = "_AdminLayout";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.37/dist/sweetalert2.min.css" />
+<h1>Ürün-Market Listesi</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MarketId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MarketId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stock)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                    <a class="btn btn-github" asp-area="Admin" asp-controller="ProductMarket" asp-action="UpdateProductMarket" asp-route-id="@item.Id">Güncelle</a>
+                    <a class="btn btn-github" asp-area="Admin" asp-controller="ProductMarket" asp-action="DetailProductMarket" asp-route-id="@item.Id"> Detay </a>
+                    <a class="btn btn-github me-3 cursor-pointer deleteAction" data-id="@item.Id"> Sil </a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="~/limonte-sweetalert2/sweetalert2.all.js"></script>
+<script src="~/limonte-sweetalert2/sweetalert2.all.min.js"></script>
+
+<script>
+    $(".deleteAction").click(function () {
+        const id = $(this).attr("data-id");
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("DeleteProduct")" + "?id=" + id,
+                    success: function (result) {
+                        if (result.isSuccess) {
+                            Swal.fire(
+                                'Silindi!',
+                                result.message,
+                                'success'
+                            ).then(() => {
+                                window.location.replace("/Admin/Product/ProductList");
+                            });
+
+                        } else {
+
+                            Swal.fire(
+                                'Silinemedi!',
+                                result.message,
+                                'error'
+                            ).then(() => {
+                                window.location.replace("/Admin/Product/ProductList");
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Hata!',
+                            'İşlem sırasında bir hata oluştu.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+</script>

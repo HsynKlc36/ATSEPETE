@@ -62,7 +62,6 @@ namespace AtSepete.Business.Concrete
 
         public async Task<IDataResult<CreateProductDto>> AddProductAsync(CreateProductDto entity)
         {
-
             try
             {
                 if (entity is null)
@@ -71,7 +70,7 @@ namespace AtSepete.Business.Concrete
                     return new ErrorDataResult<CreateProductDto>(Messages.ObjectNotValid);
                 }
                 var hasProductBarcode = await _productRepository.AnyAsync(c => c.Barcode.Trim().ToLower() == entity.Barcode.Trim().ToLower());
-                var hasProduct = await _productRepository.AnyAsync(x => x.Unit.Trim().ToLower() == entity.Unit.Trim().ToLower() && x.Quantity.Trim().ToLower() == entity.Quantity.Trim().ToLower() && x.Title.Trim().ToLower() == entity.Title.Trim().ToLower() && x.ProductName.Trim().ToLower() == entity.ProductName.Trim().ToLower());
+                var hasProduct = await _productRepository.AnyAsync(x => x.ProductName.Trim().ToLower() == entity.ProductName.Trim().ToLower() && x.Unit.Trim().ToLower() == entity.Unit.Trim().ToLower() && x.Quantity.Trim().ToLower() == entity.Quantity.Trim().ToLower() && x.Title.Trim().ToLower() == entity.Title.Trim().ToLower());
                 if (hasProductBarcode||hasProduct)
                 {
                     _loggerService.LogWarning(LogMessages.Product_Add_Fail_Already_Exists);
