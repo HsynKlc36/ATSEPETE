@@ -9,7 +9,7 @@ namespace AtSepete.UI.Areas.Admin.Models.ProductMarketVMs
         public Guid MarketId { get; set; }
         public int Stock { get; set; }
         public decimal Price { get; set; }
-        public Market? Market { get; set; }
-        public Product? Product { get; set; }
+        public string MarketName { get; set; }
+        public string ProductName { get; set; }
     }
 }

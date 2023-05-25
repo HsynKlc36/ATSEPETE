@@ -34,6 +34,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                         return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
+                    
                     DetailUserResponse user = JsonConvert.DeserializeObject<DetailUserResponse>(apiResponse);
                     if (user.IsSuccess)
                     {
