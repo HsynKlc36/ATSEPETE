@@ -25,8 +25,7 @@ namespace AtSepete.Api.Controllers
         [Route("[action]")]
         public async Task<IDataResult<List<ProductMarketListDto>>>GetAllProductMarkets()
         {
-
-            return await _productMarketService.GetAllProductMarketAsync();
+            return await _productMarketService.GetProductMarketListWithNames();
         }
         [HttpGet]
         [Route("[action]/{productId:Guid}")]

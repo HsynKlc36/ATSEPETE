@@ -14,9 +14,7 @@ namespace AtSepete.Dtos.Dto.ProductMarkets
         public Guid MarketId { get; set; }
         public int Stock { get; set; }
         public decimal Price { get; set; }
-        public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
-        public DateTime? DeletedDate { get; set; }
     }
 }

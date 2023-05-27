@@ -9,7 +9,13 @@ namespace AtSepete.UI.MapperUI.Profiles
         {
             CreateMap<AdminProductMarketCreateVM, CreateProductMarketDto>().ReverseMap();
             CreateMap<AdminProductMarketListVM, ProductMarketListDto>().ReverseMap();
+            CreateMap<ProductMarketDto, AdminProductMarketUpdateVM>().ReverseMap();
+            CreateMap<AdminProductMarketUpdateVM, UpdateProductMarketDto>().ReverseMap();
             
+
+
+
+
         }
     }
 }

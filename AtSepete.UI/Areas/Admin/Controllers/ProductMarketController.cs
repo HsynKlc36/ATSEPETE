@@ -2,6 +2,7 @@
 using AtSepete.Dtos.Dto.Markets;
 using AtSepete.Dtos.Dto.ProductMarkets;
 using AtSepete.Dtos.Dto.Products;
+using AtSepete.Entities.Data;
 using AtSepete.UI.ApiResponses.CategoryApiResponse;
 using AtSepete.UI.ApiResponses.MarketApiResponse;
 using AtSepete.UI.ApiResponses.ProductApiResponse;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using NToastNotify;
 using System.Net;
+using System.Reflection;
 using System.Text;
 
 namespace AtSepete.UI.Areas.Admin.Controllers
@@ -57,34 +59,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
 
             }
         }
-        [HttpGet]
-        public async Task<IActionResult> DetailProductMarket(Guid id)
-        {
-            using (var httpClient = new HttpClient())
-            {
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/ProductMarket/GetByIdProductMarket/{id}"))
-                {
-                    if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
-                    }
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    DetailProductResponse detailProduct = JsonConvert.DeserializeObject<DetailProductResponse>(apiResponse);
-                    if (detailProduct.IsSuccess)
-                    {
-                        var Product = _mapper.Map<ProductDto, AdminProductDetailVM>(detailProduct.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
-                        NotifySuccess(detailProduct.Message);
-                        return View(Product);
-                    }
-                    else
-                    {
-                        NotifyError(detailProduct.Message);
-                        return RedirectToAction("ProductList");
-                    }
-                };
-            }
-        }
+
         [HttpGet]
         public async Task<IActionResult> AddProductMarket()
         {
@@ -127,6 +102,89 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                 };
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> UpdateProductMarket(Guid id)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/ProductMarket/GetByIdProductMarket/{id}"))
+                {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
+                    }
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    DetailProductMarketResponse updateProductMarket = JsonConvert.DeserializeObject<DetailProductMarketResponse>(apiResponse);
+                    if (updateProductMarket.IsSuccess)
+                    {                     
+                        var productMarket = _mapper.Map<ProductMarketDto, AdminProductMarketUpdateVM>(updateProductMarket.Data);                        
+                        NotifySuccess(updateProductMarket.Message);
+                        return View(productMarket);
+                    }
+                    else
+                    {
+                        NotifyError(updateProductMarket.Message);
+                        return RedirectToAction("ProductList");
+                    }
+                };
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateProductMarket(AdminProductMarketUpdateVM adminProductMarketUpdateVM)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var updateProductMarketDto = _mapper.Map<AdminProductMarketUpdateVM, UpdateProductMarketDto>(adminProductMarketUpdateVM);
+               
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(updateProductMarketDto), Encoding.UTF8, "application/Json");
+                using (HttpResponseMessage response = await httpClient.PutAsync($"{ApiBaseUrl}/ProductMarket/UpdateProductMarket/{adminProductMarketUpdateVM.Id}", content))
+                {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
+                    }
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    UpdateProductMarketResponse updateProductMarket = JsonConvert.DeserializeObject<UpdateProductMarketResponse>(apiResponse);
+                    if (updateProductMarket.IsSuccess)
+                    {
+                        NotifySuccess(updateProductMarket.Message);
+                        return RedirectToAction("ProductMarketList");
+                    }
+                    else
+                    {
+                        NotifyError(updateProductMarket.Message);
+                        return View(adminProductMarketUpdateVM);
+                    }
+                };
+
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> DeleteProductMarket(Guid id)
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
+                using (HttpResponseMessage response = await httpClient.DeleteAsync($"{ApiBaseUrl}/ProductMarket/SoftDeleteProductMarket/{id}"))
+                {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
+                    }
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    DeleteProductMarketResponse deletedProductMarket = JsonConvert.DeserializeObject<DeleteProductMarketResponse>(apiResponse);
+                    return Json(deletedProductMarket);
+                };
+            };
+        }
+
+        /// <summary>
+        /// selectlist ile IsActive' i true olan ürünleri getirir
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
         private async Task<SelectList?> GetProductsAsync(Guid? productId = null)
         {
             using (var httpClient = new HttpClient())
@@ -150,6 +208,11 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                 };
             }
         }
+        /// <summary>
+        /// seleclist ile IsActive'i true olan marketleri getirir
+        /// </summary>
+        /// <param name="marketId"></param>
+        /// <returns></returns>
         private async Task<SelectList?> GetMarketsAsync(Guid? marketId = null)
         {
             using (var httpClient = new HttpClient())

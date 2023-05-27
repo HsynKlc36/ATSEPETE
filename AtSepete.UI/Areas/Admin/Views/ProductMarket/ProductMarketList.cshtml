@@ -14,10 +14,16 @@
                 @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.MarketId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MarketName)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.ProductId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MarketId)
+                @Html.DisplayNameFor(model => model.ProductName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Stock)
@@ -25,34 +31,40 @@
             <th>
                 @Html.DisplayNameFor(model => model.Price)
             </th>
-            <th></th>
+            <th>işlemler</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MarketId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stock)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MarketId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MarketName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
                     <a class="btn btn-github" asp-area="Admin" asp-controller="ProductMarket" asp-action="UpdateProductMarket" asp-route-id="@item.Id">Güncelle</a>
-                    <a class="btn btn-github" asp-area="Admin" asp-controller="ProductMarket" asp-action="DetailProductMarket" asp-route-id="@item.Id"> Detay </a>
                     <a class="btn btn-github me-3 cursor-pointer deleteAction" data-id="@item.Id"> Sil </a>
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -75,7 +87,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     type: "GET",
-                    url: "@Url.Action("DeleteProduct")" + "?id=" + id,
+                    url: "@Url.Action("DeleteProductMarket")" + "?id=" + id,
                     success: function (result) {
                         if (result.isSuccess) {
                             Swal.fire(
@@ -83,7 +95,7 @@
                                 result.message,
                                 'success'
                             ).then(() => {
-                                window.location.replace("/Admin/Product/ProductList");
+                                window.location.replace("/Admin/ProductMarket/ProductMarketList");
                             });
 
                         } else {
@@ -93,7 +105,7 @@
                                 result.message,
                                 'error'
                             ).then(() => {
-                                window.location.replace("/Admin/Product/ProductList");
+                                window.location.replace("/Admin/ProductMarket/ProductMarketList");
                             });
                         }
                     },

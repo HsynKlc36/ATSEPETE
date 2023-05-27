@@ -2,6 +2,7 @@
 using AtSepete.DataAccess.Context;
 using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,10 @@ namespace AtSepete.Repositories.Concrete
         public ProductMarketRepository(AtSepeteDbContext Context):base(Context) 
         {
 
+        }
+        public async Task<IQueryable<ProductMarket>> GetAllQueryableAsync()//listede select yazabilmemizi sağlar IQueryable
+        {
+            return GetAllActives().AsQueryable();
         }
     }
 }
