@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AtSepete.Dtos.Dto.OrderDetails
+﻿namespace AtSepete.UI.Areas.Admin.Models.OrderDetailVMs
 {
-    public class OrderDetailDto
+    public class AdminOrderDetailVM
     {
         public Guid Id { get; set; }
         public Guid OrderId { get; set; }
@@ -18,6 +11,5 @@ namespace AtSepete.Dtos.Dto.OrderDetails
         public string? ProductName { get; set; }
         public string? MarketName { get; set; }
         public string? CustomerName { get; set; }
-
     }
 }

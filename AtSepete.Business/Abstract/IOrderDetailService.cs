@@ -15,6 +15,7 @@ namespace AtSepete.Business.Abstract
         Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetailAsync();
 
         Task<IDataResult<OrderDetailDto>> GetByIdOrderDetailAsync(Guid id);
+        Task<IDataResult<OrderDetailDto>> GetOrderDetailWithNames(Guid id);
         Task<IDataResult<CreateOrderDetailDto>> AddOrderDetailAsync(CreateOrderDetailDto entity);
         Task<IDataResult<UpdateOrderDetailDto>> UpdateOrderDetailAsync(Guid id, UpdateOrderDetailDto updateOrderDetailDto);
         Task<IResult> HardDeleteOrderDetailAsync(Guid id);

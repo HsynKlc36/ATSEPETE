@@ -339,7 +339,7 @@
                         <ul class="treeview-menu">
 @*                          <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> SİPARİŞ GÜNCELLE</a></li>
                             <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> SİPARİŞ İPTAL</a></li>*@
-                            <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i>SİPARİŞ LİSTELE</a></li>
+                            <li><a asp-area="Admin" asp-controller="Order" asp-action="OrderList"><i class="fa fa-circle-o"></i>SİPARİŞ LİSTELE</a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -374,10 +374,10 @@
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="pages/forms/general.html"><i class="fa fa-circle-o"></i> SİPARİŞ-DETAY EKLE</a></li>
+                           @* <li><a href="pages/forms/general.html"><i class="fa fa-circle-o"></i> SİPARİŞ-DETAY EKLE</a></li>
                             <li><a href="pages/forms/advanced.html"><i class="fa fa-circle-o"></i>SİPARİŞ-DETAY GÜNCELLE</a></li>
-                            <li><a href="pages/forms/editors.html"><i class="fa fa-circle-o"></i> SİPARİŞ-DETAY SİL</a></li>
-                            <li><a href="pages/forms/editors.html"><i class="fa fa-circle-o"></i> SİPARİŞ-DETAY LİSTELE</a></li>
+                            <li><a href="pages/forms/editors.html"><i class="fa fa-circle-o"></i> SİPARİŞ-DETAY SİL</a></li>*@
+                            <li><a asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetailList"><i class="fa fa-circle-o"></i> SİPARİŞ-DETAY LİSTELE</a></li>
                         </ul>
                     </li>
                     <li class="treeview">

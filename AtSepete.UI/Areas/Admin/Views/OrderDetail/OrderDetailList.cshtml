@@ -1,0 +1,65 @@
+﻿@model IEnumerable<AtSepete.UI.Areas.Admin.Models.OrderDetailVMs.AdminOrderDetailListVM>
+
+@{
+    ViewData["Title"] = "Sipariş Detay Listesi";
+    Layout = "_AdminLayout";
+}
+
+<h1>Sipariş Detay Listesi</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModifiedDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModifiedDate)
+                </td>
+                <td>
+                    <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetail" asp-route-id="@item.Id"> Detay </a>
+                    <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="UpdateOrderDetail" asp-route-id="@item.Id"> Güncelle </a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

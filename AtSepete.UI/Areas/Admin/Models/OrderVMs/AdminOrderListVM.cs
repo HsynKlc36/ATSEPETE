@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AtSepete.Dtos.Dto.Orders
+﻿namespace AtSepete.UI.Areas.Admin.Models.OrderVMs
 {
-    public class OrderListDto
+    public class AdminOrderListVM
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }

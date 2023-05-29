@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AtSepete.Dtos.Dto.OrderDetails;
 using AtSepete.Business.Logger;
+using AtSepete.Dtos.Dto.ProductMarkets;
 
 namespace AtSepete.Business.Concrete
 {
@@ -21,14 +22,18 @@ namespace AtSepete.Business.Concrete
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IMarketRepository _marketRepository;
         private readonly IMapper _mapper;
         private readonly ILoggerService _loggerService;
 
-        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IOrderRepository orderRepository, IProductRepository productRepository, IMapper mapper, ILoggerService loggerService)
+        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IOrderRepository orderRepository, IProductRepository productRepository, IUserRepository userRepository, IMarketRepository marketRepository, IMapper mapper, ILoggerService loggerService)
         {
             _orderDetailRepository = orderDetailRepository;
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _userRepository = userRepository;
+            _marketRepository = marketRepository;
             _mapper = mapper;
             _loggerService = loggerService;
         }
@@ -43,6 +48,44 @@ namespace AtSepete.Business.Concrete
             _loggerService.LogInfo(LogMessages.OrderDetail_Object_Found_Success);
             return new SuccessDataResult<OrderDetailDto>(_mapper.Map<OrderDetailDto>(orderDetail), Messages.OrderDetailFoundSuccess);
 
+        }
+        public async Task<IDataResult<OrderDetailDto>> GetOrderDetailWithNames(Guid id)
+        {
+            try
+            {
+                var productId = _orderDetailRepository.GetByIdAsync(id).Result.ProductId;
+                var productName = _productRepository.GetByIdAsync(productId).Result?.GetFullName();
+                var orderId = _orderDetailRepository.GetByIdAsync(id).Result.OrderId;
+                var customerId = _orderRepository.GetByIdAsync(orderId).Result.CustomerId;
+                var customerName = _userRepository.GetByIdAsync(customerId).Result?.GetFullName();
+                var marketId = _orderRepository.GetByIdAsync(orderId).Result.MarketId;
+                var marketName = _marketRepository.GetByIdAsync(marketId).Result.MarketName;
+                var amount = _orderDetailRepository.GetByIdAsync(id).Result.Amount;
+                var createdDate = _orderDetailRepository.GetByIdAsync(id).Result.CreatedDate;
+                var ModifiedDate = _orderDetailRepository.GetByIdAsync(id).Result.ModifiedDate;
+
+                var orderDetailDto = new OrderDetailDto
+                {
+                    Id = id,
+                    ProductId = productId,
+                    MarketName = marketName,
+                    Amount = amount,
+                    CreatedDate = createdDate,
+                    ModifiedDate = ModifiedDate,
+                    CustomerName = customerName,
+                    ProductName = productName,
+                    OrderId = orderId,
+
+                };
+
+                _loggerService.LogInfo(LogMessages.OrderDetail_Object_Found_Success);
+                return new SuccessDataResult<OrderDetailDto>(orderDetailDto, Messages.OrderDetailFoundSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogInfo(LogMessages.OrderDetail_Failed);
+                return new ErrorDataResult<OrderDetailDto>(Messages.OrderDetailFailed);
+            }
         }
         public async Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetailAsync()
         {

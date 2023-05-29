@@ -106,35 +106,7 @@ namespace AtSepete.Business.Concrete
                 _loggerService.LogInfo(LogMessages.ProductMarket_Listed_Failed);
                 return new ErrorDataResult<List<ProductMarketListDto>>(Messages.ListedFailed);
             }
-            //try
-            //{
-            //    IQueryable<ProductMarket> productMarkets = await _productMarketRepository.GetAllQueryableAsync();
-            //    if (!productMarkets.Any())
-            //    {
-            //        _loggerService.LogWarning(LogMessages.ProductMarket_Object_Not_Found);
-            //        return new ErrorDataResult<List<ProductMarketListDto>>(Messages.ProductMarketNotFound);
-            //    }
-            //    //var result = await productMarkets.Select(async pm => new ProductMarketListDto
-            //    //{
-            //    //    Id = pm.Id,
-            //    //    ProductId = pm.ProductId,
-            //    //    MarketId = pm.MarketId,
-            //    //    Stock = pm.Stock,
-            //    //    Price = pm.Price,
-            //    //    ProductName = (await _productRepository.GetByIdAsync(pm.ProductId)).GetFullName(),
-            //    //    MarketName = (await _marketRepository.GetByIdAsync(pm.MarketId)).MarketName
-            //    //}).ToListAsync();
-
-
-            //    var result = _mapper.Map<IQueryable<ProductMarket> ,List<ProductMarketListDto>>(productMarkets);
-            //    _loggerService.LogInfo(LogMessages.ProductMarket_Listed_Success);
-            //    return new SuccessDataResult<List<ProductMarketListDto>>(result, Messages.ListedSuccess);
-            //}
-            //catch (Exception)
-            //{
-            //    _loggerService.LogInfo(LogMessages.ProductMarket_Listed_Failed);
-            //    return new ErrorDataResult<List<ProductMarketListDto>>(Messages.ListedFailed);
-            //}
+           
 
         }
         public async Task<IDataResult<CreateProductMarketDto>> AddProductMarketAsync(CreateProductMarketDto entity)

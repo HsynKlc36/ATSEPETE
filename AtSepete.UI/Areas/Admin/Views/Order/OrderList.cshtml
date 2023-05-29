@@ -1,0 +1,49 @@
+﻿@model IEnumerable<AtSepete.UI.Areas.Admin.Models.OrderVMs.AdminOrderListVM>
+
+@{
+    ViewData["Title"] = "Sipariş Listele";
+    Layout = "_AdminLayout";
+}
+
+<h1>Sipariş Listesi</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MarketId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+           
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MarketId)
+                </td>
+                <td>
+                    @item.CreatedDate.ToShortDateString()
+                </td>
+               
+            </tr>
+        }
+    </tbody>
+</table>

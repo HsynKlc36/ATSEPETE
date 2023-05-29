@@ -31,7 +31,8 @@ namespace AtSepete.Api.Controllers
         [Route("[action]/{id:Guid}")]
         public async Task<IDataResult<OrderDetailDto>> GetByIdOrderDetail([FromRoute] Guid id)
         {
-            return await _orderDetailService.GetByIdOrderDetailAsync(id);
+            
+            return await _orderDetailService.GetOrderDetailWithNames(id);
         }
         [HttpPost]
         [Route("[action]")]

@@ -98,6 +98,7 @@ namespace AtSepete.Business.Constants
 
         public const string OrderDetail_Listed_Success = "OrderDetail_Listed_Success";
         public const string OrderDetail_Listed_Failed = "OrderDetail_Listed_Failed";
+        public const string OrderDetail_Failed = "OrderDetail_Failed";
         public const string OrderDetail_Added_Success = "OrderDetail_Added_Success";
         public const string OrderDetail_Added_Failed = "OrderDetail_Added_Failed";
         public const string OrderDetail_Updated_Success = "OrderDetail_Updated_Success";
