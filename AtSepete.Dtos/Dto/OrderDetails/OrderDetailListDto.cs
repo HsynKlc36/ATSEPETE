@@ -16,5 +16,7 @@ namespace AtSepete.Dtos.Dto.OrderDetails
         public DateTime? ModifiedDate { get; set; }
         public DateTime? DeletedDate { get; set; }
         public bool IsActive { get; set; }
+        public string? ProductName { get; set; }
+        public string? CustomerName { get; set; }
     }
 }

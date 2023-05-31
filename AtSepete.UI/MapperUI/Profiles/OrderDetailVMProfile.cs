@@ -9,6 +9,8 @@ namespace AtSepete.UI.MapperUI.Profiles
         {
             CreateMap<OrderDetailListDto, AdminOrderDetailListVM>().ReverseMap();
             CreateMap<OrderDetailDto, AdminOrderDetailVM>().ReverseMap();
+            CreateMap<OrderDetailDto, AdminOrderDetailUpdateVM>().ReverseMap();
+            CreateMap<AdminOrderDetailUpdateVM, UpdateOrderDetailDto>().ReverseMap();
         }
     }
 }

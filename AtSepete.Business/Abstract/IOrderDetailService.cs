@@ -13,6 +13,8 @@ namespace AtSepete.Business.Abstract
     public interface IOrderDetailService
     {
         Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetailAsync();
+        Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetailWihtNameAsync();
+        Task<IDataResult<List<OrderDetailListDto>>> GetAllByFilterOrderDetailAsync();
 
         Task<IDataResult<OrderDetailDto>> GetByIdOrderDetailAsync(Guid id);
         Task<IDataResult<OrderDetailDto>> GetOrderDetailWithNames(Guid id);

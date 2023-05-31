@@ -7027,3 +7027,21 @@ button.close {
         display: none !important
     }
 }
+
+
+/*.tableFixHead {
+    overflow: auto;
+    max-height: 70vh;
+    border-collapse: separate;
+}
+
+    .tableFixHead thead {
+        position: sticky;
+        top: -1px;
+        z-index: 1;
+        box-sizing: border-box;
+        background-color: #F2F2F2;
+        border-top: none !important;
+        border-bottom: none !important;
+        box-shadow: inset 0 -2px 0 #000000;
+    }*/

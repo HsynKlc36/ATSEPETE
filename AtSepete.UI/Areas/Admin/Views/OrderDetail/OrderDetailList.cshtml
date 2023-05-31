@@ -1,65 +1,244 @@
-﻿@model IEnumerable<AtSepete.UI.Areas.Admin.Models.OrderDetailVMs.AdminOrderDetailListVM>
+﻿@using AtSepete.UI.Areas.Admin.Models.OrderDetailVMs;
+@model IEnumerable<AtSepete.UI.Areas.Admin.Models.OrderDetailVMs.AdminOrderDetailListVM>
 
 @{
     ViewData["Title"] = "Sipariş Detay Listesi";
     Layout = "_AdminLayout";
+    string customerFullName = ViewBag.CustomerFullName;
+    string productFullName = ViewBag.ProductFullName;
+    var ModelFilter = Model.GroupBy(x => x.OrderId).SelectMany(x => x.OrderByDescending(x => x.CreatedDate)).OrderByDescending(x => x.CreatedDate).ToList();
+
+    List<AdminOrderDetailListVM> ModelByCustomerFilter = new List<AdminOrderDetailListVM>();
+    if (customerFullName is not null)
+    {
+        ModelByCustomerFilter = Model.GroupBy(x => x.OrderId).SelectMany(x => x.OrderByDescending(x => x.CreatedDate)).Where(x => x.CustomerName.Replace(" ","").Trim().ToLower().Contains(customerFullName.Trim().Replace(" ","").ToLower())).ToList();
+
+    }
+    List<AdminOrderDetailListVM> ModelByProductFilter = new List<AdminOrderDetailListVM>();
+    if (productFullName is not null)
+    {
+        ModelByProductFilter = Model.GroupBy(x => x.OrderId).SelectMany(x => x.OrderByDescending(x => x.CreatedDate)).Where(x => x.ProductName.Replace(" ", "").Trim().ToLower().Contains(productFullName.Trim().Replace(" ", "").ToLower())).ToList();
+
+    }
+    List<AdminOrderDetailListVM> ModelByProductCustomerFilter = new List<AdminOrderDetailListVM>();
+    if (productFullName is not null && customerFullName is not null)
+    {
+        ModelByProductCustomerFilter = Model.GroupBy(x => x.OrderId).SelectMany(x => x.OrderByDescending(x => x.CreatedDate)).Where(x => x.ProductName.Replace(" ", "").Trim().ToLower().Contains(productFullName.Trim().Replace(" ", "").ToLower()) && x.CustomerName.Replace(" ", "").Trim().ToLower().Contains(customerFullName.Trim().Replace(" ", "").ToLower())).ToList();
+
+    }
+
+
 }
 
-<h1>Sipariş Detay Listesi</h1>
+<div class="container" style="background-color:blanchedalmond; width:1650px;">
+    <div class="d-flex flex-wrap header-sticky mr-0" style="width:90%">
+        <h1 class="d-inline float-left">Sipariş Detay Listesi</h1>
+        <div class="row d-flex ml-auto pr-5">
+            <form class="form-inline" asp-action="OrderDetailList">
+                <div class="form-group mb-2">
+                    <input type="text" name="customerFullName" class="form-control" placeholder="Müşteri Adı Giriniz: ">                   
+                </div>
+                <div class="form-group mb-2">
+                    <input type="text" name="productFullName" class="form-control" placeholder="Ürün Adı Giriniz: ">
+                </div>
+                <div class="form-group mb-2">
+                    <input type="submit" class="btn btn-github mb-auto ml-2" value="Ara" />
+                    <button asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetailList" class="btn btn-github mb-auto ml-2">Yenile <i class="fa fa-search"></i></button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="col-12 d-flex flex-column align-self-start ">
 
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Amount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModifiedDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table table-hover">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProductId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Amount)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ModifiedDate)
-                </td>
-                <td>
-                    <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetail" asp-route-id="@item.Id"> Detay </a>
-                    <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="UpdateOrderDetail" asp-route-id="@item.Id"> Güncelle </a>
-                </td>
-
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CustomerName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ModifiedDate)
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+
+
+            @if (customerFullName!=null&&productFullName==null)
+            {
+                @foreach (var item in ModelByCustomerFilter)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CustomerName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ModifiedDate)
+                        </td>
+                        <td>
+                            <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetail" asp-route-id="@item.Id"> Detay </a>
+                            <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="UpdateOrderDetail" asp-route-id="@item.Id"> Güncelle </a>
+                        </td>
+
+                    </tr>
+                }
+            }
+            else if (productFullName!=null&&customerFullName==null)
+            {
+                @foreach (var item in ModelByProductFilter)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CustomerName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ModifiedDate)
+                        </td>
+                        <td>
+                            <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetail" asp-route-id="@item.Id"> Detay </a>
+                            <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="UpdateOrderDetail" asp-route-id="@item.Id"> Güncelle </a>
+                        </td>
+
+                    </tr>
+                }
+            }
+            else if (productFullName != null && customerFullName != null)
+            {
+                @foreach (var item in ModelByProductCustomerFilter)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CustomerName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ModifiedDate)
+                        </td>
+                        <td>
+                            <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetail" asp-route-id="@item.Id"> Detay </a>
+                            <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="UpdateOrderDetail" asp-route-id="@item.Id"> Güncelle </a>
+                        </td>
+
+                    </tr>
+                }
+            }
+            else
+            {
+                @foreach (var item in ModelFilter)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CustomerName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ModifiedDate)
+                        </td>
+                        <td>
+                            <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetail" asp-route-id="@item.Id"> Detay </a>
+                            <a class="btn btn-github" asp-area="Admin" asp-controller="OrderDetail" asp-action="UpdateOrderDetail" asp-route-id="@item.Id"> Güncelle </a>
+                        </td>
+
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+
+

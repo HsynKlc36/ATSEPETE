@@ -1,0 +1,80 @@
+﻿@model IEnumerable<AtSepete.UI.Areas.Admin.Models.StockVMs.AdminStockListVM>
+
+@{
+    ViewData["Title"] = "StockList";
+    Layout = "_AdminLayout";
+    var filterModel = Model.GroupBy(x => x.MarketId).SelectMany(x => x.OrderByDescending(x => x.Stock)).ToList();
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<h1>Stok Listesi</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MarketId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MarketName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>Kritik Stok </th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in filterModel)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MarketId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MarketName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @if (item.Stock<=10)
+                    {
+                        <i class="fa-sharp fa-solid fa-triangle-exclamation fa-2xl" style="color: #f40b0b;"></i>
+                    }
+                    else
+                    {
+                        <i class="fa-solid fa-circle-check fa-2xl" style="color: #04ff00;"></i>
+                    }                  
+                </td>
+                <td>
+                    <a class="btn btn-github" asp-area="Admin" asp-controller="Stock" asp-action="UpdateStock" asp-route-id="@item.Id">Stok Güncelle</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -87,11 +87,75 @@ namespace AtSepete.Business.Concrete
                 return new ErrorDataResult<OrderDetailDto>(Messages.OrderDetailFailed);
             }
         }
+        public async Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetailWihtNameAsync()
+        {
+            try
+            {
+                var tempEntity = await _orderDetailRepository.GetAllAsync();
+
+                var result = new List<OrderDetailListDto>();
+                foreach (var entity in tempEntity)
+                {
+                    var orderDetailListDto = new OrderDetailListDto
+                    {
+                        Id = entity.Id,
+                        ProductId = entity.ProductId,
+                        Amount = entity.Amount,
+                        CreatedDate = entity.CreatedDate,
+                        ModifiedDate = entity.ModifiedDate,
+                        OrderId = entity.OrderId,
+                        IsActive = entity.IsActive,
+
+                    };
+                    var product = await _productRepository.GetByIdAsync(entity.ProductId);
+                    if (product != null)
+                    {
+                        orderDetailListDto.ProductName = product.GetFullName();
+                    }
+                    var order = await _orderRepository.GetByIdAsync(entity.OrderId);
+                    var userName = _userRepository.GetByIdAsync(order.CustomerId).Result.GetFullName();
+                    if (userName != null)
+                    {
+                        orderDetailListDto.CustomerName = userName;
+                    }
+                    result.Add(orderDetailListDto);
+                }
+                _loggerService.LogInfo(LogMessages.OrderDetail_Listed_Success);
+                return new SuccessDataResult<List<OrderDetailListDto>>(result, Messages.ListedSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.OrderDetail_Listed_Failed);
+                return new ErrorDataResult<List<OrderDetailListDto>>(Messages.ListedFailed);
+            }
+
+        }
         public async Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetailAsync()
         {
             try
             {
                 var tempEntity = await _orderDetailRepository.GetAllAsync();
+                if (!tempEntity.Any())
+                {
+                    _loggerService.LogWarning(LogMessages.OrderDetail_Object_Not_Found);
+                    return new ErrorDataResult<List<OrderDetailListDto>>(Messages.OrderDetailNotFound);
+                }
+                var result = _mapper.Map<IEnumerable<OrderDetail>, List<OrderDetailListDto>>(tempEntity);
+                _loggerService.LogInfo(LogMessages.OrderDetail_Listed_Success);
+                return new SuccessDataResult<List<OrderDetailListDto>>(result, Messages.ListedSuccess);
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.OrderDetail_Listed_Failed);
+                return new ErrorDataResult<List<OrderDetailListDto>>(Messages.ListedFailed);
+            }
+
+        }
+        public async Task<IDataResult<List<OrderDetailListDto>>> GetAllByFilterOrderDetailAsync()
+        {
+            try
+            {
+                var tempEntity = await _orderDetailRepository.GetAllOrderDetailAsync();
                 if (!tempEntity.Any())
                 {
                     _loggerService.LogWarning(LogMessages.OrderDetail_Object_Not_Found);

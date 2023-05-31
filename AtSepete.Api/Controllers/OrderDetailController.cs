@@ -22,8 +22,9 @@ namespace AtSepete.Api.Controllers
         [Route("[action]")]
         public async Task<IDataResult<List<OrderDetailListDto>>> GetAllOrderDetails()
         {
-
-            return await _orderDetailService.GetAllOrderDetailAsync();
+            //return await _orderDetailService.GetAllOrderDetailAsync();
+            return await _orderDetailService.GetAllOrderDetailWihtNameAsync();
+         
         }
 
 
