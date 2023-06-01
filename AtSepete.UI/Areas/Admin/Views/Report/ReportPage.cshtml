@@ -1,0 +1,65 @@
+﻿@model AtSepete.UI.Areas.Admin.Models.ReportVMs.AdminReportCountVM
+
+@{
+    ViewData["Title"] = "ReportPage";
+    Layout = "_AdminLayout";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<h1>RAPOR</h1>
+
+<div class="row">
+    <div class="col-lg-6 col-xs-6"  >
+        <!-- small box -->
+        <div class="small-box bg-aqua">
+            <div class="inner">
+                <h3>@Model.CountOrders</h3>
+                <p>Tüm Siparişler</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-shopping-basket" style="color: #ffffff;"></i>
+            </div>
+            <a asp-area="Admin" asp-controller="Order" asp-action="OrderList" class="small-box-footer">Daha Fazlası... <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-6 col-xs-6" >
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3>@Model.CountUsers<sup style="font-size: 20px"></sup></h3>
+                <p>Tüm Müşteriler</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-users" style="color: #ffffff;"></i>
+            </div>
+            <a href="#" class="small-box-footer">Daha Fazlası... <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-6 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-yellow">
+            <div class="inner">
+                <h3>@Model.CountProducts</h3>
+                <p>Tüm Ürünler</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-diamond" style="color: #ffffff;"></i>
+            </div>
+            <a asp-area="Admin" asp-controller="Product" asp-action="ProductList" class="small-box-footer">Daha Fazlası... <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-6 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <h3>@Model.CountMarkets</h3>
+                <p>Tüm Marketler</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-university" style="color: #ffffff;"></i>
+            </div>
+            <a asp-area="Admin" asp-controller="Market" asp-action="MarketList" class="small-box-footer">Daha Fazlası... <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div><!-- ./col -->
+</div><!-- /.row -->
+

@@ -5,7 +5,7 @@
     Layout = "_AdminLayout";
     var filterModel = Model.GroupBy(x => x.MarketId).SelectMany(x => x.OrderByDescending(x => x.Stock)).ToList();
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <h1>Stok Listesi</h1>
 
 <table class="table">
@@ -62,13 +62,14 @@
                     @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
+
                     @if (item.Stock<=10)
                     {
-                        <i class="fa-sharp fa-solid fa-triangle-exclamation fa-2xl" style="color: #f40b0b;"></i>
+                        <i class="fa fa-exclamation-triangle " style="color: #f40b0b;"></i>
                     }
                     else
                     {
-                        <i class="fa-solid fa-circle-check fa-2xl" style="color: #04ff00;"></i>
+                        <i class="fa fa-check-circle-o " style="color: #04ff00;"></i>
                     }                  
                 </td>
                 <td>

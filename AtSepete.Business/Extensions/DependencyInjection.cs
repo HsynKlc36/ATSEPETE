@@ -179,6 +179,7 @@ namespace AtSepete.Business.Extensions
             services.AddScoped<IProductMarketService, ProductMarketService>();
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IReportService, ReportService>();
             services.AddSingleton<ILoggerService, LoggerService>();
             services.AddSingleton<IEmailSender, EmailSenderService>();
 

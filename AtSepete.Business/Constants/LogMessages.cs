@@ -141,5 +141,8 @@ namespace AtSepete.Business.Constants
         public const string ProductMarket_Invalid_Input = "ProductMarket_Invalid_Input";
         public const string ProductMarket_Add_Fail_Already_Exists = "ProductMarket_Add_Fail_Already_Exists";
 
+        public const string Report_Success = "Report_Success";
+        public const string Report_Failed = "Report_Failed";
+
     }
 }

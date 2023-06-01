@@ -82,6 +82,9 @@ public class Messages
     public const string PasswordFail = "Password_Fail";
     public const string PasswordSuccess = "Password_Success";
 
+    public const string ReportSuccess = "Report_Success";
+    public const string ReportFailed = "Report_Failed";
+
 
  //Cons ve static atasındaki fark
 //    const anahtar kelimesini kullanarak sabit bir değer tanımlamanız da mümkündür ve bu yaklaşımın birçok avantajı vardır.

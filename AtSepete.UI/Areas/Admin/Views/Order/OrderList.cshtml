@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Sipariş Listele";
     Layout = "_AdminLayout";
+    var modelFilter = Model.OrderByDescending(x => x.CreatedDate);
 }
 
 <h1>Sipariş Listesi</h1>
@@ -27,7 +28,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in modelFilter)
         {
             <tr>
                 <td>
