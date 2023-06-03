@@ -13,5 +13,7 @@ namespace AtSepete.UI.Areas.Customer.Controllers
         {
             return View();
         }
+
+
     }
 }

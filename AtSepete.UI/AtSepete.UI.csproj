@@ -39,8 +39,4 @@
     <ProjectReference Include="..\AtSepete.Repositories\AtSepete.Repositories.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Customer\Models\" />
-  </ItemGroup>
-
 </Project>

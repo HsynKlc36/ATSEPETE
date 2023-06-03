@@ -85,15 +85,18 @@ public class Messages
     public const string ReportSuccess = "Report_Success";
     public const string ReportFailed = "Report_Failed";
 
+    public const string ShopListedSuccess = "Shop_Listed_Success";
+    public const string ShopListedFailed = "Shop_Listed_Failed";
 
- //Cons ve static atasındaki fark
-//    const anahtar kelimesini kullanarak sabit bir değer tanımlamanız da mümkündür ve bu yaklaşımın birçok avantajı vardır.
 
-//Örneğin, const anahtar kelimesiyle tanımlanan bir değişken, programın çalışması sırasında değeri değiştirilemez.Bu nedenle, const kullanarak tanımladığınız sabitler daha güvenlidir.
+    //Cons ve static atasındaki fark
+    //    const anahtar kelimesini kullanarak sabit bir değer tanımlamanız da mümkündür ve bu yaklaşımın birçok avantajı vardır.
 
-//Ancak, const anahtar kelimesi ile tanımlanan bir değişken, sadece derleme zamanında değeri belirlenebilir.Yani, const kullanarak tanımladığınız bir sabitin değerini çalışma zamanında değiştiremezsiniz.Bu sebeple, eğer loglama mesajlarınızı düzenli olarak güncellemek istiyorsanız static readonly kullanmanız daha uygun olabilir.
+    //Örneğin, const anahtar kelimesiyle tanımlanan bir değişken, programın çalışması sırasında değeri değiştirilemez.Bu nedenle, const kullanarak tanımladığınız sabitler daha güvenlidir.
 
-//Özetle, const anahtar kelimesi ile sabit bir değer tanımlamak hatalı bir kullanım olmaz ama loglama mesajları gibi dinamik olarak değişebilen veriler için static readonly kullanarak tanımlamanız daha mantıklı olabilir.
+    //Ancak, const anahtar kelimesi ile tanımlanan bir değişken, sadece derleme zamanında değeri belirlenebilir.Yani, const kullanarak tanımladığınız bir sabitin değerini çalışma zamanında değiştiremezsiniz.Bu sebeple, eğer loglama mesajlarınızı düzenli olarak güncellemek istiyorsanız static readonly kullanmanız daha uygun olabilir.
+
+    //Özetle, const anahtar kelimesi ile sabit bir değer tanımlamak hatalı bir kullanım olmaz ama loglama mesajları gibi dinamik olarak değişebilen veriler için static readonly kullanarak tanımlamanız daha mantıklı olabilir.
 
 
 }

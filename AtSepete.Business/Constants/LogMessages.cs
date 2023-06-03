@@ -144,5 +144,8 @@ namespace AtSepete.Business.Constants
         public const string Report_Success = "Report_Success";
         public const string Report_Failed = "Report_Failed";
 
+        public const string Shop_Listed_Success = "Shop_Listed_Success";
+        public const string Shop_Listed_Failed = "Shop_Listed_Failed";
+
     }
 }

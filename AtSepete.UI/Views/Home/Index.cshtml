@@ -39,7 +39,7 @@
         <header class="header_section">
             <div class="container-fluid">
                 <nav class="navbar navbar-expand-lg custom_nav-container">
-                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
                        @* <img src="~/image/logo.png" alt="" /> <span>
                             ATSEPETE 
                         </span>*@
@@ -54,7 +54,7 @@
                                 <div class="d-none d-lg-flex">
                                     <ul class="navbar-nav justify-content-between " style="margin-left:auto">   
                                         <li class="nav-item">
-                                            <a class="nav-link"  asp-action="Login" asp-controller="Login">
+                                            <a class="nav-link" asp-area="" asp-action="Login" asp-controller="Login">
                                                 GİRİŞ 
                                             </a>
                                            
@@ -65,7 +65,7 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                             <a class="nav-link" asp-action="Register" asp-controller="Login">
+                                             <a class="nav-link" asp-area="" asp-action="Register" asp-controller="Login">
                                                 KAYIT OL
                                             </a>
                                         </li>
@@ -86,8 +86,9 @@
                     <div id="myNav" class="overlay">
                         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
                         <div class="overlay-content">
-                            <a asp-controller="Login" asp-action="Login">GİRİŞ</a>
-                            <a asp-controller="Login" asp-action="Register">KAYIT OL</a>
+                            <a asp-area="" asp-controller="Login" asp-action="Login">GİRİŞ</a>
+                            <a asp-area="" asp-controller="Login" asp-action="Register">KAYIT OL</a>
+                            <a asp-area="Customer" asp-controller="Shop" asp-action="HomePage">ALIŞVERİŞE BAŞLA</a>
                         </div>
                     </div>
                 </nav>
@@ -119,9 +120,8 @@
                                                         quis nostrud exercitation ullamco laboris nis
                                                     </p>
                                                     <div class="d-flex">
-                                                        <a class="slider_btn" asp-controller="Login" asp-action="Login">
-                                                            Alışverişe Başla
-                                                        </a>
+                                                      
+                                                         <a class="slider_btn" asp-area="Customer" asp-controller="Shop" asp-action="HomePage">ALIŞVERİŞE BAŞLA</a>
                                                     </div>
                                                 </div>
                                             </div>
