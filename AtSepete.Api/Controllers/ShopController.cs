@@ -17,7 +17,6 @@ namespace AtSepete.Api.Controllers
 
         public ShopController(IShopService shopService)
         {
-
             _shopService = shopService;
         }
         [HttpGet]
@@ -26,6 +25,21 @@ namespace AtSepete.Api.Controllers
         public async Task<IDataResult<List<ShopListDto>>> ShopList()
         {
             return await _shopService.ShopListAsync();
+        }
+        [HttpGet]
+        [Route("[action]/{filterName}")]
+        [Authorize(AuthenticationSchemes = "Customer")]
+        public async Task<IDataResult<List<ShopFilterListDto>>> ShopFilterList([FromRoute]string filterName)
+        {
+            return await _shopService.ShopFilterListAsync(filterName);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [Authorize(AuthenticationSchemes = "Customer")]
+        public async Task<IDataResult<List<BestSellerProductListDto>>> BestSellerProductList()
+        {
+            return await _shopService.BestSellerProductsAsync();
         }
     }
 }

@@ -21,6 +21,7 @@ namespace AtSepete.Dtos.Dto.Shop
         public int ProductStock { get; set; }
         public string MarketName { get; set; }
         public string CategoryName { get; set; }
+        public DateTime CreatedDate { get; set; }
         
     }
 }

@@ -87,6 +87,15 @@ public class Messages
 
     public const string ShopListedSuccess = "Shop_Listed_Success";
     public const string ShopListedFailed = "Shop_Listed_Failed";
+    public const string ShopListedNotFound = "Shop_Listed_Not_Found";
+
+    public const string ShopFilterListedSuccess = "ShopFilter_Listed_Success";
+    public const string ShopFilterListedFailed = "ShopFilter_Listed_Failed";
+    public const string ShopFilterListedNotFound = "ShopFilter_Listed_Not_Found";
+
+    public const string BestSellerListedSuccess = "BestSeller_Listed_Success";
+    public const string BestSellerListedFailed = "BestSeller_Listed_Failed";
+
 
 
     //Cons ve static atasındaki fark

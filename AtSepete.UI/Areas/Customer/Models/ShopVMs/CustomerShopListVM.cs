@@ -12,7 +12,9 @@
         public string ProductPhotoPath { get; set; }
         public decimal ProductPrice { get; set; }
         public int ProductStock { get; set; }
+        public List<string>? ProductAmount { get; set; }
         public string MarketName { get; set; }
         public string CategoryName { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

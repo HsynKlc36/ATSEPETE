@@ -11,5 +11,7 @@ namespace AtSepete.Business.Abstract
     public interface IShopService
     {
         Task<IDataResult<List<ShopListDto>>> ShopListAsync();
+        Task<IDataResult<List<ShopFilterListDto>>> ShopFilterListAsync(string filterName);
+        Task<IDataResult<List<BestSellerProductListDto>>> BestSellerProductsAsync();
     }
 }

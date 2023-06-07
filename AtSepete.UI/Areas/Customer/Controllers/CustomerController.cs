@@ -11,7 +11,7 @@ namespace AtSepete.UI.Areas.Customer.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("HomePage", "Shop");
         }
 
 

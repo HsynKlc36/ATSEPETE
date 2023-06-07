@@ -1,4 +1,5 @@
 ﻿using AtSepete.Dtos.Dto.Shop;
+using AtSepete.Entities.Data;
 using AtSepete.UI.Areas.Customer.Models.ShopVMs;
 
 namespace AtSepete.UI.MapperUI.Profiles
@@ -8,6 +9,11 @@ namespace AtSepete.UI.MapperUI.Profiles
         public ShopVMProfile()
         {
             CreateMap<ShopListDto,CustomerShopListVM>().ReverseMap();
+            CreateMap<BestSellerProductListDto, CustomerBestSellerListVM>().ReverseMap();
+            CreateMap<ShopFilterListDto, CustomerShopFilterListVM>().ReverseMap();
+            
         }
+
     }
+    
 }

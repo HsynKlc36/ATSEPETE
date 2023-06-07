@@ -160,7 +160,6 @@ namespace AtSepete.Business.Extensions
                });
             
 
-
             services.AddAutoMapper(
             Assembly.GetExecutingAssembly(),
             typeof(CategoryProfile).Assembly,
@@ -169,7 +168,8 @@ namespace AtSepete.Business.Extensions
             typeof(OrderDetailProfile).Assembly,
             typeof(ProductMarketProfile).Assembly,
             typeof(ProductProfile).Assembly,
-            typeof(UserProfile).Assembly
+            typeof(UserProfile).Assembly,
+            typeof(ShopProfile).Assembly
             );
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICategoryService, CategoryService>();

@@ -1,0 +1,12 @@
+﻿.pagination-link {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #f6f6f6;
+    cursor: pointer;
+}
+
+    .pagination-link.active {
+        background-color: #e0e0e0;
+    }

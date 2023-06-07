@@ -137,7 +137,7 @@ ol {
 .set-bg {
     background-repeat: no-repeat;
     background-size: cover;
-    background-position:center;
+    background-position: center;
 }
 
 .spad {
@@ -1184,8 +1184,8 @@ ol {
 }
 
     .sidebar__item__color.sidebar__item__color--white label:after {
-        border: 2px solid #333333;
-        background: #fbbcbc;
+        /*border: 2px solid #333333;*/
+        background: #ffffff;
     }
 
     .sidebar__item__color.sidebar__item__color--gray label:after {
@@ -1209,11 +1209,11 @@ ol {
     }
 
     .sidebar__item__color label {
-        font-size: 16px;
+      /*  font-size: 16px;
         color: #333333;
-        position: relative;
-        padding-left: 32px;
-        cursor: pointer;
+        position: relative;*/
+        padding-left: 5px;
+        /*cursor: pointer;*/
     }
 
         .sidebar__item__color label input {
