@@ -52,6 +52,12 @@ namespace AtSepete.UI.Extensions
                 options.Cookie.HttpOnly = true;
             });
 
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = "AtSepeteSession";
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
+            });
+
 
             return services;
         }

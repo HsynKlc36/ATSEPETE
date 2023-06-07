@@ -51,6 +51,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 app.UseNToastNotify();
 app.MapControllerRoute(
     name: "admin",

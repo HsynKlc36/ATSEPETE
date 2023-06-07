@@ -15,6 +15,8 @@ namespace AtSepete.Dtos.Dto.Shop
         public string ProductTitle { get; set; }
         public string ProductPhotoPath { get; set; }
         public string CategoryName { get; set; }
+        public string MarketName { get; set; }
+        public decimal ProductPrice { get; set; }
         
     }
 }

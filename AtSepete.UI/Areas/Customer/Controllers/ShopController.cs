@@ -5,11 +5,14 @@ using AtSepete.UI.ApiResponses.ProductResponse;
 using AtSepete.UI.ApiResponses.ShopApiResponse;
 using AtSepete.UI.Areas.Admin.Models.ProductVMs;
 using AtSepete.UI.Areas.Customer.Models.ShopVMs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NToastNotify;
 using SendGrid;
 using System.Net;
+using System.Text.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace AtSepete.UI.Areas.Customer.Controllers
 {
@@ -40,6 +43,13 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                         var products = _mapper.Map<List<ShopListDto>, List<CustomerShopListVM>>(shopList.Data);
                         NotifySuccess(shopList.Message);
                         ViewBag.ShopList = products;
+                        var serializedFilterProducts = TempData["ShopFilterList"] as string;
+                        if (serializedFilterProducts != null)
+                        {
+
+                            var filterProducts = JsonSerializer.Deserialize<List<CustomerShopFilterListVM>>(serializedFilterProducts);
+                            ViewBag.FilterProducts = filterProducts;
+                        }
 
                     }
                     else
@@ -64,6 +74,7 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                         var bestSellerProducts = _mapper.Map<List<BestSellerProductListDto>, List<CustomerBestSellerListVM>>(bestSellerProductList.Data);
                         NotifySuccess(bestSellerProductList.Message);
                         ViewBag.BestSellerProductList = bestSellerProducts;
+
                     }
                     else
                     {
@@ -97,8 +108,10 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                     if (shopFilterList.IsSuccess)
                     {
                         var filterProducts = _mapper.Map<List<ShopFilterListDto>, List<CustomerShopFilterListVM>>(shopFilterList.Data);
+                        var serializedFilterProducts = JsonSerializer.Serialize(filterProducts);
+                        TempData["ShopFilterList"] = serializedFilterProducts;
                         NotifySuccess(shopFilterList.Message);
-                        return View();
+                        return RedirectToAction("HomePage");
                     }
                     else
                     {

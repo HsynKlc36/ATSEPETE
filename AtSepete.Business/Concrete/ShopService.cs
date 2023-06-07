@@ -133,6 +133,7 @@ namespace AtSepete.Business.Concrete
             try
             {
                 var query = (from od in (await _productMarketRepository.GetAllAsync())
+                             join m in (await _marketRepository.GetAllAsync()) on od.MarketId equals m.Id                             
                              join p in (await _productRepository.GetAllAsync()) on od.ProductId equals p.Id
                              join c in (await _categoryRepository.GetAllAsync()) on p.CategoryId equals c.Id                             
                              select new
@@ -143,11 +144,13 @@ namespace AtSepete.Business.Concrete
                                  ProductUnit =p.Unit,
                                  ProductTitle = p.Title,
                                  ProductPhotoPath = p.PhotoPath,
-                                 CategoryName=c.Name
+                                 CategoryName=c.Name,
+                                 MarketName=m.MarketName,
+                                 ProductPrice=od.Price
                              }).ToList();
 
                 //var result = query.ToList();
-                 var shopFilter= query.Where(x => x.ProductTitle.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower()) || x.ProductName.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower()) || x.CategoryName.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower()));
+                 var shopFilter= query.Where(x => x.ProductTitle.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower()) || x.ProductName.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower()) || x.CategoryName.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower())).ToList();
                 if (shopFilter is null)
                 {
                     _loggerService.LogWarning(LogMessages.ShopFilter_Listed_Not_Found);

@@ -9,11 +9,10 @@
     var modelMarketFilter = shopList.Select(x => x.MarketName.ToUpper()).Distinct().ToList();
     var newProductFilter = shopList.OrderByDescending(x => x.CreatedDate).Take(10).ToList();
 
-    var shopListPagination = @Html.Raw(Json.Serialize(shopList));
+    IEnumerable<CustomerShopFilterListVM> FilterProducts = ViewBag.FilterProducts;
 
 }
 
-<link href="~/bootstrap/css/pagination.css" rel="stylesheet" />
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-section set-bg" data-setbg="/image/atsepeteloginpage2.jpg">
     <div class="container">
@@ -191,7 +190,14 @@
                         </div>
                         <div class="col-lg-4 col-md-4">
                             <div class="filter__found">
+                                @if (FilterProducts is null)
+                                {
                                 <h6><span>@shopList.Count()</span> Ürün Bulundu</h6>
+                                    
+                                }else
+                                {
+                                    <h6><span>@FilterProducts.Count()</span> Ürün Bulundu</h6>
+                                }
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-3">
@@ -200,10 +206,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="column-count:3;" id="product-container">
+                @if (FilterProducts is not null)
+                {
+
+                    <div class="row" style="column-count:3;" id="product-container">
 
 
-                    @* <div class="col-lg-4 col-md-6 col-sm-6" >
+                        @* <div class="col-lg-4 col-md-6 col-sm-6" >
                     <div class="product__item">
                     <div class="product__item__pic set-bg" data-setbg="productList[i].ProductPhotoPath">
                     <ul class="product__item__pic__hover">
@@ -222,12 +231,35 @@
 
                     </div>*@
 
-                </div>
-                <div class="product__pagination" id="sayfalama">
-                    <ul id="sayfaListesi">
-                        <!-- Sayfa numaraları burada olacak -->
+                    </div>
+                }
+                else
+                {
+                    <div class="row" style="column-count:3;" id="product-container">
+
+
+                        @* <div class="col-lg-4 col-md-6 col-sm-6" >
+                    <div class="product__item">
+                    <div class="product__item__pic set-bg" data-setbg="productList[i].ProductPhotoPath">
+                    <ul class="product__item__pic__hover">
+                    <li><a href="#"><i class="fa fa-heart"></i></a></li>
+                    <li><a href="#"><i class="fa fa-retweet"></i></a></li>
+                    <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
                     </ul>
-                </div>
+                    </div>
+                    <div class="product__item__text">
+                    <h5>productList[i].ProductTitle.ToUpper()</h5>
+                    <h6>productList[i].ProductName  productList[i].ProductQuantity productList[i].ProductUnit</h6>
+                    <h5><span>productList[i].MarketName.ToUpper()</span></h5>
+                    productList[i].ProductPrice TL
+                    </div>
+                    </div>
+
+                    </div>*@
+
+                    </div>
+                }
+
             </div>
         </div>
     </div>
@@ -235,8 +267,9 @@
 
 <script>
     var productList = @Json.Serialize(shopList); // Ürün listesi
+    var productFilterList = @Json.Serialize(FilterProducts); // filtrelenmiş Ürün listesi
     var batchSize = 6; // Her yüklemede kaç ürün yükleneceği
-    console.log(productList)
+    console.log(productFilterList)
     function createProductDiv(item) {
         var divCol = document.createElement("div");
         divCol.className = "col-lg-4 col-md-6 col-sm-6";
@@ -250,7 +283,6 @@
         var imgProduct = document.createElement("img");
         imgProduct.src = item.productPhotoPath;
         divProductItemPic.appendChild(imgProduct);
-
 
 
         var ulProductItemPicHover = document.createElement("ul");
@@ -316,10 +348,20 @@
     function loadMoreProducts() {
         var container = document.getElementById("product-container");
         var loadedCount = container.childElementCount;
+        if (productFilterList != null) 
+        {
+            for (var i = loadedCount; i < loadedCount + batchSize && i < productList.length; i++) {
+                var productDiv = createProductDiv(productFilterList[i]);
+                container.appendChild(productDiv);
+            }
+        }
+        else 
+        {
 
-        for (var i = loadedCount; i < loadedCount + batchSize && i < productList.length; i++) {
-            var productDiv = createProductDiv(productList[i]);
-            container.appendChild(productDiv);
+            for (var i = loadedCount; i < loadedCount + batchSize && i < productList.length; i++) {
+                var productDiv = createProductDiv(productList[i]);
+                container.appendChild(productDiv);
+            }
         }
     }
 
