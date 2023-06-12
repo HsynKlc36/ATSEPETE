@@ -47,6 +47,7 @@
     }
 
 .header_section {
+     background-color:#f7cdd0;
 }
 
     .header_section .container-fluid {
@@ -213,6 +214,7 @@ a:focus {
 
 .slider_item-container .row {
     align-items: center;
+    background-color: #f7cdd0;
 }
 
 .slider_item-detail {
@@ -481,7 +483,7 @@ a:focus {
 }
 
     .find_section img {
-        width: 100%;
+        width: 85%;
     }
 
     .find_section p {

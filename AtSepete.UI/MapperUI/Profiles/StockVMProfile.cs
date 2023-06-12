@@ -1,5 +1,7 @@
-﻿using AtSepete.Dtos.Dto.Stocks;
+﻿using AtSepete.Dtos.Dto.Shop;
+using AtSepete.Dtos.Dto.Stocks;
 using AtSepete.UI.Areas.Admin.Models.StockVMs;
+using AtSepete.UI.Areas.Customer.Models.ShopVMs;
 
 namespace AtSepete.UI.MapperUI.Profiles
 {
@@ -10,6 +12,7 @@ namespace AtSepete.UI.MapperUI.Profiles
             CreateMap<StockListDto, AdminStockListVM>().ReverseMap();
             CreateMap<StockDto, AdminUpdateStockVM>().ReverseMap();
             CreateMap<AdminUpdateStockVM, UpdateStockDto>().ReverseMap();
+
         }
     }
 }

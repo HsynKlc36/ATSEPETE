@@ -27,11 +27,25 @@ namespace AtSepete.Api.Controllers
             return await _shopService.ShopListAsync();
         }
         [HttpGet]
+        [Route("[action]/{productId}")]
+        [Authorize(AuthenticationSchemes = "Customer")]
+        public async Task<IDataResult<List<ShopProductDetailDto>>> ShopProductDetails([FromRoute]Guid productId)
+        {
+            return await _shopService.ShopProductDetailAsync(productId);
+        }
+        [HttpGet]
         [Route("[action]/{filterName}")]
         [Authorize(AuthenticationSchemes = "Customer")]
         public async Task<IDataResult<List<ShopFilterListDto>>> ShopFilterList([FromRoute]string filterName)
         {
             return await _shopService.ShopFilterListAsync(filterName);
+        }
+        [HttpGet]
+        [Route("[action]/{sideBarFilter}")]
+        [Authorize(AuthenticationSchemes = "Customer")]
+        public async Task<IDataResult<List<ShopSideBarFilterListDto>>> ShopSideBarFilterList([FromRoute] string sideBarFilter)
+        {
+            return await _shopService.ShopSideBarFilterListAsync(sideBarFilter);
         }
 
         [HttpGet]

@@ -43,7 +43,8 @@
                        @* <img src="~/image/logo.png" alt="" /> <span>
                             ATSEPETE 
                         </span>*@
-                        <img src="~/image/atsepetelogo3.png" style="width:100px;"/><span>
+                        @*<img src="~/image/atsepetelogo3.png" style="width:100px;"/><span>*@
+                        <img src="~/image/atsepetelogo5.png" style="width:150px;"/><span>
                             ATSEPETE 
                         </span>
                     </a>
@@ -69,14 +70,10 @@
                                                 KAYIT OL
                                             </a>
                                         </li>
-                                       @* <form class="form-inline my-2 ml-5 mb-3 mb-lg-0">
-                                            <button class="btn  my-2 my-sm-0 nav_search-btn" type="submit"></button>
-                                        </form>*@
+                                      
                                     </ul>
-                                </div>
-                              
+                                </div>                             
                             </div>
-
                         </div>
                     </div>
 
@@ -111,13 +108,10 @@
                                                 <div>
                                                     <h2 class="slider_heading">
                                                         50% İNDİRİM <br />
-                                                        iLK SİPARİŞTE
+                                                        İLK SİPARİŞTE
                                                     </h2>
                                                     <p>
-                                                        Lorem ipsum dolor sit amet, consectetur adipiscing
-                                                        elit, sed do eiusmod tempor incididunt ut labore
-                                                        et dolore magna aliqua. Ut enim ad minim veniam,
-                                                        quis nostrud exercitation ullamco laboris nis
+                                                       ATSEPETE ile Kozmetik ve Bakım ürünlerini Tüm Marketlerde Kıyasla ve Sana Uygun Olanı Hemen At Sepetine!
                                                     </p>
                                                     <div class="d-flex">
                                                       
@@ -234,7 +228,8 @@
                 <div class=" col-lg-7">
                     <div class="detail_container">
                         <div class="detail-box d-box-1">
-                            <a href="">
+                             
+                            <a asp-area="Customer" asp-controller="Shop" asp-action="HomePage">
                                 <div class="detail-content">
                                  
                                   <img src="~/image/woman.png" />
@@ -245,7 +240,7 @@
                             </a>
                         </div>
                         <div class="detail-box d-box-2">
-                            <a href="">
+                            <a asp-area="Customer" asp-controller="Shop" asp-action="HomePage">
                                 <div class="detail-content">
                                     <img src="~/image/man.png" />
                                     <h5>
@@ -255,7 +250,7 @@
                             </a>
                         </div>
                         <div class="detail-box d-box-3">
-                            <a href="">
+                            <a asp-area="Customer" asp-controller="Shop" asp-action="HomePage">
                                 <div class="detail-content">
                                     <img src="~/image/kids.png" />
                                     <h5>
@@ -265,7 +260,7 @@
                             </a>
                         </div>
                         <div class="detail-box d-box-4">
-                            <a href="">
+                            <a asp-area="Customer" asp-controller="Shop" asp-action="HomePage">
                                 <div class="detail-content">
                                     <img src="~/image/home.png" />
                                     <h5 style="color:burlywood;">
@@ -314,7 +309,7 @@
                                     Tüm Kategorileri İncele!
                                 </h3>
                                 <div>
-                                    <a href="">
+                                    <a asp-area="Customer" asp-controller="Shop" asp-action="HomePage">
                                         Daha Fazlası
                                     </a>
                                 </div>
@@ -351,8 +346,8 @@
       </div>
       <div class="col-md-4 mb-3">
         <h4>İletişim</h4>
-        <p><i class="bi bi-telephone me-2"></i> 555-1234</p>
-        <p><i class="bi bi-envelope me-2"></i> info@atsepete.com</p>
+        <p><i class="bi bi-telephone me-2"></i> +90 555 555 55 55</p>
+        <p><i class="bi bi-envelope me-2"></i> atsepete@atsepete.com</p>
       </div>
     </div>
     <hr class="my-4">
@@ -389,113 +384,3 @@
 
 </html>
 
-
-
-@*@model AtSepete.UI.Models.UserApiResponse*@
-
-@*@{
-    ViewData["Title"] = "AtSepete Hoşgeldiniz";
-    Layout = "HomeLayout";
-}*@
-
-
-@*<head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.37/dist/sweetalert2.min.css" />
-</head>
-
-<h1>Index</h1>
-
-<div>
-    <h4>UserApiResponse</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Data.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Data.Email)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Message)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Message)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IsSuccess)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.IsSuccess)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-
-    <a class="btn btn-light-primary me-3 cursor-pointer deleteAction" data-id="46b44b12-afdb-4a46-f2b0-08db3e8adba2"> Delete </a>
-
-    <a asp-action="Index">Back to List</a>
-
-</div>
-<div id="myTooltip" style="display: none; position: absolute; background-color: #f1f1f1; color: #000; padding: 10px; border-radius: 5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
-</div>
-
-
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
-    <script src="~/limonte-sweetalert2/sweetalert2.all.js"></script>
-    <script src="~/limonte-sweetalert2/sweetalert2.all.min.js"></script>
-
-<script>
-    $(".deleteAction").click(function () {
-        const id = $(this).attr("data-id");
-        Swal.fire({
-            title: 'Emin misiniz?',
-            text: "Bu işlem geri alınamaz!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Evet, sil!',
-            cancelButtonText: 'Vazgeç'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    type: "GET",
-                    url: "@Url.Action("DeleteUser")" + "?id=" + id,
-                    success: function (result) {
-                        if (result.isSuccess) {
-                            Swal.fire(
-                                'Silindi!',
-                                'Kullanıcı başarıyla silindi.',
-                                'success'
-                            ).then(() => {
-                                location.href = "/Home/Index";
-                            });
-                        } else {
-                            Swal.fire(
-                                'Hata!',
-                                result.message,
-                                'error'
-                            )
-                        }
-                    },
-                    error: function () {
-                        Swal.fire(
-                            'Hata!',
-                            'İşlem sırasında bir hata oluştu.',
-                            'error'
-                        );
-                    }
-                });
-            }
-        });
-    });
-</script>
-
-
-
-
-
-*@

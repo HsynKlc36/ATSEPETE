@@ -9,7 +9,9 @@
     var modelMarketFilter = shopList.Select(x => x.MarketName.ToUpper()).Distinct().ToList();
     var newProductFilter = shopList.OrderByDescending(x => x.CreatedDate).Take(10).ToList();
 
+    //diğer action'lardan gelen filtreleme verileri
     IEnumerable<CustomerShopFilterListVM> FilterProducts = ViewBag.FilterProducts;
+    IEnumerable<CustomerShopSideBarFilterListVM> SideBarFilterProducts = ViewBag.SideBarFilterProducts;
 
 }
 
@@ -34,6 +36,7 @@
         <div class="row">
             <div class="col-lg-3 col-md-5">
                 <div class="sidebar">
+
                     <div class="sidebar__item">
                         <h4>Kategori</h4>
                         <ul>
@@ -41,23 +44,21 @@
                             {
                                 <li>
                                     <a class="fltr-item-a">
-                                        <input type="checkbox" id="checkCategoryFilter-@item">
                                         <label for="checkCategoryFilter-@item">
+                                            <input type="checkbox" value="@item" name="chckbox-category" class="checkCategoryFilter" id="checkCategoryFilter-@item">
                                             @item.ToUpper()
-
                                         </label>
                                     </a>
-
                                 </li>
-                                @*<li><a href="#">@item.ToUpper()</a></li>*@
                             }
                         </ul>
                     </div>
+
                     <div class="sidebar__item">
                         <h4>Fiyat</h4>
                         <div class="price-range-wrap">
                             <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                                 data-min="10" data-max="540">
+                                 data-min="0" data-max="2500">
                                 <div class="ui-slider-range ui-corner-all ui-widget-header"></div>
                                 <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
                                 <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
@@ -76,37 +77,32 @@
                         {
                             <div class="sidebar__item__color sidebar__item__color--white">
                                 <a class="fltr-item-a">
-                                    <input type="checkbox" id="checkTitleFilter-@item">
+                                    <input type="checkbox" value="@item" name="chckbox-title" class="checkTitleFilter" id="checkTitleFilter-@item">
                                     <label for="checkTitleFilter-@item">
                                         @item.ToUpper()
-
                                     </label>
                                 </a>
-
                             </div>
                         }
-
-
                     </div>
                     <div class="sidebar__item sidebar__item__color--option">
                         <h4>Market</h4>
-
                         @foreach (var item in modelMarketFilter)
                         {
                             <div class="sidebar__item__color sidebar__item__color--white">
                                 <a class="fltr-item-a">
-                                    <input type="checkbox" id="checkMarketFilter-@item">
+                                    <input type="checkbox" value="@item" name="chckbox-market" class="checkMarketFilter" id="checkMarketFilter-@item">
                                     <label for="checkMarketFilter-@item">
                                         @item.ToUpper()
                                     </label>
                                 </a>
                             </div>
-
                         }
-
-
-
                     </div>
+                    <button class="btn btn-primary" type="button" style="background-color:#e8cbcb; border-color:#e8cbcb;" onclick="getCheckedValues()">Arama</button>
+
+                    <div class="sidebar__item"></div>
+
                     <div class="sidebar__item">
                         <div class="latest-product__text">
                             <h4>En Yeniler</h4>
@@ -116,7 +112,7 @@
                                     @for (int i = 0; i < 5; i++)
                                     {
 
-                                        <a href="#" class="latest-product__item">
+                                        <a asp-area="Customer" asp-action="ShopProductDetails" asp-controller="Shop" asp-route-id="@newProductFilter[i].ProductId" class="latest-product__item">
                                             <div class="latest-product__item__pic">
                                                 <img src="@newProductFilter[i].ProductPhotoPath" alt="">
                                             </div>
@@ -134,7 +130,7 @@
                                     @for (int i = 5; i < 10; i++)
                                     {
 
-                                        <a href="#" class="latest-product__item">
+                                        <a asp-area="Customer" asp-action="ShopProductDetails" asp-controller="Shop" asp-route-id="@newProductFilter[i].ProductId" class="latest-product__item">
                                             <div class="latest-product__item__pic">
                                                 <img src="@newProductFilter[i].ProductPhotoPath" alt="">
                                             </div>
@@ -163,23 +159,25 @@
                             {
                                 <div class="col-lg-4">
                                     <div class="product__discount__item">
+
                                         <div class="product__discount__item__pic set-bg"
                                              data-setbg="@item.ProductPhotoPath">
                                             <div class="product__discount__percent">
                                                 <i class="fa fa-star"></i>
                                             </div>
-                                            <ul class="product__item__pic__hover">
+                                        @*    <ul class="product__item__pic__hover">
                                                 <li><a href="#"><i class="fa fa-heart"></i></a></li>
                                                 <li><a href="#"><i class="fa fa-retweet"></i></a></li>
                                                 <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                                            </ul>
+                                            </ul>*@
                                         </div>
-                                        <div class="product__discount__item__text">
-                                            <b>@item.ProductTitle.ToUpper()</b>
-                                            <h5><a href="#">@item.ProductName @item.ProductQuantity @item.ProductUnit</a></h5>
+                                        <div class="product__discount__item__text">  
+                                            <b><a asp-area="Customer" asp-action="ShopProductDetails" asp-controller="Shop" asp-route-id="@item.ProductId">@item.ProductTitle.ToUpper()</a></b>
+                                            <h5><a asp-area="Customer" asp-action="ShopProductDetails" asp-controller="Shop" asp-route-id="@item.ProductId">@item.ProductName @item.ProductQuantity @item.ProductUnit</a></h5>
                                         </div>
                                     </div>
                                 </div>
+
                             }
                         </div>
                     </div>
@@ -190,13 +188,20 @@
                         </div>
                         <div class="col-lg-4 col-md-4">
                             <div class="filter__found">
-                                @if (FilterProducts is null)
-                                {
-                                <h6><span>@shopList.Count()</span> Ürün Bulundu</h6>
-                                    
-                                }else
+                                @if (FilterProducts is not null)
                                 {
                                     <h6><span>@FilterProducts.Count()</span> Ürün Bulundu</h6>
+
+
+                                }
+                                else if (SideBarFilterProducts is not null)
+                                {
+                                    <h6><span>@SideBarFilterProducts.Count()</span> Ürün Bulundu</h6>
+
+                                }
+                                else
+                                {
+                                    <h6><span>@shopList.Count()</span> Ürün Bulundu</h6>
                                 }
                             </div>
                         </div>
@@ -208,55 +213,17 @@
                 </div>
                 @if (FilterProducts is not null)
                 {
-
                     <div class="row" style="column-count:3;" id="product-container">
-
-
-                        @* <div class="col-lg-4 col-md-6 col-sm-6" >
-                    <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="productList[i].ProductPhotoPath">
-                    <ul class="product__item__pic__hover">
-                    <li><a href="#"><i class="fa fa-heart"></i></a></li>
-                    <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                    <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                    </ul>
                     </div>
-                    <div class="product__item__text">
-                    <h5>productList[i].ProductTitle.ToUpper()</h5>
-                    <h6>productList[i].ProductName  productList[i].ProductQuantity productList[i].ProductUnit</h6>
-                    <h5><span>productList[i].MarketName.ToUpper()</span></h5>
-                    productList[i].ProductPrice TL
-                    </div>
-                    </div>
-
-                    </div>*@
-
+                }
+                @if (SideBarFilterProducts is not null)
+                {
+                    <div class="row" style="column-count:3;" id="product-container">
                     </div>
                 }
                 else
                 {
                     <div class="row" style="column-count:3;" id="product-container">
-
-
-                        @* <div class="col-lg-4 col-md-6 col-sm-6" >
-                    <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="productList[i].ProductPhotoPath">
-                    <ul class="product__item__pic__hover">
-                    <li><a href="#"><i class="fa fa-heart"></i></a></li>
-                    <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                    <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                    </ul>
-                    </div>
-                    <div class="product__item__text">
-                    <h5>productList[i].ProductTitle.ToUpper()</h5>
-                    <h6>productList[i].ProductName  productList[i].ProductQuantity productList[i].ProductUnit</h6>
-                    <h5><span>productList[i].MarketName.ToUpper()</span></h5>
-                    productList[i].ProductPrice TL
-                    </div>
-                    </div>
-
-                    </div>*@
-
                     </div>
                 }
 
@@ -264,12 +231,69 @@
         </div>
     </div>
 </section>
+<script>
 
+    function getCheckedValues() {
+        var checkboxesCategories = document.getElementsByName('chckbox-category');
+        var checkboxesTitles = document.getElementsByName('chckbox-title');
+        var checkboxesMarkets = document.getElementsByName('chckbox-market');
+        var checkedValuesCategories = [];
+        var checkedValuesTitles = [];
+        var checkedValuesMarkets = [];
+
+        var minValueElement = document.getElementById('minamount');
+        var min = minValueElement.value.replace('TL', '');
+
+        var maxValueElement = document.getElementById('maxamount');
+        var max = maxValueElement.value.replace('TL', '');
+
+
+
+        for (var i = 0; i < checkboxesCategories.length; i++) {
+            if (checkboxesCategories[i].checked) {
+                checkedValuesCategories.push(checkboxesCategories[i].value);
+            }
+        }
+        for (var i = 0; i < checkboxesTitles.length; i++) {
+            if (checkboxesTitles[i].checked) {
+                checkedValuesTitles.push(checkboxesTitles[i].value);
+            }
+        }
+        for (var i = 0; i < checkboxesMarkets.length; i++) {
+            if (checkboxesMarkets[i].checked) {
+                checkedValuesMarkets.push(checkboxesMarkets[i].value);
+            }
+        }
+
+        var filterParameters = encodeURIComponent(JSON.stringify(checkedValuesCategories)) + " " + encodeURIComponent(JSON.stringify(checkedValuesTitles)) + " " + encodeURIComponent(JSON.stringify(checkedValuesMarkets));
+        $.ajax({
+            url: "@Url.Action("HomePageSideBarFilter")" + "?sideBarFilter=" + checkedValuesCategories + "*" + checkedValuesMarkets + "*" + checkedValuesTitles + "*" + min + "-" + max,
+            type: 'POST',
+            data: { array: checkedValuesCategories },
+            contentType: 'application/json',
+            success: function (result) {
+                if (result.success) {
+                    window.location.replace("/Customer/Shop/HomePage");
+
+                } else {
+                    window.location.replace("/Customer/Shop/HomePage");
+                }
+
+            },
+            error: function (xhr, status, error) {
+                console.log("Değişken gönderilirken bir hata oluştu:", error);
+            }
+        });
+
+    }
+
+</script>
 <script>
     var productList = @Json.Serialize(shopList); // Ürün listesi
     var productFilterList = @Json.Serialize(FilterProducts); // filtrelenmiş Ürün listesi
+    var productSideBarFilterList = @Json.Serialize(SideBarFilterProducts); //sideBar da filtrelenmiş Ürün listesi
     var batchSize = 6; // Her yüklemede kaç ürün yükleneceği
-    console.log(productFilterList)
+
     function createProductDiv(item) {
         var divCol = document.createElement("div");
         divCol.className = "col-lg-4 col-md-6 col-sm-6";
@@ -279,11 +303,23 @@
 
         var divProductItemPic = document.createElement("div");
         divProductItemPic.className = "product__item__pic set-bg";
-        //divProductItemPic.setAttribute("data-setbg", item.productPhotoPath);
+
         var imgProduct = document.createElement("img");
         imgProduct.src = item.productPhotoPath;
+        // deneme
+        if (item.productStock <= 0) {
+            var outOfStockLabel = document.createElement("div");
+            outOfStockLabel.className = "out-of-stock-label";
+            outOfStockLabel.innerText = "Stoklar Tükendi";
+            divProductItemPic.appendChild(outOfStockLabel);
+        }
+        if (item.productStock > 0 && item.productStock < 10) {
+            var outOfStockLabel = document.createElement("div");
+            outOfStockLabel.className = "out-of-stock-label";
+            outOfStockLabel.innerText = "Sınırlı Stoklar";
+            divProductItemPic.appendChild(outOfStockLabel);
+        }
         divProductItemPic.appendChild(imgProduct);
-
 
         var ulProductItemPicHover = document.createElement("ul");
         ulProductItemPicHover.className = "product__item__pic__hover";
@@ -306,14 +342,21 @@
         liRetweet.appendChild(aRetweet);
         ulProductItemPicHover.appendChild(liRetweet);
 
-        var liShoppingCart = document.createElement("li");
-        var aShoppingCart = document.createElement("a");
-        aShoppingCart.href = "#";
-        var iShoppingCart = document.createElement("i");
-        iShoppingCart.className = "fa fa-shopping-cart";
-        aShoppingCart.appendChild(iShoppingCart);
-        liShoppingCart.appendChild(aShoppingCart);
-        ulProductItemPicHover.appendChild(liShoppingCart);
+        if (item.productStock > 0) {
+
+            var liShoppingCart = document.createElement("li");
+            var aShoppingCart = document.createElement("a");
+            aShoppingCart.href = "#";
+            var iShoppingCart = document.createElement("i");
+            iShoppingCart.className = "fa fa-shopping-cart";
+            aShoppingCart.appendChild(iShoppingCart);
+            liShoppingCart.appendChild(aShoppingCart);
+            ulProductItemPicHover.appendChild(liShoppingCart);
+            aShoppingCart.addEventListener("click", function () {
+                addToCart(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath);
+            });
+
+        }
 
         divProductItemPic.appendChild(ulProductItemPicHover);
 
@@ -321,7 +364,7 @@
         divProductItemText.className = "product__item__text";
 
         var h5ProductTitle = document.createElement("h5");
-        h5ProductTitle.innerText = item.productTitle;
+        h5ProductTitle.innerText = item.productTitle.toUpperCase();
         divProductItemText.appendChild(h5ProductTitle);
 
         var h6ProductName = document.createElement("h6");
@@ -348,15 +391,19 @@
     function loadMoreProducts() {
         var container = document.getElementById("product-container");
         var loadedCount = container.childElementCount;
-        if (productFilterList != null) 
-        {
-            for (var i = loadedCount; i < loadedCount + batchSize && i < productList.length; i++) {
+        if (productFilterList != null) {
+            for (var i = loadedCount; i < loadedCount + batchSize && i < productFilterList.length; i++) {
                 var productDiv = createProductDiv(productFilterList[i]);
                 container.appendChild(productDiv);
             }
         }
-        else 
-        {
+        else if (productSideBarFilterList != null) {
+            for (var i = loadedCount; i < loadedCount + batchSize && i < productSideBarFilterList.length; i++) {
+                var productDiv = createProductDiv(productSideBarFilterList[i]);
+                container.appendChild(productDiv);
+            }
+        }
+        else {
 
             for (var i = loadedCount; i < loadedCount + batchSize && i < productList.length; i++) {
                 var productDiv = createProductDiv(productList[i]);
@@ -374,5 +421,64 @@
     // İlk yükleme
     loadMoreProducts();
 </script>
+
+<script>
+    function getCartFromLocalStorage() 
+    { 
+        var cartJson = localStorage.getItem('Cart'); return cartJson ? JSON.parse(cartJson) : [];
+    }
+    function saveCartToLocalStorage(cart) 
+    {
+        var cartJson = JSON.stringify(cart); localStorage.setItem('Cart', cartJson);
+    }
+
+    function addToCart(productId, marketId, productTitle, productName, productQuantity, productUnit, marketName, productPrice, productPhotoPath) {
+
+        var quantity = 1; // Varsayılan olarak eklenen ürünün miktarı 1
+
+            // Local Storage'dan sepet verilerini al
+            var cart = getCartFromLocalStorage();
+
+            // Ürünü sepete ekle
+        var existingItem = cart.find(item => item.productId === productId && item.marketId === marketId);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } 
+            else 
+            {
+                cart.push({
+
+                    productId: productId,
+                    marketId: marketId,
+                    productTitle: productTitle,
+                    productName: productName,
+                    productQuantity: productQuantity,
+                    productUnit: productUnit,
+                    productPhotoPath: productPhotoPath,
+                    marketName: marketName,
+                    productPrice: productPrice,
+                    quantity: quantity
+                });
+            }
+            // Sepet verilerini Local Storage'a kaydet
+            saveCartToLocalStorage(cart);
+            updateCartItemCount();
+    }
+
+</script>
+
+<script>
+    function updateCartItemCount()
+    { 
+        var cart = getCartFromLocalStorage();
+        var cartItemCount = cart.length; 
+    }
+</script>
+
+
+
+
+
+
 
 

@@ -148,9 +148,17 @@ namespace AtSepete.Business.Constants
         public const string Shop_Listed_Failed = "Shop_Listed_Failed";
         public const string Shop_Listed_Not_Found = "Shop_Listed_Not_Found";
 
+        public const string Shop_ProductDetail_Success = "Shop_ProductDetail_Success";
+        public const string Shop_ProductDetail_Failed = "Shop_ProductDetail_Failed";
+        public const string Shop_ProductDetail_Not_Found = "Shop_ProductDetail_Not_Found";
+
         public const string ShopFilter_Listed_Success = "ShopFilter_Listed_Success";
         public const string ShopFilter_Listed_Failed = "ShopFilter_Listed_Failed";
         public const string ShopFilter_Listed_Not_Found = "ShopFilter_Listed_Not_Found";
+
+        public const string ShopSideBarFilter_Listed_Success = "ShopSideBarFilter_Listed_Success";
+        public const string ShopSideBarFilter_Listed_Failed = "ShopSideBarFilter_Listed_Failed";
+        public const string ShopSideBarFilter_Listed_Not_Found = "ShopSideBarFilter_Listed_Not_Found";
 
         public const string BestSeller_Listed_Success = "BestSeller_Listed_Success";
         public const string BestSeller_Listed_Failed = "BestSeller_Listed_Failed";

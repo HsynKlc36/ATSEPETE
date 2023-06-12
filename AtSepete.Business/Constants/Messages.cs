@@ -89,9 +89,17 @@ public class Messages
     public const string ShopListedFailed = "Shop_Listed_Failed";
     public const string ShopListedNotFound = "Shop_Listed_Not_Found";
 
+    public const string ShopProductDetailSuccess = "Shop_ProductDetail_Success";
+    public const string ShopProductDetailFailed = "Shop_ProductDetail_Failed";
+    public const string ShopProductDetailNotFound = "Shop_ProductDetail_Not_Found";
+
     public const string ShopFilterListedSuccess = "ShopFilter_Listed_Success";
     public const string ShopFilterListedFailed = "ShopFilter_Listed_Failed";
     public const string ShopFilterListedNotFound = "ShopFilter_Listed_Not_Found";
+
+    public const string ShopSideBarFilterListedSuccess = "ShopSideBarFilter_Listed_Success";
+    public const string ShopSideBarFilterListedFailed = "ShopSideBarFilter_Listed_Failed";
+    public const string ShopSideBarFilterListedNotFound = "ShopSideBarFilter_Listed_Not_Found";
 
     public const string BestSellerListedSuccess = "BestSeller_Listed_Success";
     public const string BestSellerListedFailed = "BestSeller_Listed_Failed";

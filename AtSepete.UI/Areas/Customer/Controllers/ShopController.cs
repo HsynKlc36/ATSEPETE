@@ -12,6 +12,7 @@ using NToastNotify;
 using SendGrid;
 using System.Net;
 using System.Text.Json;
+using System.Threading.Tasks.Dataflow;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace AtSepete.UI.Areas.Customer.Controllers
@@ -24,6 +25,7 @@ namespace AtSepete.UI.Areas.Customer.Controllers
         {
             _mapper = mapper;
         }
+        [HttpGet]
         public async Task<IActionResult> HomePage()
         {
             using (var httpClient = new HttpClient())
@@ -43,12 +45,18 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                         var products = _mapper.Map<List<ShopListDto>, List<CustomerShopListVM>>(shopList.Data);
                         NotifySuccess(shopList.Message);
                         ViewBag.ShopList = products;
+                        //aşağıdaki satırlar diğer action'lardan aldığımız veriler
                         var serializedFilterProducts = TempData["ShopFilterList"] as string;
+                        var serializedSideBarFilterProducts = TempData["ShopSideBarFilterList"] as string;
                         if (serializedFilterProducts != null)
                         {
-
                             var filterProducts = JsonSerializer.Deserialize<List<CustomerShopFilterListVM>>(serializedFilterProducts);
                             ViewBag.FilterProducts = filterProducts;
+                        }
+                        if (serializedSideBarFilterProducts !=null)
+                        {
+                            var sideBarFilterProducts = JsonSerializer.Deserialize<List<CustomerShopSideBarFilterListVM>>(serializedSideBarFilterProducts);
+                            ViewBag.SideBarFilterProducts = sideBarFilterProducts;
                         }
 
                     }
@@ -87,6 +95,44 @@ namespace AtSepete.UI.Areas.Customer.Controllers
             }
         }
 
+        public async Task<IActionResult> HomePageSideBarFilter([FromQuery] string sideBarFilter)
+        {
+            
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Shop/ShopSideBarFilterList/{sideBarFilter}"))
+                {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
+                    }
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    ShopSideBarFilterListResponse shopSideBarFilterList = JsonConvert.DeserializeObject<ShopSideBarFilterListResponse>(apiResponse);
+
+                    if (shopSideBarFilterList.IsSuccess)
+                    {
+                        var SideBarFilterproducts = _mapper.Map<List<ShopSideBarFilterListDto>, List<CustomerShopSideBarFilterListVM>>(shopSideBarFilterList.Data);
+                        var serializedSideBarFilterProducts = JsonSerializer.Serialize(SideBarFilterproducts);
+                        TempData["ShopSideBarFilterList"] = serializedSideBarFilterProducts;
+                        NotifySuccess(shopSideBarFilterList.Message);
+                        
+                        return Json(new { success = shopSideBarFilterList.IsSuccess });
+                    }
+                    else
+                    {
+                        NotifyError(shopSideBarFilterList.Message);
+                      
+                        return Json(new { success = shopSideBarFilterList.IsSuccess });
+                    }
+
+                };
+                
+
+
+            }
+        }
+
         public async Task<IActionResult> HomePageFilter(string filterName)
         {
             if (string.IsNullOrEmpty(filterName))
@@ -109,20 +155,52 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                     {
                         var filterProducts = _mapper.Map<List<ShopFilterListDto>, List<CustomerShopFilterListVM>>(shopFilterList.Data);
                         var serializedFilterProducts = JsonSerializer.Serialize(filterProducts);
-                        TempData["ShopFilterList"] = serializedFilterProducts;
+                        TempData["ShopFilterList"] = serializedFilterProducts;//homePage de görüntüledik
                         NotifySuccess(shopFilterList.Message);
                         return RedirectToAction("HomePage");
                     }
                     else
                     {
                         NotifyError(shopFilterList.Message);
-                        return RedirectToAction("Index", "Home", new { area = "" });
+                        return RedirectToAction("HomePage");
                     }
 
                 };
             }
-
-
         }
+        public async Task<IActionResult> ShopProductDetails(Guid id)
+        {
+            if (id==Guid.Empty)
+            {
+                return RedirectToAction("HomePage");
+            }
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
+                using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Shop/ShopProductDetails/{id}"))
+                {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
+                    }
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    ShopProductDetailsResponse shopProductDetails = JsonConvert.DeserializeObject<ShopProductDetailsResponse>(apiResponse);
+
+                    if (shopProductDetails.IsSuccess)
+                    {
+                        var filterProducts = _mapper.Map<List<ShopProductDetailDto>, List<CustomerShopProductDetailsVM>>(shopProductDetails.Data);                       
+                        NotifySuccess(shopProductDetails.Message);
+                        return View(filterProducts);
+                    }
+                    else
+                    {
+                        NotifyError(shopProductDetails.Message);
+                        return RedirectToAction("HomePage");
+                    }
+
+                };
+            }
+        }
+
     }
 }

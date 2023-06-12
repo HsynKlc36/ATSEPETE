@@ -9,6 +9,8 @@ using AtSepete.Repositories.Concrete;
 using AtSepete.Results;
 using AtSepete.Results.Concrete;
 using AutoMapper;
+using Castle.Core.Internal;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +47,7 @@ namespace AtSepete.Business.Concrete
             {
                 var productMarkets = await _productMarketRepository.GetAllAsync();
                 var result = new List<ShopListDto>();
-                
+
                 foreach (var entity in productMarkets)
                 {
                     var shopListDto = new ShopListDto
@@ -54,7 +56,7 @@ namespace AtSepete.Business.Concrete
                         ProductPrice = entity.Price,
                         ProductStock = entity.Stock,
                         MarketId = entity.MarketId,
-                        CreatedDate=(DateTime)entity.CreatedDate
+                        CreatedDate = (DateTime)entity.CreatedDate
 
                     };
                     var product = await _productRepository.GetByIdAsync(entity.ProductId);
@@ -65,17 +67,17 @@ namespace AtSepete.Business.Concrete
                     if (product is null || category is null || market is null)
                     {
                         _loggerService.LogWarning(LogMessages.Shop_Listed_Not_Found);
-                        return new ErrorDataResult<List<ShopListDto>>( Messages.ShopListedNotFound);
+                        return new ErrorDataResult<List<ShopListDto>>(Messages.ShopListedNotFound);
                     }
 
-                        shopListDto.CategoryId = category.Id;
-                        shopListDto.CategoryName = category.Name;
-                        shopListDto.ProductName = product.ProductName;
-                        shopListDto.ProductTitle = product.Title;
-                        shopListDto.ProductUnit = product.Unit;
-                        shopListDto.ProductQuantity = product.Quantity;
-                        shopListDto.ProductPhotoPath = product.PhotoPath;
-                        shopListDto.MarketName = market.MarketName;
+                    shopListDto.CategoryId = category.Id;
+                    shopListDto.CategoryName = category.Name;
+                    shopListDto.ProductName = product.ProductName;
+                    shopListDto.ProductTitle = product.Title;
+                    shopListDto.ProductUnit = product.Unit;
+                    shopListDto.ProductQuantity = product.Quantity;
+                    shopListDto.ProductPhotoPath = product.PhotoPath;
+                    shopListDto.MarketName = market.MarketName;
 
                     result.Add(shopListDto);
                 }
@@ -89,6 +91,48 @@ namespace AtSepete.Business.Concrete
             }
         }
 
+        public async Task<IDataResult<List<ShopProductDetailDto>>> ShopProductDetailAsync(Guid productId)
+        {
+            try
+            {
+                if (productId == Guid.Empty)
+                {
+                    _loggerService.LogWarning(LogMessages.Shop_ProductDetail_Not_Found);
+                    return new ErrorDataResult<List<ShopProductDetailDto>>(Messages.ShopProductDetailNotFound);
+                }
+                var query = (from od in (await _productMarketRepository.GetAllAsync())
+                             join m in (await _marketRepository.GetAllAsync()) on od.MarketId equals m.Id
+                             join p in (await _productRepository.GetAllAsync()) on od.ProductId equals p.Id
+                             join c in (await _categoryRepository.GetAllAsync()) on p.CategoryId equals c.Id
+                             select new
+                             {
+                                 ProductId = p.Id,
+                                 MarketId= od.MarketId,
+                                 ProductName = p.ProductName,
+                                 ProductQuantity = p.Quantity,
+                                 ProductUnit = p.Unit,
+                                 ProductTitle = p.Title,
+                                 ProductPhotoPath = p.PhotoPath,
+                                 CategoryName = c.Name,
+                                 MarketName = m.MarketName,
+                                 ProductPrice = od.Price,
+                                 ProductStock = od.Stock,
+                                 ProductDescription = p.Description
+                             }).ToList();
+                var shopFilter = query.Where(x => x.ProductId == productId).ToList();
+                 var shopProductDetail= _mapper.Map<List<ShopProductDetailDto>>(shopFilter);
+                _loggerService.LogInfo(LogMessages.Shop_ProductDetail_Success);
+                return new SuccessDataResult<List<ShopProductDetailDto>>(shopProductDetail, Messages.ShopProductDetailSuccess);
+
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.Shop_ProductDetail_Failed);
+                return new ErrorDataResult<List<ShopProductDetailDto>>(Messages.ShopProductDetailFailed);
+            }
+           
+           
+        }
         public async Task<IDataResult<List<BestSellerProductListDto>>> BestSellerProductsAsync()
         {
             try
@@ -132,32 +176,38 @@ namespace AtSepete.Business.Concrete
         {
             try
             {
+                if (filterName is null)
+                {
+                    _loggerService.LogWarning(LogMessages.ShopFilter_Listed_Not_Found);
+                    return new ErrorDataResult<List<ShopFilterListDto>>(Messages.ShopFilterListedNotFound);
+                }
+
                 var query = (from od in (await _productMarketRepository.GetAllAsync())
-                             join m in (await _marketRepository.GetAllAsync()) on od.MarketId equals m.Id                             
+                             join m in (await _marketRepository.GetAllAsync()) on od.MarketId equals m.Id
                              join p in (await _productRepository.GetAllAsync()) on od.ProductId equals p.Id
-                             join c in (await _categoryRepository.GetAllAsync()) on p.CategoryId equals c.Id                             
+                             join c in (await _categoryRepository.GetAllAsync()) on p.CategoryId equals c.Id
                              select new
                              {
-                                 ProductId = p.Id ,
+                                 ProductId = p.Id,
                                  ProductName = p.ProductName,
                                  ProductQuantity = p.Quantity,
-                                 ProductUnit =p.Unit,
+                                 ProductUnit = p.Unit,
                                  ProductTitle = p.Title,
                                  ProductPhotoPath = p.PhotoPath,
-                                 CategoryName=c.Name,
-                                 MarketName=m.MarketName,
-                                 ProductPrice=od.Price
+                                 CategoryName = c.Name,
+                                 MarketName = m.MarketName,
+                                 ProductPrice = od.Price,
+                                 ProductStock = od.Stock,
                              }).ToList();
 
-                //var result = query.ToList();
-                 var shopFilter= query.Where(x => x.ProductTitle.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower()) || x.ProductName.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower()) || x.CategoryName.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower())).ToList();
+                var shopFilter = query.Where(x => x.ProductTitle.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower()) || x.ProductName.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower()) || x.CategoryName.Replace(" ", "").Trim().ToLower().Contains(filterName.Replace(" ", "").Trim().ToLower())).ToList();
                 if (shopFilter is null)
                 {
                     _loggerService.LogWarning(LogMessages.ShopFilter_Listed_Not_Found);
                     return new ErrorDataResult<List<ShopFilterListDto>>(Messages.ShopFilterListedNotFound);
                 }
 
-                    var shopFilterResult= _mapper.Map<List<ShopFilterListDto>>(shopFilter);
+                var shopFilterResult = _mapper.Map<List<ShopFilterListDto>>(shopFilter);
                 _loggerService.LogInfo(LogMessages.ShopFilter_Listed_Success);
                 return new SuccessDataResult<List<ShopFilterListDto>>(shopFilterResult, Messages.ShopFilterListedSuccess);
 
@@ -168,7 +218,63 @@ namespace AtSepete.Business.Concrete
                 _loggerService.LogError(LogMessages.ShopFilter_Listed_Failed);
                 return new ErrorDataResult<List<ShopFilterListDto>>(Messages.ShopFilterListedFailed);
             }
-            
+
+        }
+
+        public async Task<IDataResult<List<ShopSideBarFilterListDto>>> ShopSideBarFilterListAsync(string sideBarFilter)
+        {
+            try
+            {
+                if (sideBarFilter is null)
+                {
+                    _loggerService.LogWarning(LogMessages.ShopSideBarFilter_Listed_Not_Found);
+                    return new ErrorDataResult<List<ShopSideBarFilterListDto>>(Messages.ShopSideBarFilterListedNotFound);
+                }
+
+                var query = (from od in (await _productMarketRepository.GetAllAsync())
+                             join m in (await _marketRepository.GetAllAsync()) on od.MarketId equals m.Id
+                             join p in (await _productRepository.GetAllAsync()) on od.ProductId equals p.Id
+                             join c in (await _categoryRepository.GetAllAsync()) on p.CategoryId equals c.Id
+                             select new
+                             {
+                                 ProductId = p.Id,
+                                 ProductName = p.ProductName,
+                                 ProductQuantity = p.Quantity,
+                                 ProductUnit = p.Unit,
+                                 ProductTitle = p.Title,
+                                 ProductPhotoPath = p.PhotoPath,
+                                 CategoryName = c.Name,
+                                 MarketName = m.MarketName,
+                                 ProductPrice = od.Price,
+                                 ProductStock = od.Stock,
+                             }).ToList();
+                if (query.IsNullOrEmpty())
+                {
+                    _loggerService.LogWarning(LogMessages.ShopSideBarFilter_Listed_Not_Found);
+                    return new ErrorDataResult<List<ShopSideBarFilterListDto>>(Messages.ShopSideBarFilterListedNotFound);
+                }
+                string[] sideBarFilterSplit = sideBarFilter.Split('*');
+                string[] categories = sideBarFilterSplit[0].Trim().Replace(" ", "").Split(',');
+                string[] markets = sideBarFilterSplit[1].Trim().Replace(" ", "").Split(',');
+                string[] titles = sideBarFilterSplit[2].Trim().Replace(" ", "").Split(',');
+                string[] priceRange = sideBarFilterSplit[3].Split('-');
+
+                var filteredAsCategories = categories[0] != "" ? query.Where(item => categories.Contains(item.CategoryName.Trim().Replace(" ", "").ToUpper())).ToList() : query.ToList();
+                var filteredAsMarkets = markets[0] != "" ? filteredAsCategories.Where(item => markets.Contains(item.MarketName.Trim().Replace(" ", "").ToUpper())).ToList() : filteredAsCategories.ToList();
+                var filteredAsTitle = titles[0] != "" ? filteredAsMarkets.Where(item => titles.Contains(item.ProductTitle.Trim().Replace(" ", "").ToUpper())).ToList() : filteredAsMarkets.ToList();
+                var filteredAsPrice = filteredAsTitle.Where(x => x.ProductPrice >= Convert.ToDecimal(priceRange[0]) && x.ProductPrice <= Convert.ToDecimal(priceRange[1])).ToList();
+
+                var result = _mapper.Map<List<ShopSideBarFilterListDto>>(filteredAsPrice);
+                _loggerService.LogInfo(LogMessages.ShopSideBarFilter_Listed_Success);
+                return new SuccessDataResult<List<ShopSideBarFilterListDto>>(result, Messages.ShopSideBarFilterListedSuccess);
+
+            }
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.ShopSideBarFilter_Listed_Failed);
+                return new ErrorDataResult<List<ShopSideBarFilterListDto>>(Messages.ShopSideBarFilterListedFailed);
+            }
+
         }
     }
 }

@@ -11,7 +11,9 @@ namespace AtSepete.UI.MapperUI.Profiles
             CreateMap<ShopListDto,CustomerShopListVM>().ReverseMap();
             CreateMap<BestSellerProductListDto, CustomerBestSellerListVM>().ReverseMap();
             CreateMap<ShopFilterListDto, CustomerShopFilterListVM>().ReverseMap();
-            
+            CreateMap<ShopSideBarFilterListDto, CustomerShopSideBarFilterListVM>().ReverseMap();
+            CreateMap<ShopProductDetailDto, CustomerShopProductDetailsVM>().ReverseMap();
+
         }
 
     }

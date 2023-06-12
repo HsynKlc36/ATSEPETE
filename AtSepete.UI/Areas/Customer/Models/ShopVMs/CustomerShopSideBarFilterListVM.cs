@@ -1,6 +1,6 @@
 ﻿namespace AtSepete.UI.Areas.Customer.Models.ShopVMs
 {
-    public class CustomerShopFilterListVM
+    public class CustomerShopSideBarFilterListVM
     {
         public Guid ProductId { get; set; }
         public string ProductName { get; set; }

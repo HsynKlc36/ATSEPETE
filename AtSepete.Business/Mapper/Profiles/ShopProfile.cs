@@ -29,7 +29,33 @@ namespace AtSepete.Business.Mapper.Profiles
                 .ForMember(dest => dest.ProductPhotoPath, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductPhotoPath").GetValue(src, null)))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("CategoryName").GetValue(src, null)))
                 .ForMember(dest => dest.MarketName, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("MarketName").GetValue(src, null)))
-                .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => (decimal)src.GetType().GetProperty("ProductPrice").GetValue(src, null)));
+                .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => (decimal)src.GetType().GetProperty("ProductPrice").GetValue(src, null)))
+                .ForMember(dest => dest.ProductStock, opt => opt.MapFrom(src => (int)src.GetType().GetProperty("ProductStock").GetValue(src, null)));
+                CreateMap<object, ShopSideBarFilterListDto>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => (Guid)src.GetType().GetProperty("ProductId").GetValue(src, null)))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductName").GetValue(src, null)))
+                .ForMember(dest => dest.ProductTitle, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductTitle").GetValue(src, null)))
+                .ForMember(dest => dest.ProductQuantity, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductQuantity").GetValue(src, null)))
+                .ForMember(dest => dest.ProductUnit, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductUnit").GetValue(src, null)))
+                .ForMember(dest => dest.ProductPhotoPath, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductPhotoPath").GetValue(src, null)))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("CategoryName").GetValue(src, null)))
+                .ForMember(dest => dest.MarketName, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("MarketName").GetValue(src, null)))
+                .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => (decimal)src.GetType().GetProperty("ProductPrice").GetValue(src, null)))
+                .ForMember(dest => dest.ProductStock, opt => opt.MapFrom(src => (int)src.GetType().GetProperty("ProductStock").GetValue(src, null)));
+            CreateMap<object, ShopProductDetailDto>()
+               .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => (Guid)src.GetType().GetProperty("ProductId").GetValue(src, null)))
+               .ForMember(dest => dest.MarketId, opt => opt.MapFrom(src => (Guid)src.GetType().GetProperty("MarketId").GetValue(src, null)))
+               .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductName").GetValue(src, null)))
+               .ForMember(dest => dest.ProductTitle, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductTitle").GetValue(src, null)))
+               .ForMember(dest => dest.ProductQuantity, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductQuantity").GetValue(src, null)))
+               .ForMember(dest => dest.ProductUnit, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductUnit").GetValue(src, null)))
+               .ForMember(dest => dest.ProductPhotoPath, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductPhotoPath").GetValue(src, null)))
+               .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("CategoryName").GetValue(src, null)))
+               .ForMember(dest => dest.MarketName, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("MarketName").GetValue(src, null)))
+               .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => (decimal)src.GetType().GetProperty("ProductPrice").GetValue(src, null)))
+               .ForMember(dest => dest.ProductStock, opt => opt.MapFrom(src => (int)src.GetType().GetProperty("ProductStock").GetValue(src, null)))
+               .ForMember(dest => dest.ProductDescription, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("ProductDescription").GetValue(src, null)));
+
 
 
 
