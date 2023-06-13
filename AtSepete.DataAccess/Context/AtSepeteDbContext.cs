@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 namespace AtSepete.DataAccess.Context
 {
 
-
     public class AtSepeteDbContext : DbContext
     {
         public const string ConnectionName = "AtSepete";

@@ -3,14 +3,20 @@ using AtSepete.Business.Concrete;
 using AtSepete.Business.JWT;
 using AtSepete.Business.Logger;
 using AtSepete.Business.Mapper.Profiles;
+using AtSepete.DataAccess.Context;
+using AtSepete.Repositories.Abstract;
+using AtSepete.Repositories.Concrete;
+using AtSepete.UI.Controllers;
 using AtSepete.UI.MapperUI.Profiles;
 using AtSepete.UI.Resources;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.EntityFrameworkCore;
 using NToastNotify;
 using SendGrid;
+using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 
@@ -51,7 +57,7 @@ namespace AtSepete.UI.Extensions
                 options.LoginPath = "/Login/Login/"; // Kimlik doğrulama başarısız olduğunda yönlendirme yapılacak sayfa
                 options.Cookie.HttpOnly = true;
             });
-
+           
             return services;
         }
        
