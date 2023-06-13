@@ -2,11 +2,10 @@
     Layout = "_CustomerLayout";
 }
 <style>
-
-.shoping__cart__item_cart{
-    width:50px;
-    height:50px;
-}
+    .shoping__cart__item_cart{
+      width:50px;
+      height:50px;
+    }
 </style>
 
 <!-- Shoping Cart Section Begin -->
@@ -59,32 +58,31 @@
                 <div class="shoping__checkout">
                     <h5>TOPLAM TUTAR</h5>
                     <ul>
-                        <li>ALIŞVERİŞ TUTARI <span>454.98 TL</span></li>
-                        <li>ÖDEME TUTARI <span>454.98 TL</span></li>
+                        <li>ALIŞVERİŞ TUTARI <span></span></li>
+                        <li>ÖDEME TUTARI <span></span></li>
                     </ul>
-                    <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
+                    <a href="#" class="primary-btn">SİPARİŞE TAMAMLA</a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 <script src="~/js/shopping_cart.js"></script>
+<script src="~/js/total_price.js"></script>
 <script src="~/js/remove_from_cart.js"></script>
+<script src="~/js/cart_decrease_increase_handler.js"></script>
 <script>
 
     function renderCartItems() {
         var cart = getCartFromLocalStorage();
         var tableBody = document.querySelector('.shoping__cart__table tbody');
 
-
         // Tabloyu temizle
         tableBody.innerHTML = '';
-
 
         // Sepet ürünlerini dolaşarak tabloya ekleyin
         for (var i = 0; i < cart.length; i++) {
             var item = cart[i];
-
 
             // Ürün satırını oluşturun
             var row = document.createElement('tr');
@@ -97,9 +95,12 @@
             image.src = item.productPhotoPath;
             image.alt = item.productTitle;
             imageCell.appendChild(image);
-            var productNameCell = document.createElement('h5');
-            productNameCell.innerText = item.productTitle;
-            imageCell.appendChild(productNameCell);
+            var productTitleCell = document.createElement('h5');
+            var productFullNameCell = document.createElement('h6');
+            productTitleCell.innerText = item.productTitle.toUpperCase();
+            productFullNameCell.innerText = `${item.productName} ${item.productQuantity} ${item.productUnit}`;
+            imageCell.appendChild(productTitleCell);
+            imageCell.appendChild(productFullNameCell);
             row.appendChild(imageCell);
 
             // Market sütunu
@@ -114,21 +115,31 @@
             row.appendChild(priceCell);
 
             // Adet sütunu
+
             var quantityCell = document.createElement('td');
             quantityCell.className = 'shoping__cart__quantity';
-            var quantityDiv = document.createElement('div');
-            quantityDiv.className = 'quantity';
+            var quantityDiv = document.createElement('div'); 
+            quantityDiv.className = 'quantity'; 
             var proQtyDiv = document.createElement('div');
             proQtyDiv.className = 'pro-qty';
             var quantityInput = document.createElement('input');
-            quantityInput.type = 'text';
+            quantityInput.type = 'text'; 
             quantityInput.value = item.quantity; // Varsayılan değeri burada belirleyebilirsiniz
-            proQtyDiv.appendChild(quantityInput);
+            proQtyDiv.appendChild(quantityInput); 
+            var decreaseButton = document.createElement('span');
+            decreaseButton.textContent = '-';
+            decreaseButton.addEventListener('click', createDecreaseHandler(item.productId, item.marketId, quantityInput));
+            var increaseButton = document.createElement('span');
+            increaseButton.textContent = '+'; 
+            increaseButton.addEventListener('click', createIncreaseHandler(item.productId, item.marketId, quantityInput));
+            proQtyDiv.appendChild(decreaseButton); 
+            proQtyDiv.appendChild(increaseButton);
             quantityDiv.appendChild(proQtyDiv);
-            quantityCell.appendChild(quantityDiv);
+            quantityCell.appendChild(quantityDiv); 
             row.appendChild(quantityCell);
-
-            // Toplam sütunu
+           
+ 
+              // Toplam sütunu
             var totalCell = document.createElement('td');
             totalCell.className = 'shoping__cart__total';
             totalCell.innerText = (item.productPrice * quantityInput.value) + ' TL'; // Toplam tutarı burada hesaplayabilirsiniz
