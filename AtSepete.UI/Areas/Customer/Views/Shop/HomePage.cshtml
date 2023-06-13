@@ -165,11 +165,11 @@
                                             <div class="product__discount__percent">
                                                 <i class="fa fa-star"></i>
                                             </div>
-                                        @*    <ul class="product__item__pic__hover">
-                                                <li><a href="#"><i class="fa fa-heart"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                                            </ul>*@
+                                            <ul class="product__item__pic__hover">
+                                                <li></li>
+                                                <li><a asp-area="Customer" asp-controller="Shop" asp-action="ShopProductDetails" asp-route-id="@item.ProductId"><i class="fa fa-retweet"></i></a></li>
+                                                <li></li>
+                                            </ul>
                                         </div>
                                         <div class="product__discount__item__text">  
                                             <b><a asp-area="Customer" asp-action="ShopProductDetails" asp-controller="Shop" asp-route-id="@item.ProductId">@item.ProductTitle.ToUpper()</a></b>
@@ -231,6 +231,7 @@
         </div>
     </div>
 </section>
+<script src="~/js/shopping_cart.js"></script>
 <script>
 
     function getCheckedValues() {
@@ -306,7 +307,7 @@
 
         var imgProduct = document.createElement("img");
         imgProduct.src = item.productPhotoPath;
-        // deneme
+        
         if (item.productStock <= 0) {
             var outOfStockLabel = document.createElement("div");
             outOfStockLabel.className = "out-of-stock-label";
@@ -335,7 +336,7 @@
 
         var liRetweet = document.createElement("li");
         var aRetweet = document.createElement("a");
-        aRetweet.href = "#";
+        aRetweet.href = `/Customer/Shop/ShopProductDetails/${item.productId}`;
         var iRetweet = document.createElement("i");
         iRetweet.className = "fa fa-retweet";
         aRetweet.appendChild(iRetweet);
@@ -353,7 +354,7 @@
             liShoppingCart.appendChild(aShoppingCart);
             ulProductItemPicHover.appendChild(liShoppingCart);
             aShoppingCart.addEventListener("click", function () {
-                addToCart(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath);
+                addToCartHomePage(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath);
             });
 
         }
@@ -422,58 +423,7 @@
     loadMoreProducts();
 </script>
 
-<script>
-    function getCartFromLocalStorage() 
-    { 
-        var cartJson = localStorage.getItem('Cart'); return cartJson ? JSON.parse(cartJson) : [];
-    }
-    function saveCartToLocalStorage(cart) 
-    {
-        var cartJson = JSON.stringify(cart); localStorage.setItem('Cart', cartJson);
-    }
 
-    function addToCart(productId, marketId, productTitle, productName, productQuantity, productUnit, marketName, productPrice, productPhotoPath) {
-
-        var quantity = 1; // Varsayılan olarak eklenen ürünün miktarı 1
-
-            // Local Storage'dan sepet verilerini al
-            var cart = getCartFromLocalStorage();
-
-            // Ürünü sepete ekle
-        var existingItem = cart.find(item => item.productId === productId && item.marketId === marketId);
-            if (existingItem) {
-                existingItem.quantity += quantity;
-            } 
-            else 
-            {
-                cart.push({
-
-                    productId: productId,
-                    marketId: marketId,
-                    productTitle: productTitle,
-                    productName: productName,
-                    productQuantity: productQuantity,
-                    productUnit: productUnit,
-                    productPhotoPath: productPhotoPath,
-                    marketName: marketName,
-                    productPrice: productPrice,
-                    quantity: quantity
-                });
-            }
-            // Sepet verilerini Local Storage'a kaydet
-            saveCartToLocalStorage(cart);
-            updateCartItemCount();
-    }
-
-</script>
-
-<script>
-    function updateCartItemCount()
-    { 
-        var cart = getCartFromLocalStorage();
-        var cartItemCount = cart.length; 
-    }
-</script>
 
 
 

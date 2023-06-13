@@ -81,80 +81,14 @@
                     <img src="@item.ProductPhotoPath" style="width: 100px; height: 100px;" />
                     <span>@item.MarketName.ToUpper() </span>
                     <p>@item.ProductPrice TL</p>
-                    <input type="button" value="Ekle" class="btn btn-primary" style="width:100px; background-color:#f7cdd0; border-color:#f7cdd0;" onclick="addToCart('@item.ProductId', '@item.MarketId', '@item.ProductTitle', '@item.ProductName', '@item.ProductQuantity', '@item.ProductUnit',  '@item.MarketName', '@item.ProductPrice','@item.ProductPhotoPath')" />
+                    <input type="button" value="Ekle" class="btn btn-primary" style="width:100px; background-color:#f7cdd0; border-color:#f7cdd0;" onclick="addToCartProductDetails('@item.ProductId', '@item.MarketId', '@item.ProductTitle', '@item.ProductName', '@item.ProductQuantity', '@item.ProductUnit',  '@item.MarketName', '@item.ProductPrice','@item.ProductPhotoPath')" />
                 </div>
             }
         </div>
     </div>
 </div>
+<script src="~/js/shopping_cart.js"></script>
 
 
-<script>
-    function getCartFromLocalStorage() {
-        var cartJson = localStorage.getItem('Cart'); 
-        return cartJson ? JSON.parse(cartJson) : [];
-    }
-    function saveCartToLocalStorage(cart) {
-        var cartJson = JSON.stringify(cart); 
-        localStorage.setItem('Cart', cartJson);
-    }
 
-    function addToCart(productId, marketId, productTitle, productName, productQuantity, productUnit, marketName, productPrice, productPhotoPath) {
-
-        var quantity = 1; // Varsayılan olarak eklenen ürünün miktarı 1
-
-        // Local Storage'dan sepet verilerini al
-        var cart = getCartFromLocalStorage();
-
-        // Ürünü sepete ekle
-        var existingItem = cart.find(item => item.productId === productId && item.marketId === marketId);
-        if (existingItem) {
-            existingItem.quantity += quantity;
-        }
-        else {
-            cart.push({
-
-                productId: productId,
-                marketId: marketId,
-                productTitle: productTitle,
-                productName: productName,
-                productQuantity: productQuantity,
-                productUnit: productUnit,
-                productPhotoPath: productPhotoPath,
-                marketName: marketName,
-                productPrice: productPrice,
-                quantity: quantity
-            });
-        }
-        // Sepet verilerini Local Storage'a kaydet
-        saveCartToLocalStorage(cart);
-        updateCartItemCount()
-        location.reload();
-    }
-
-</script>
-<script>
-    function getCartFromLocalStorage() {
-        var cartJson = localStorage.getItem('Cart');
-        var cart = cartJson ? JSON.parse(cartJson) : [];
-
-        // Sepet verilerinin sayısını span elementine yazdır
-        document.getElementById('cartItemCount').textContent = cart.length;
-
-        return cart;
-    }
-</script>
-
-<script>
-    function updateCartItemCount() {
-        var cart = getCartFromLocalStorage();
-        var cartItemCount = cart.length;
-    }
-
-</script>
-<script>
-    window.addEventListener('DOMContentLoaded', function () {
-        updateCartItemCount();
-    });
-</script>
 

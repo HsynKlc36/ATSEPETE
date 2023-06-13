@@ -355,6 +355,7 @@ var userName= @Context.User.FindFirst(ClaimTypes.Name).Value.ToString();
     </footer>
     <!-- Footer Section End -->
 
+
     <script src="~/bootstrap/js/customer_jquery-3.3.1.min.js"></script>
     <script src="~/bootstrap/js/customer_bootstrap.min.js"></script>
     <script src="~/bootstrap/js/customer_jquery.nice-select.min.js"></script>
@@ -363,21 +364,9 @@ var userName= @Context.User.FindFirst(ClaimTypes.Name).Value.ToString();
     <script src="~/bootstrap/js/customer_mixitup.min.js"></script>
     <script src="~/bootstrap/js/Customer_owl.carousel.min.js"></script>
     <script src="~/bootstrap/js/customer_main.js"></script>
-    <script>
-        function getCartFromLocalStorage() {
-            var cartJson = localStorage.getItem('Cart');
-            var cart = cartJson ? JSON.parse(cartJson) : [];
-            document.getElementById('cartItemCount').textContent = cart.length;
-            console.log(cart.length)
-            return cart;
-        }
-    </script>
+    <script src="~/js/cart_favorite_item_count.js"></script>
 
-    <script>
-        window.addEventListener('DOMContentLoaded', function () {
-            updateCartItemCount();
-        });
-    </script>
+
 </body>
 
 </html>
