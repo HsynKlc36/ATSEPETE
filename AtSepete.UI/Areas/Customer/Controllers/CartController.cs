@@ -59,60 +59,28 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     AddOrderListResponse addedOrderList = JsonConvert.DeserializeObject<AddOrderListResponse>(apiResponse);//burası patlıyor!!!
-                    if (!addedOrderList.IsSuccess)
+                    if (addedOrderList.IsSuccess)
+                    {
+                        NotifySuccess(addedOrderList.Message);
+                        return Json(addedOrderList.IsSuccess);
+                    }
+                    else
                     {
                         NotifyError(addedOrderList.Message);
-                        return RedirectToAction("CreditCardPaymentPage");
+                        return Json(addedOrderList.IsSuccess);
                     }
                    
                 };
               
             }
-
-            return Json(jsonModel);
+           
         }
-
-     
-    
     }
 }
-//public async Task<IActionResult> HomePageSideBarFilter([FromQuery] string sideBarFilter)
-//{
-
-//    using (var httpClient = new HttpClient())
-//    {
-//        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
-//        using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Shop/ShopSideBarFilterList/{sideBarFilter}"))
-//        {
-//            if (response.StatusCode == HttpStatusCode.Unauthorized)
-//            {
-//                return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
-//            }
-//            string apiResponse = await response.Content.ReadAsStringAsync();
-//            ShopSideBarFilterListResponse shopSideBarFilterList = JsonConvert.DeserializeObject<ShopSideBarFilterListResponse>(apiResponse);
-
-//            if (shopSideBarFilterList.IsSuccess)
-//            {
-//                var SideBarFilterproducts = _mapper.Map<List<ShopSideBarFilterListDto>, List<CustomerShopSideBarFilterListVM>>(shopSideBarFilterList.Data);
-//                var serializedSideBarFilterProducts = JsonSerializer.Serialize(SideBarFilterproducts);
-//                TempData["ShopSideBarFilterList"] = serializedSideBarFilterProducts;
-//                NotifySuccess(shopSideBarFilterList.Message);
-
-//                return Json(new { success = shopSideBarFilterList.IsSuccess });
-//            }
-//            else
-//            {
-//                NotifyError(shopSideBarFilterList.Message);
-
-//                return Json(new { success = shopSideBarFilterList.IsSuccess });
-//            }
-
-//        };
 
 
 
-//    }
-//}
+
 
 
 

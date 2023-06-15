@@ -75,21 +75,7 @@
             <h3>Tüm Satıcılar</h3>
         </div>
         <div class="row" id="filter" style="margin-left: -15px;">
-            @* @foreach (var item in filterMarketPrice)
-            {
-            <div class="item ml-4">
-
-            <img src="@item.ProductPhotoPath" style="width: 100px; height: 100px;" />
-            <span>@item.MarketName.ToUpper() </span>
-            <p>@item.ProductPrice TL</p>
-            @if (item.ProductStock>0)
-            {
-
-            <input type="button" value="Ekle" class="btn btn-primary" style="width:100px; background-color:#f7cdd0; border-color:#f7cdd0;" onclick="addToCartProductDetails('@item.ProductId', '@item.MarketId', '@item.ProductTitle', '@item.ProductName', '@item.ProductQuantity', '@item.ProductUnit',  '@item.MarketName', '@item.ProductPrice','@item.ProductPhotoPath')" />
-            }
-
-            </div>
-            }*@
+            
         </div>
     </div>
 </div>
@@ -132,6 +118,21 @@
             outOfStockLabel.style.padding = '1px';
             outOfStockLabel.style.zIndex = '2';
                 
+
+            imgContainer.appendChild(outOfStockLabel);
+        }
+        else if(item.productStock>0 && item.productStock<10){
+            var outOfStockLabel = document.createElement("div");
+            outOfStockLabel.className = "out-of-stock-label";
+            outOfStockLabel.innerText = "Sınırlı Stoklar";
+            outOfStockLabel.style.color = 'white';
+            outOfStockLabel.style.backgroundColor = '#d9767673';
+            outOfStockLabel.style.position = 'absolute';
+            outOfStockLabel.style.top = '0';
+            outOfStockLabel.style.left = '0';
+            outOfStockLabel.style.padding = '1px';
+            outOfStockLabel.style.zIndex = '2';
+
 
             imgContainer.appendChild(outOfStockLabel);
         }

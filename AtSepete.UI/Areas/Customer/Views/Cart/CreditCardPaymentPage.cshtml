@@ -116,13 +116,22 @@
             type: 'POST',
             contentType: 'application/json',
             data: data,
-            success: function (response) {
-                // İstek başarılı olduğunda gerçekleştirilecek işlemler
-                // ...
+            success: function (result) 
+            {
+                if(result){
+
+                    localStorage.removeItem('Cart');
+                    location.reload();
+                    
+                }
+                else{
+                    location.reload();
+                    
+                }
+                
             },
             error: function (xhr, status, error) {
-                // İstek hatası durumunda gerçekleştirilecek işlemler
-                // ...
+                location.reload();
             }
         });
     }

@@ -10,7 +10,6 @@ namespace AtSepete.UI.MapperUI.Profiles
         public OrderVMProfile()
         {
             CreateMap <OrderListDto, AdminOrderListVM >().ReverseMap();
-            CreateMap <JsonShoppingCartDto,CreateOrderDto>().ReverseMap();
         }
     }
 }

@@ -160,6 +160,10 @@ namespace AtSepete.Business.Constants
         public const string ShopSideBarFilter_Listed_Failed = "ShopSideBarFilter_Listed_Failed";
         public const string ShopSideBarFilter_Listed_Not_Found = "ShopSideBarFilter_Listed_Not_Found";
 
+        public const string ShoppingCart_Success = "ShoppingCart_Success";
+        public const string ShoppingCart_Failed = "ShoppingCart_Failed";
+        public const string ShoppingCart__Not_Found = "ShoppingCart_Not_Found";
+
         public const string BestSeller_Listed_Success = "BestSeller_Listed_Success";
         public const string BestSeller_Listed_Failed = "BestSeller_Listed_Failed";
 

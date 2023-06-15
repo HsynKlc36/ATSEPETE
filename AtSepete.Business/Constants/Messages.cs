@@ -103,6 +103,10 @@ public class Messages
     public const string ShopSideBarFilterListedFailed = "ShopSideBarFilter_Listed_Failed";
     public const string ShopSideBarFilterListedNotFound = "ShopSideBarFilter_Listed_Not_Found";
 
+    public const string ShoppingCartSuccess = "ShoppingCart_Success";
+    public const string ShoppingCartFailed = "ShoppingCart_Failed";
+    public const string ShoppingCartNotFound = "ShoppingCart_Not_Found";
+
     public const string BestSellerListedSuccess = "BestSeller_Listed_Success";
     public const string BestSellerListedFailed = "BestSeller_Listed_Failed";
 

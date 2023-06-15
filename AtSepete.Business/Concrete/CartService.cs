@@ -16,125 +16,103 @@ using AtSepete.Business.Logger;
 using AtSepete.Dtos.Dto.Carts;
 using AtSepete.Repositories.Concrete;
 using AtSepete.Dtos.Dto.OrderDetails;
+using AtSepete.Business.JWT;
 
 namespace AtSepete.Business.Concrete
 {
-    public class CartService:ICartService
+    public class CartService : ICartService
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
         private readonly IMarketRepository _marketRepository;
+        private readonly IProductMarketRepository _productMarketRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILoggerService _loggerService;
 
-        public CartService(IOrderRepository orderRepository,IOrderDetailRepository orderDetailRepository,IMapper mapper,IEmailSender emailSender,IMarketRepository marketRepository,IUserRepository userRepository,ILoggerService loggerService)
+        public CartService(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMapper mapper, IEmailSender emailSender, IMarketRepository marketRepository, IProductMarketRepository productMarketRepository, IUserRepository userRepository, ILoggerService loggerService)
         {
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
             _mapper = mapper;
             _emailSender = emailSender;
             _marketRepository = marketRepository;
+            _productMarketRepository = productMarketRepository;
             _userRepository = userRepository;
             _loggerService = loggerService;
         }
 
         public async Task<IResult> AddOrderAndOrderDetailAsync(List<CreateShoppingCartDto> shoppingCartList)
         {
-            //if (shoppingCartList.IsNullOrEmpty())
-            //{
-            //    _loggerService.LogWarning(LogMessages.Order_Object_Not_Found);
-            //    return new ErrorDataResult<List<CreateOrderDto>>(Messages.OrderNotFound);
-            //}
-            //var orderListDistinct = shoppingCartList.DistinctBy(x => x.MarketId).ToList();
-            //List<CreateOrderDto> createOrderDtos = new List<CreateOrderDto>();
-            //foreach (var orderDto in orderListDistinct)
-            //{
-            //    try
-            //    {
-            //        var market = await _marketRepository.GetByIdAsync(orderDto.MarketId);
-            //        if (market is null)
-            //        {
-            //            _loggerService.LogWarning(LogMessages.Market_Object_Not_Found);
-            //            return new ErrorDataResult<List<CreateOrderDto>>(Messages.MarketNotFound);
-            //        }
-
-            //        var customer = await _userRepository.GetByIdAsync(orderDto.CustomerId);
-            //        if (customer is null)
-            //        {
-            //            _loggerService.LogWarning(LogMessages.User_Object_Not_Found);
-            //            return new ErrorDataResult<List<CreateOrderDto>>(Messages.UserNotFound);
-            //        }
-
-            //        var order = _mapper.Map<CreateOrderDto, Order>(orderDto);
-            //        var result = await _orderRepository.AddAsync(order);
-            //        await _orderRepository.SaveChangesAsync();
-
-            //        var createdOrderDto = _mapper.Map<Order, CreateOrderDto>(result);
-
-            //        createOrderDtos.Add(createdOrderDto);
-            //        // İşlemi tamamladıktan sonra elde edilen createdOrderDto'yu kullanabilirsiniz.
-            //    }
-            //    catch (Exception)
-            //    {
-            //        _loggerService.LogError(LogMessages.Order_Added_Failed);
-            //        return new ErrorDataResult<List<CreateOrderDto>>(Messages.OrderAddedFailed);
-            //    }
-            //}
-            //_loggerService.LogInfo(LogMessages.Order_Added_Success);
-            //return new SuccessDataResult<List<CreateOrderDto>>(createOrderDtos, Messages.OrderAddedSuccess);
-
-
             if (shoppingCartList.IsNullOrEmpty())
             {
-                _loggerService.LogWarning(LogMessages.Order_Object_Not_Found);
-                return new ErrorResult(Messages.OrderNotFound);
+                _loggerService.LogWarning(LogMessages.ShoppingCart__Not_Found);
+                return new ErrorResult(Messages.ShoppingCartNotFound);
             }
             var orderListDistinct = shoppingCartList.DistinctBy(x => x.MarketId).ToList();
-            foreach (var orderDto in orderListDistinct)
+            try
             {
-                try
+                foreach (var orderDto in orderListDistinct)
                 {
-                                      
                     CreateOrderDto createOrderDto = new()
                     {
                         CustomerId = orderDto.CustomerId,
                         MarketId = orderDto.MarketId
-                       
                     };
 
-                    
-                   var order= _mapper.Map<CreateOrderDto,Order>(createOrderDto);
-
+                    var order = _mapper.Map<CreateOrderDto, Order>(createOrderDto);
                     var result = await _orderRepository.AddAsync(order);
                     await _orderRepository.SaveChangesAsync();
 
                     var orderId = result.Id;
+                    var orderDetailsForMarket = shoppingCartList.Where(x => x.MarketId == orderDto.MarketId).ToList();
 
-
-                    CreateOrderDetailDto createOrderDetailDto = new()
+                    foreach (var orderDetailDto in orderDetailsForMarket)
                     {
-                        OrderId = orderId,
-                        ProductId = orderDto.ProductId,
-                        Amount = orderDto.Quantity
-                    };
+                        CreateOrderDetailDto createOrderDetailDto = new()
+                        {
+                            OrderId = orderId,
+                            ProductId = orderDetailDto.ProductId,
+                            Amount = orderDetailDto.Quantity
+                        };
 
+                        var orderDetail = _mapper.Map<CreateOrderDetailDto, OrderDetail>(createOrderDetailDto);
+                        await _orderDetailRepository.AddAsync(orderDetail);
+                        await _orderDetailRepository.SaveChangesAsync();
 
-                    var orderDetail = _mapper.Map<CreateOrderDetailDto, OrderDetail>(createOrderDetailDto);
-                    await _orderDetailRepository.AddAsync(orderDetail);
-                    await _orderDetailRepository.SaveChangesAsync();
+                        var productMarket = await _productMarketRepository.GetByDefaultAsync(x => x.MarketId == orderDetailDto.MarketId && x.ProductId == orderDetailDto.ProductId);
+
+                        if (productMarket != null && productMarket.Stock >= orderDetailDto.Quantity)
+                        {
+                            productMarket.Stock -= orderDetailDto.Quantity;
+                            await _productMarketRepository.UpdateAsync(productMarket);
+                            await _productMarketRepository.SaveChangesAsync();
+                        }
+
+                    }
                 }
-                catch (Exception ex)
-                {
-                    _loggerService.LogError(ex.Message);
-                    // Hata durumunda gerekli işlemleri yapabilirsiniz.
-                }
+                var customerId = shoppingCartList.FirstOrDefault().CustomerId;
+                string customerName = _userRepository.GetByIdAsync(customerId).Result.FirstName;
+                string  customerEmail= _userRepository.GetByIdAsync(customerId).Result.Email;
+                
+                var content = $"Merhaba, {customerName} <br />" +
+                    $"Siparişin başarıyla oluşturuldu! Bizi tercih ettiğin için teşekkürler" +
+                    $"İyi alışverişler dileriz... <br /> <br />" +
+                    $"AtSepete";
+                await _emailSender.SendEmailAsync(customerEmail, "Sipariş Durumu", content);
+
+                _loggerService.LogInfo(LogMessages.ShoppingCart_Success);
+                return new SuccessResult(Messages.ShoppingCartSuccess);
+
             }
-            return null;
+            catch (Exception)
+            {
+                _loggerService.LogError(LogMessages.ShoppingCart_Failed);
+                return new ErrorResult(Messages.ShoppingCartFailed);
+            }
 
         }
-
     }
 }
 
