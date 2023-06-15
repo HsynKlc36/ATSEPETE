@@ -8,7 +8,6 @@ namespace AtSepete.Dtos.Dto.Orders
 {
     public class CreateOrderDto
     {
-        public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
         public Guid MarketId { get; set; }
         public DateTime? CreatedDate { get; set; } = DateTime.Now;

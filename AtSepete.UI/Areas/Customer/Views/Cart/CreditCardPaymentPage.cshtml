@@ -1,0 +1,130 @@
+﻿@{
+    Layout = "_CustomerLayout";
+}
+
+<link href="~/css/creditcard.css" rel="stylesheet" />
+    <div class="card_contanier">
+        <div class="creditCard">
+            <div id="cardFront">
+                <div id="cardnumber" class="card-number-parts">
+                    <span>####</span>
+                    <span>####</span>
+                    <span>####</span>
+                    <span>####</span>
+                </div>
+                <div class="cardholder">
+                    <span class="normaltext">Card Holder</span><br /><span id="fullName">Full Name</span>
+                </div>
+                <div class="expires">
+                    <span class="normaltext">Expires</span>
+                    <div class="ayYil">
+                        <span id="ay">MM</span><span style="font-size: 20px">/</span><span id="yil">YY</span>
+                    </div>
+                </div>
+                <div class="visaicon"></div>
+                <div class="cip"></div>
+                <div class="temassiz"></div>
+            </div>
+            <div id="cardBack">
+                <div class="blackline"></div>
+                <div class="cvv">
+                    <span class="normaltext">CVV</span><br /><input type="text"
+                                                                    id="cardcvv"
+                                                                    maxlength="3" />
+                </div>
+                <div class="visaicon"></div>
+            </div>
+        </div>
+        <div class="enteredCardNumber">
+            <span class="text">Kart Numarası</span><br />
+            <input type="text"
+                   id="cdnumber"
+                   maxlength="16"
+                   onkeyup="modify('cdnumber','cardnumber')"
+                   onblur="borderRemove('cardnumber')" />
+        </div>
+        <div class="enteredCardHolder">
+            <span class="text">Kart Üzerindeki İsim</span><br />
+            <input type="text"
+                   id="cdholder"
+                   onkeyup="getInputValueandText('cdholder','fullName')"
+                   onfocus="getInputValueandText('cdholder','fullName')"
+                   onblur="borderRemove('fullName')" />
+        </div>
+        <span class="text" style="margin-left:5%; ">Son Kullanma Tarihi</span>
+        <div class="enteredCardInformation">
+            <div class="ExprisionDate">
+                <select id="month"
+                        onchange="getText('month','ay')"
+                        onblur="borderRemove('ay')">
+                    <option>Ay</option>
+                    <option>01</option>
+                    <option>02</option>
+                    <option>04</option>
+                    <option>05</option>
+                    <option>06</option>
+                    <option>07</option>
+                    <option>08</option>
+                    <option>09</option>
+                    <option>10</option>
+                    <option>11</option>
+                    <option>12</option>
+                </select>
+                <select id="year"
+                        onchange="getText('year','yil')"
+                        onblur="borderRemove('yil')">
+                    <option>Yıl</option>
+                    <option>23</option>
+                    <option>24</option>
+                    <option>25</option>
+                    <option>26</option>
+                    <option>27</option>
+                    <option>28</option>
+                    <option>29</option>
+                    <option>30</option>
+                </select>
+            </div>
+        <div class="CvvInformation" style="margin-top:-30px;">
+                <span class="text">CVV</span><br />
+                <input type="text"
+                       id="entiredcvv"
+                       maxlength="3"
+                       onkeyup="getInputValueCvv('entiredcvv','cardcvv')"
+                       onblur="borderRemove('cardcvv'); reverseback('cardFront','cardBack')"
+                       onfocus="reverse('cardFront','cardBack')" />
+            </div>
+        </div>
+        <div class="submit">
+        <input type="button" onclick="sendCartDataToAction()" value="ÖDEME YAP" class="button" />
+
+        </div>
+    </div>
+ 
+<script src="~/js/creditcardpaymentpage.js"></script>
+<script>
+    // AJAX kullanarak MVC UI action'ına veri gönderme
+    function sendCartDataToAction() {
+        // Local storage'dan "cart" verisini almak
+        var cartData = localStorage.getItem("Cart");
+
+        
+        // AJAX isteği için veri objesini oluşturma
+        var data =cartData;
+
+        $.ajax({
+            url: '@Url.Action("CustomerCreateOrder", "Cart")'+'?cartData='+data,
+            type: 'POST',
+            contentType: 'application/json',
+            data: data,
+            success: function (response) {
+                // İstek başarılı olduğunda gerçekleştirilecek işlemler
+                // ...
+            },
+            error: function (xhr, status, error) {
+                // İstek hatası durumunda gerçekleştirilecek işlemler
+                // ...
+            }
+        });
+    }
+
+</script>

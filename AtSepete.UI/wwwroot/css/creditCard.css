@@ -1,0 +1,263 @@
+﻿/*body {
+    position: relative;
+    height: 95vh;
+    background-color: rgb(2, 8, 78);
+}*/
+
+.card_contanier {
+    position: relative;
+    margin-top:20%;
+    height: 400px;
+    width: 450px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+    background-color: white;
+}
+
+.creditCard {
+    height: 25%;
+    position: relative;
+}
+
+#cardFront {
+    position: absolute;
+    height: 175px;
+    width: 300px;
+    background-image: url('../image/creditcard_cardbackground.jpg');
+    top: -100px;
+    left: 75px;
+    border-radius: 10px;
+    transition: 1s;
+    opacity: 1;
+}
+
+#cardnumber {
+    position: absolute;
+    top: 80px;
+    left: 10px;
+    word-spacing: 10px;
+    width: 90%;
+    font-size: 25px;
+    z-index: 999;
+    text-align: center;
+    background-color: transparent;
+    color: #474747;
+    font-family: 'ocr_a_std';
+    text-shadow: 0 -1px 0 rgb(255, 255, 255), 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a, 0 4px 0 #282828, 0 22px 30px rgba(255, 255, 255, 0.9);
+    transition: 1s;
+}
+
+.cardholder {
+    position: absolute;
+    top: 120px;
+    left: 10px;
+}
+
+.expires {
+    position: absolute;
+    top: 120px;
+    left: 245px;
+    text-align: center;
+}
+
+#fullName {
+    position: absolute;
+    font-weight: bold;
+    font-size: 17px;
+    z-index: 997;
+    width: 150px;
+    height: 25px;
+    color: #474747;
+    font-family: 'ocr_a_std';
+    text-shadow: 0 -1px 0 rgb(255, 255, 255), 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a, 0 4px 0 #282828, 0 22px 30px rgba(255, 255, 255, 0.9);
+    transition: 1s;
+}
+
+.ayYil {
+    position: absolute;
+    font-weight: bold;
+    font-size: 16px;
+    left: -5px;
+    z-index: 998;
+    color: #474747;
+    font-family: 'ocr_a_std';
+    text-shadow: 0 -1px 0 rgb(255, 255, 255), 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 22px 30px rgba(255, 255, 255, 0.9);
+}
+
+.normaltext {
+    font-size: 13px;
+    color: rgb(255, 255, 255);
+    text-shadow: 0 -1px 0 #fff, 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a, 0 4px 0 #282828,
+}
+
+.visaicon {
+    position: absolute;
+    background-image: url('../image/creditcard_visa.png');
+    background-size: 100% 100%;
+    width: 100px;
+    height: 25px;
+    top: 20px;
+    left: 190px;
+    opacity: 0.9;
+}
+
+.cip {
+    position: absolute;
+    background-image: url('../image/creditcard_cip.png');
+    background-size: 100% 100%;
+    width: 70px;
+    height: 60px;
+    top: 5px;
+    left: 10px;
+}
+
+.temassiz {
+    position: absolute;
+    background-image: url('../image/creditcard_temassiz.png');
+    background-size: 100% 100%;
+    width: 25px;
+    height: 25px;
+    top: 25px;
+    left: 80px;
+}
+
+#cdnumber #cdholder #entiredcvv {
+    border-radius: 3px;
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+#cardBack {
+    position: absolute;
+    height: 175px;
+    width: 300px;
+    background: linear-gradient(90deg, rgba(51,74,131,1) 0%, rgba(2,185,244,1) 52%, rgba(0,77,255,1) 100%);
+    top: -100px;
+    left: 75px;
+    border-radius: 10px;
+    transform: rotateY(180deg);
+    transition: 1s;
+    opacity: 0;
+}
+
+.blackline {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    background-color: black;
+    opacity: 0.8;
+    top: 20px;
+}
+
+.cvv {
+    position: absolute;
+    width: 98%;
+    top: 60px;
+    text-align: right;
+    transition: 1s;
+}
+
+#cardcvv {
+    width: 100%;
+    height: 30px !important;
+    text-align: right;
+    color: black;
+    color: rgb(87, 87, 87);
+    text-shadow: 0 -1px 0 #fff, 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a, 0 4px 0 #282828, 0 22px 30px rgba(0, 0, 0, 0.9);
+}
+
+#cardBack .visaicon {
+    top: 125px;
+}
+
+.enteredCardNumber {
+    height: 15%;
+    width: 90%;
+    margin: auto;
+}
+
+#cdnumber {
+    width: 100%;
+    height: 30px;
+}
+
+.enteredCardHolder {
+    height: 15%;
+    width: 90%;
+    margin: auto;
+}
+
+#cdholder {
+    width: 100%;
+    height: 30px;
+}
+
+.text {
+    opacity: 0.8;
+    color: black;
+    font-size: 13px;
+}
+
+/*.enteredCardInformation {
+    height: 20%;
+    width: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}*/
+.enteredCardInformation {
+    height: 20%;
+    width: 90%;
+    margin: auto;
+    margin-top:-5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#month {
+    width: 90px;
+    height: 30px;
+    color: black;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+#year {
+    width: 90px;
+    height: 30px;
+    color: black;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+#entiredcvv {
+    height: 30px;
+    width: 200px;
+}
+
+.submit {
+    height: 19%;
+    width: 90%;
+    margin: auto;
+}
+
+.button {
+    width: 100%;
+    background: #f7cdd0;
+    border-color: #f7cdd0 ;
+    height: 40px;
+}
+
+
+.ExprisionDate {
+    display: flex;
+    align-items: center;
+}
+
+    .ExprisionDate select {
+        margin-right: 10px;
+    }

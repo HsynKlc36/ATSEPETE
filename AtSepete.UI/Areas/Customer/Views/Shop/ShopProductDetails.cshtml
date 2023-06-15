@@ -6,15 +6,16 @@
     var shopProductDetail = Model.FirstOrDefault();
     var filterMarketPrice = Model.Select(x => new
     {
-        ProductId=x.ProductId,
+        ProductId = x.ProductId,
         ProductPhotoPath = x.ProductPhotoPath,
         ProductPrice = x.ProductPrice,
-        ProductName=x.ProductName,
-        ProductTitle=x.ProductTitle,
-        MarketId=x.MarketId,
+        ProductName = x.ProductName,
+        ProductTitle = x.ProductTitle,
+        MarketId = x.MarketId,
         MarketName = x.MarketName,
-        ProductUnit=x.ProductUnit,
-        ProductQuantity=x.ProductQuantity
+        ProductUnit = x.ProductUnit,
+        ProductQuantity = x.ProductQuantity,
+        ProductStock = x.ProductStock
     }).ToList();
 
 }
@@ -71,24 +72,102 @@
     </div>
     <div class="item-container product-image col-lg-4">
         <div class="col-lg-12" style="margin-top: 0;">
-            <h3 >Tüm Satıcılar</h3>
+            <h3>Tüm Satıcılar</h3>
         </div>
-        <div class="row" style="margin-left: -15px;">
-            @foreach (var item in filterMarketPrice)
+        <div class="row" id="filter" style="margin-left: -15px;">
+            @* @foreach (var item in filterMarketPrice)
             {
-                <div class="item ml-4">
-                 
-                    <img src="@item.ProductPhotoPath" style="width: 100px; height: 100px;" />
-                    <span>@item.MarketName.ToUpper() </span>
-                    <p>@item.ProductPrice TL</p>
-                    <input type="button" value="Ekle" class="btn btn-primary" style="width:100px; background-color:#f7cdd0; border-color:#f7cdd0;" onclick="addToCartProductDetails('@item.ProductId', '@item.MarketId', '@item.ProductTitle', '@item.ProductName', '@item.ProductQuantity', '@item.ProductUnit',  '@item.MarketName', '@item.ProductPrice','@item.ProductPhotoPath')" />
-                </div>
+            <div class="item ml-4">
+
+            <img src="@item.ProductPhotoPath" style="width: 100px; height: 100px;" />
+            <span>@item.MarketName.ToUpper() </span>
+            <p>@item.ProductPrice TL</p>
+            @if (item.ProductStock>0)
+            {
+
+            <input type="button" value="Ekle" class="btn btn-primary" style="width:100px; background-color:#f7cdd0; border-color:#f7cdd0;" onclick="addToCartProductDetails('@item.ProductId', '@item.MarketId', '@item.ProductTitle', '@item.ProductName', '@item.ProductQuantity', '@item.ProductUnit',  '@item.MarketName', '@item.ProductPrice','@item.ProductPhotoPath')" />
             }
+
+            </div>
+            }*@
         </div>
     </div>
 </div>
 <script src="~/js/shopping_cart.js"></script>
 
 
+<script>
+    var productList = @Html.Raw(Json.Serialize(filterMarketPrice)); // Veri listesi
+    var container = document.querySelector('#filter'); // Container elementi
 
+    // Her bir ürün için döngü
+    for (var i = 0; i < productList.length; i++) {
+        var item = productList[i];
 
+        // Ürün bileşenini oluştur
+        var productDiv = document.createElement('div');
+        productDiv.className = 'item ml-4';
+
+        // Ürün fotoğrafı
+        var imgContainer = document.createElement('div');
+        imgContainer.style.position = 'relative';
+        imgContainer.style.width = '100px';
+        imgContainer.style.height = '100px';
+
+        var img = document.createElement('img');
+        img.src = item.productPhotoPath;
+        img.style.width = '100%';
+        img.style.height = '100%';
+
+        // Stok durumuna göre fotoğraf stilini ve metnini ayarla
+        if (item.productStock <= 0) {
+            var outOfStockLabel = document.createElement("div");
+            outOfStockLabel.className = "out-of-stock-label";
+            outOfStockLabel.innerText = "Stoklar Tükendi";
+            outOfStockLabel.style.color = 'white';
+            outOfStockLabel.style.backgroundColor = '#d9767673';
+            outOfStockLabel.style.position = 'absolute';
+            outOfStockLabel.style.top = '0';
+            outOfStockLabel.style.left = '0';
+            outOfStockLabel.style.padding = '1px';
+            outOfStockLabel.style.zIndex = '2';
+                
+
+            imgContainer.appendChild(outOfStockLabel);
+        }
+
+        imgContainer.appendChild(img);
+        productDiv.appendChild(imgContainer);
+
+        // Diğer ürün bilgileri
+        var marketName = document.createElement('span');
+        marketName.innerText = item.marketName.toUpperCase();
+        var productPrice = document.createElement('p');
+        productPrice.innerText = item.productPrice + ' TL';
+
+        // Ürün bileşenini oluşturulan sıraya göre düzenle
+        productDiv.appendChild(marketName);
+        productDiv.appendChild(productPrice);
+
+        // Sepete ekle düğmesi
+        if (item.productStock > 0) {
+            var addToCartButton = document.createElement('input');
+            addToCartButton.type = 'button';
+            addToCartButton.value = 'Ekle';
+            addToCartButton.className = 'btn btn-primary';
+            addToCartButton.style.width = '100px';
+            addToCartButton.style.backgroundColor = '#f7cdd0';
+            addToCartButton.style.borderColor = '#f7cdd0';
+
+            // Sepete ekle düğmesine tıklama işlemi
+            addToCartButton.onclick = function () {
+                addToCartProductDetails(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath);
+            };
+
+            productDiv.appendChild(addToCartButton);
+        }
+
+        container.appendChild(productDiv);
+    }
+
+</script>

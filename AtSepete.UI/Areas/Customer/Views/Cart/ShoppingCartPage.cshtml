@@ -37,9 +37,9 @@
             <div class="col-lg-12">
                 <div class="shoping__cart__btns">
                     <a asp-area="Customer" asp-controller="Shop" asp-action="HomePage" class="primary-btn cart-btn">ALIŞVERİŞE DEVAM ET</a>
-                    <a href="#" class="primary-btn cart-btn cart-btn-right">
+                    <a href="#" onclick="clearCart()" class="primary-btn cart-btn cart-btn-right">
                         <span class="icon_loading"></span>
-                        SEPETİ GÜNCELLE
+                       SEPETİ TEMİZLE
                     </a>
                 </div>
             </div>
@@ -58,25 +58,25 @@
                 <div class="shoping__checkout">
                     <h5>TOPLAM TUTAR</h5>
                     <ul>
-                        <li>ALIŞVERİŞ TUTARI <span></span></li>
-                        <li>ÖDEME TUTARI <span></span></li>
+                        <li>ALIŞVERİŞ TUTARI <span id="alısverisTutari"></span></li>
+                        <li>ÖDEME TUTARI <span id="odemeTutari"></span></li>
                     </ul>
-                    <a href="#" class="primary-btn">SİPARİŞE TAMAMLA</a>
+                    <a href="#" id="paymentId" class="primary-btn">SİPARİŞİ TAMAMLA</a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 <script src="~/js/shopping_cart.js"></script>
-<script src="~/js/total_price.js"></script>
 <script src="~/js/remove_from_cart.js"></script>
 <script src="~/js/cart_decrease_increase_handler.js"></script>
+<script src="~/js/shopping_cart_cline.js"></script>
 <script>
 
     function renderCartItems() {
         var cart = getCartFromLocalStorage();
         var tableBody = document.querySelector('.shoping__cart__table tbody');
-
+        var totalAmount = 0;
         // Tabloyu temizle
         tableBody.innerHTML = '';
 
@@ -144,6 +144,10 @@
             totalCell.className = 'shoping__cart__total';
             totalCell.innerText = (item.productPrice * quantityInput.value) + ' TL'; // Toplam tutarı burada hesaplayabilirsiniz
             row.appendChild(totalCell);
+            var totalPrice = item.productPrice * quantityInput.value;
+            totalAmount += totalPrice;
+
+            
 
             // Kaldırma sütunu
             var removeCell = document.createElement('td');
@@ -158,6 +162,35 @@
             // Satırı tabloya ekle
             tableBody.appendChild(row);
         }
+        var alısverisTutariSpan = document.getElementById('alısverisTutari'); 
+        var odemeTutariSpan = document.getElementById('odemeTutari');
+        var alısverisTutarı = (Math.round(totalAmount * 100) / 100).toFixed(2);
+        var odemeTutarı = (Math.round(totalAmount * 1.18*100)/100).toFixed(2);
+        alısverisTutariSpan.innerText = alısverisTutarı + ' TL';
+        odemeTutariSpan.innerText = odemeTutarı + ' TL';
+       
+
+        //toplam alışveriş tutarına göre alışverişi tamamla butonunun oluşturulması
+
+        var checkoutDiv = document.querySelector('.shoping__checkout');
+        var existingPaymentLink = document.querySelector('#paymentId');
+
+        if (!(alısverisTutarı > 0)) {
+            if (existingPaymentLink) {
+                //existingPaymentLink.remove();
+                existingPaymentLink.href = "#";
+            }
+                 
+        } 
+        else {
+                existingPaymentLink.href = '@Url.Action("CreditCardPaymentPage", "Cart", new { area = "Customer" })';
+                existingPaymentLink.innerText = "SİPARİŞİ TAMAMLA";           
+        }
+       
+       
+
+
+
     }
 
     // Sayfa yüklendiğinde sepet ürünlerini render et

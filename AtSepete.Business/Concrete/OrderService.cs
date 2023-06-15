@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Castle.Core.Resource;
 using AtSepete.Dtos.Dto.Orders;
 using AtSepete.Business.Logger;
+using Castle.Core.Internal;
 
 namespace AtSepete.Business.Concrete
 {
@@ -102,7 +103,6 @@ namespace AtSepete.Business.Concrete
                 return new ErrorDataResult<CreateOrderDto>(Messages.AddFail);
             }
         }
-
 
         public async Task<IDataResult<UpdateOrderDto>> UpdateOrderAsync(Guid id, UpdateOrderDto updateOrderDto)
         {

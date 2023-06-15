@@ -265,6 +265,7 @@ namespace AtSepete.Business.Concrete
 
         }
 
+       
         public async Task<IDataResult<UpdateOrderDetailDto>> UpdateOrderDetailAsync(Guid id, UpdateOrderDetailDto updateOrderDetailDto)
         {
             try

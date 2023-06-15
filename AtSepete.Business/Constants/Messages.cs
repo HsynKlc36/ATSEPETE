@@ -51,6 +51,8 @@ public class Messages
 
     public const string OrderFoundSuccess = "Order_Found_Success";
     public const string OrderNotFound = "Order_Not_Found";
+    public const string OrderAddedSuccess = "Order_Added_Success";
+    public const string OrderAddedFailed = "Order_Added_Failed";
 
     public const string OrderDetailFoundSuccess = "OrderDetail_Found_Success";
     public const string OrderDetailFailed = "OrderDetail_Failed";
