@@ -66,7 +66,7 @@ var userName= @Context.User.FindFirst(ClaimTypes.Name).Value.ToString();
                         <span class="fa fa-angle-down"></span>
                         <ul>
                             <li> <a href=""><i class="fa fa-envelope"></i> Mesaj Kutusu</a></li>
-                            <li> <a href=""><i class="fa fa-truck" aria-hidden="true"></i> Siparişlerim</a></li>
+                            <li> <a asp-area="Customer" asp-controller="CustomerOrder" asp-action="CustomerOrderPage"><i class="fa fa-truck" aria-hidden="true"></i> Siparişlerim</a></li>
                             <li> <a asp-area="" asp-controller="Login" asp-action="ChangePassword"><i class="fa fa-user"></i> Şifremi Değiştir</a></li>
                             <li> <a asp-area="" asp-controller="Login" asp-action="LogOut"><i class="fa fa-user"></i> Çıkış Yap</a></li>
                         </ul>
@@ -154,7 +154,7 @@ var userName= @Context.User.FindFirst(ClaimTypes.Name).Value.ToString();
                                         <span class="fa fa-angle-down"></span>
                                         <ul>
                                             <li> <a href=""><i class="fa fa-envelope"></i> Mesaj Kutusu</a></li>
-                                            <li> <a href=""><i class="fa fa-truck" aria-hidden="true"></i> Siparişlerim</a></li>
+                                            <li> <a asp-area ="Customer" asp-controller="CustomerOrder" asp-action="CustomerOrderPage"><i class="fa fa-truck" aria-hidden="true"></i> Siparişlerim</a></li>
                                             <li> <a asp-area="" asp-controller="Login" asp-action="ChangePassword"><i class="fa fa-user"></i> Şifremi Değiştir</a></li>          
                                             <li> <a asp-area="" asp-controller="Login" asp-action="LogOut"><i class="fa fa-user"></i> Çıkış Yap</a></li>
                                         </ul>

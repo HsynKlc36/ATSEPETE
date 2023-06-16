@@ -58,7 +58,7 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                         return RedirectToAction("RefreshTokenLogin", "Login", new { returnUrl = HttpContext.Request.Path, area = "" });
                     }
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    AddOrderListResponse addedOrderList = JsonConvert.DeserializeObject<AddOrderListResponse>(apiResponse);//burası patlıyor!!!
+                    AddOrderListResponse addedOrderList = JsonConvert.DeserializeObject<AddOrderListResponse>(apiResponse);
                     if (addedOrderList.IsSuccess)
                     {
                         NotifySuccess(addedOrderList.Message);

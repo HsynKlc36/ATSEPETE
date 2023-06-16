@@ -167,5 +167,9 @@ namespace AtSepete.Business.Constants
         public const string BestSeller_Listed_Success = "BestSeller_Listed_Success";
         public const string BestSeller_Listed_Failed = "BestSeller_Listed_Failed";
 
+        public const string CustomerOrder_Listed_Success = "CustomerOrder_Listed_Success";
+        public const string CustomerOrder_Listed_Failed = "CustomerOrder_Listed_Failed";
+        public const string CustomerOrder_Listed_Not_Found = "CustomerOrder_Listed_Not_Found";
+
     }
 }

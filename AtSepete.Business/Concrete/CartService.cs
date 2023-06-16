@@ -96,8 +96,8 @@ namespace AtSepete.Business.Concrete
                 string customerName = _userRepository.GetByIdAsync(customerId).Result.FirstName;
                 string  customerEmail= _userRepository.GetByIdAsync(customerId).Result.Email;
                 
-                var content = $"Merhaba, {customerName} <br />" +
-                    $"Siparişin başarıyla oluşturuldu! Bizi tercih ettiğin için teşekkürler" +
+                var content = $"Merhaba {customerName}, <br />" +
+                    $"Siparişin başarıyla oluşturuldu! Bizi tercih ettiğin için teşekkürler  <br />" +
                     $"İyi alışverişler dileriz... <br /> <br />" +
                     $"AtSepete";
                 await _emailSender.SendEmailAsync(customerEmail, "Sipariş Durumu", content);

@@ -110,7 +110,9 @@ public class Messages
     public const string BestSellerListedSuccess = "BestSeller_Listed_Success";
     public const string BestSellerListedFailed = "BestSeller_Listed_Failed";
 
-
+    public const string CustomerOrderListedSuccess = "CustomerOrderList_Listed_Success";
+    public const string CustomerOrderListFailed = "CustomerOrderList_Listed_Failed";
+    public const string CustomerOrderList_Not_Found = "CustomerOrderList_Not_Found";
 
     //Cons ve static atasındaki fark
     //    const anahtar kelimesini kullanarak sabit bir değer tanımlamanız da mümkündür ve bu yaklaşımın birçok avantajı vardır.

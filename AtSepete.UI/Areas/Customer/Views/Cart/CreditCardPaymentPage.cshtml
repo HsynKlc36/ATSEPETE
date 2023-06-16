@@ -121,11 +121,15 @@
                 if(result){
 
                     localStorage.removeItem('Cart');
-                    location.reload();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 3000);
                     
                 }
                 else{
-                    location.reload();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 3000);
                     
                 }
                 
