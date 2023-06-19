@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Login\AccessDeniedPage.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="CloudinaryDotNet" Version="1.20.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
@@ -38,6 +42,18 @@
   <ItemGroup>
     <ProjectReference Include="..\AtSepete.Business\AtSepete.Business.csproj" />
     <ProjectReference Include="..\AtSepete.Repositories\AtSepete.Repositories.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Login\AccessDeniedPage.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Login\AccessDeniedPage.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Login\AccessDeniedPage.cshtml" />
   </ItemGroup>
 
 </Project>

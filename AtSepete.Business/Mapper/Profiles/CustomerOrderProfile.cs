@@ -24,7 +24,8 @@ namespace AtSepete.Business.Mapper.Profiles
           .ForMember(dest => dest.MarketName, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("MarketName").GetValue(src, null)))
           .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => (decimal)src.GetType().GetProperty("ProductPrice").GetValue(src, null)))
           .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => (Guid)src.GetType().GetProperty("OrderId").GetValue(src, null)))
-          .ForMember(dest => dest.CustomerAddress, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("CustomerAddress").GetValue(src, null)));
+          .ForMember(dest => dest.CustomerAddress, opt => opt.MapFrom(src => (string)src.GetType().GetProperty("CustomerAddress").GetValue(src, null)))
+          .ForMember(dest => dest.OrderCreatedDate, opt => opt.MapFrom(src => (DateTime)src.GetType().GetProperty("OrderCreatedDate").GetValue(src, null)));
         }
     }
 }

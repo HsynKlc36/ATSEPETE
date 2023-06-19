@@ -12,7 +12,6 @@ namespace AtSepete.Entities.Data
     public class ProductMarket:Base
     {
 
-
         [ForeignKey("ProductInMarket")]
         public Guid ProductId { get; set; }
         

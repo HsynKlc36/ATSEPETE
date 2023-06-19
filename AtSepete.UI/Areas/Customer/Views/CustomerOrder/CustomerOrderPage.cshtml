@@ -1,1 +1,159 @@
-﻿
+﻿@model IEnumerable<AtSepete.UI.Areas.Customer.Models.CustomerOrderVMs.CustomerCustomerOrderListVM>
+@{
+    Layout = "_CustomerLayout";
+}
+<style>
+    .shoping__cart__item_cart {
+        width: 50px;
+        height: 50px;
+    }
+</style>
+<section class="shoping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="shoping__product">ÜRÜN</th>
+                                <th>MARKET</th>
+                                <th>FİYAT</th>
+                                <th>ADET</th>
+                                <th>SİPARİŞ TUTARI</th>
+                                <th>SİPARİŞ TARİHİ</th>
+                                <th>KARGO ADRESİ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+</section>
+<script>
+    function renderCartItems() {
+        var customerOrdes= @Html.Raw(Json.Serialize(Model));
+        var tableBody = document.querySelector('.shoping__cart__table tbody');
+        var totalAmount = 0;
+        // Tabloyu temizle
+        tableBody.innerHTML = '';
+
+
+
+        // Sepet ürünlerini dolaşarak tabloya ekleyin
+        for (var i = 0; i < customerOrdes.length; i++) {
+            var item = customerOrdes[i];
+
+
+
+            // Ürün satırını oluşturun
+            var row = document.createElement('tr');
+
+
+
+            // Ürün resmi sütunu
+            var imageCell = document.createElement('td');
+            imageCell.className = 'shoping__cart__item_cart';
+            var image = document.createElement('img');
+            image.src = item.productPhotoPath;
+            image.alt = item.productTitle;
+            imageCell.appendChild(image);
+            var productTitleCell = document.createElement('h5');
+            var productFullNameCell = document.createElement('h6');
+            productTitleCell.innerText = item.productTitle.toUpperCase();
+            productFullNameCell.innerText = `${item.productName} ${item.productQuantity} ${item.productUnit}`;
+            imageCell.appendChild(productTitleCell);
+            imageCell.appendChild(productFullNameCell);
+            row.appendChild(imageCell);
+
+
+
+            // Market sütunu
+            var marketCell = document.createElement('td');
+            marketCell.innerText = item.marketName;
+            row.appendChild(marketCell);
+
+
+
+            // Fiyat sütunu
+            var priceCell = document.createElement('td');
+            priceCell.className = 'shoping__cart__price';
+            priceCell.innerText = item.productPrice + ' TL';
+            row.appendChild(priceCell);
+
+
+
+            // Adet sütunu
+            var quantityCell = document.createElement('td');
+            quantityCell.className = 'shoping__cart__quantity';
+            var quantityDiv = document.createElement('div');
+            quantityDiv.className = 'quantity';
+            var proQtyDiv = document.createElement('div');
+            proQtyDiv.className = 'pro-qty';
+            var quantityInput = document.createElement('input');
+            quantityInput.type = 'text';
+            quantityInput.value = item.productAmount; // Varsayılan değeri burada belirleyebilirsiniz
+            quantityInput.disabled = true; // Miktarın değiştirilememesini sağlar
+            proQtyDiv.appendChild(quantityInput);
+            quantityDiv.appendChild(proQtyDiv);
+            quantityCell.appendChild(quantityDiv);
+            row.appendChild(quantityCell);
+
+
+
+            // Toplam sütunu
+            var totalCell = document.createElement('td');
+            totalCell.className = 'shoping__cart__total';
+            totalCell.innerText = (item.productPrice * item.productAmount) + ' TL'; // Toplam tutarı burada hesaplayabilirsiniz
+            row.appendChild(totalCell);
+            //var totalPrice = item.productPrice * item.productQuantity;
+            //totalAmount += totalPrice;
+
+           
+            // Sipariş tarihi sütunu 
+            var orderDateCell = document.createElement('td');
+            var date = item.orderCreatedDate.split("T")[0];
+            orderDateCell.innerText = date;
+            row.appendChild(orderDateCell);
+
+            // Kargo adresi sütunu
+              var addressCell = document.createElement('td');
+              addressCell.innerText = item.customerAddress; 
+              row.appendChild(addressCell);
+
+
+            // Satırı tabloya ekle
+            tableBody.appendChild(row);
+        }
+
+
+
+        // Toplam alışveriş tutarına göre alışverişi tamamla butonunun oluşturulması
+        var checkoutDiv = document.querySelector('.shoping__checkout');
+        var existingPaymentLink = document.querySelector('#paymentId');
+
+
+
+        if (!(alısverisTutarı > 0)) {
+            if (existingPaymentLink) {
+                existingPaymentLink.href = "#";
+            }
+        } else {
+            existingPaymentLink.href = '@Url.Action("CreditCardPaymentPage", "Cart", new { area = "Customer" })';
+            existingPaymentLink.innerText = "SİPARİŞİ TAMAMLA";
+        }
+    }
+
+
+
+    // Sayfa yüklendiğinde sepet ürünlerini render et
+    window.addEventListener('DOMContentLoaded', function () {
+        renderCartItems();
+    });
+
+
+</script>

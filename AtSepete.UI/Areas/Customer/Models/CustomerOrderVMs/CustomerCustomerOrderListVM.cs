@@ -14,5 +14,6 @@
         public string ProductTitle { get; set; }
         public string ProductUnit { get; set; }
         public int ProductAmount { get; set; }
+        public DateTime OrderCreatedDate { get; set; }
     }
 }

@@ -53,7 +53,7 @@ namespace AtSepete.UI.Extensions
                 options.SlidingExpiration = false;
                 options.Cookie.Name = "AtSepeteCookie";
                 options.ExpireTimeSpan = TimeSpan.FromHours(30);
-                //options.AccessDeniedPath = "/Home/ErişimEngellendi";
+                options.AccessDeniedPath = "/Login/AccessDeniedPage";/* new PathString("/Login/AccessDeniedPage")*/
                 options.LoginPath = "/Login/Login/"; // Kimlik doğrulama başarısız olduğunda yönlendirme yapılacak sayfa
                 options.Cookie.HttpOnly = true;
             });

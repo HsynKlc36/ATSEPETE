@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AtSepete.Dtos.Dto.CustomerOrders
+namespace AtSepete.RabbitMQ.ESB.MassTransit.Shared.Messages
 {
-    public class CustomerOrderListDto
+    public class CreateOrdersMessage:IMessage
     {
         public Guid ProductId { get; set; }
         public Guid MarketId { get; set; }

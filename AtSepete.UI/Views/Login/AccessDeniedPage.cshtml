@@ -1,0 +1,48 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Erişim Engellendi!</title>
+    <link href="~/css/AccessDenied.css" rel="stylesheet" />
+</head>
+
+<body>
+    <h1>403</h1>
+    <div>
+        <p>> <span>HATA KODU</span>: "<i>HTTP 403 Yasaklı</i>"</p>
+        <p>> <span>HATA AÇIKLAMASI</span>: "<i>Erişim engellendi. Sunucu da Bu Sayfaya Erişim İzniniz Yok!</i>"</p>
+        <p>> <span>OLASI HATA NEDENİ</span>: [<b>yürütme erişimi yasak, okuma erişimi yasak, yazma erişimi yasak, ssl gerekli, ssl 128 gerekli, ip adresi reddedildi, istemci sertifikası gerekli, site erişimi reddedildi, çok fazla kullanıcı, geçersiz yapılandırma, parola değişikliği, eşleyici erişimi reddedildi, istemci sertifikası iptal edildi, dizin listeleme reddedildi, istemci erişim lisansları aşıldı, istemci sertifikası güvenilmez veya geçersiz, istemci sertifikasının süresi doldu veya henüz geçerli değil, pasaport oturumu açılamadı, kaynak erişimi reddedildi, sonsuz derinlik reddedildi, aynı istemci ipinden çok fazla istek geldi</b>...]</p>
+       
+
+            <p>> <span>SUNUCU ÜZERİNDEKİ BU SAYFAYA ERİŞİM İZNİNİZ YOKTUR</span> </p>
+
+            <p>> <span>İYİ GÜNLER DİLERİZ :-)</span></p>
+        
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var divElement = document.querySelector('div');
+            var content = divElement.innerHTML;
+            divElement.innerHTML = '';
+
+            var index = 0;
+            var typingInterval = setInterval(function () {
+                divElement.innerHTML = content.slice(0, index) + '|';
+                index++;
+                if (index > content.length) {
+                    clearInterval(typingInterval);
+                    divElement.innerHTML = content;
+                }
+            }, 10);
+        });
+
+    </script>
+</body>
+
+
+
+</html>
+
+

@@ -9,6 +9,7 @@ using AtSepete.Repositories.Abstract;
 using AtSepete.Results;
 using AtSepete.Results.Concrete;
 using Castle.Core.Logging;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,9 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Business.Concrete
 {
-    public class CustomerOrderService : ICustomerOrderService
+    public class CustomerOrderService :BackgroundService, ICustomerOrderService
     {
+        private readonly ISendEndPointProvider _sendEndPointProvider;
         private readonly IProductMarketRepository _productMarketRepository;
         private readonly IMarketRepository _marketRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
@@ -29,7 +31,7 @@ namespace AtSepete.Business.Concrete
         private readonly ILoggerService _loggerService;
 
 
-        public CustomerOrderService(IProductMarketRepository productMarketRepository,IMarketRepository marketRepository,IOrderDetailRepository orderDetailRepository,IOrderRepository orderRepository,IProductRepository productRepository,IUserRepository userRepository,IMapper mapper,ILoggerService loggerService)
+        public CustomerOrderService(IProductMarketRepository productMarketRepository,IMarketRepository marketRepository,IOrderDetailRepository orderDetailRepository,IOrderRepository orderRepository,IProductRepository productRepository,IUserRepository userRepository,IMapper mapper,ILoggerService loggerService,ISendEndPointProvider sendEndPointProvider)
         {
             _productMarketRepository = productMarketRepository;
             _marketRepository = marketRepository;
@@ -49,12 +51,15 @@ namespace AtSepete.Business.Concrete
                     _loggerService.LogWarning(LogMessages.CustomerOrder_Listed_Not_Found);
                     return new ErrorDataResult<List<CustomerOrderListDto>>(Messages.CustomerOrderList_Not_Found);
                 }
+         
+                var customerAddress=_userRepository.GetByIdAsync(customerId).Result.Adress;
                 var query = (from ord in (await _orderDetailRepository.GetAllAsync())
                              join or in (await _orderRepository.GetAllAsync()) on ord.OrderId equals or.Id
                              join u in (await _userRepository.GetAllAsync()) on or.CustomerId equals u.Id
                              join m in (await _marketRepository.GetAllAsync()) on or.MarketId equals m.Id
-                             join pm in (await _productMarketRepository.GetAllAsync()) on m.Id equals pm.MarketId
+                             join pm in (await _productMarketRepository.GetAllAsync()) on new { or.MarketId, ord.ProductId } equals new { pm.MarketId, pm.ProductId }
                              join p in (await _productRepository.GetAllAsync()) on ord.ProductId equals p.Id
+                             where or.CustomerId == customerId // Müşteri kimliğine göre filtreleme
                              select new
                              {
                                  CustomerId = u.Id,
@@ -68,14 +73,16 @@ namespace AtSepete.Business.Concrete
                                  ProductTitle = p.Title,
                                  ProductPhotoPath = p.PhotoPath,
                                  ProductPrice = pm.Price,
+                                 CustomerAddress=customerAddress,
                                  ProductAmount = ord.Amount,
-                                 CustomerAddress = u.Adress,
-                                 OrderCreatedDate = ord.CreatedDate,
+                                 OrderCreatedDate = ord.CreatedDate
                              }).ToList();
-                var customerOrders = query.Where(x => x.CustomerId == customerId).OrderBy(x => x.OrderCreatedDate).ToList();
+
+                var customerOrders = query.OrderByDescending(x => x.OrderCreatedDate).ToList();
                 var myOrders = _mapper.Map<List<CustomerOrderListDto>>(customerOrders);
                 _loggerService.LogWarning(LogMessages.CustomerOrder_Listed_Success);
                 return new SuccessDataResult<List<CustomerOrderListDto>>(myOrders,Messages.CustomerOrderListedSuccess);
+
             }
             catch (Exception)
             {
@@ -85,6 +92,11 @@ namespace AtSepete.Business.Concrete
             }
 
             
+        }
+
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

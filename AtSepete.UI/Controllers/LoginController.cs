@@ -273,5 +273,11 @@ namespace AtSepete.UI.Controllers
             NotifySuccess("Çıkış Başarılı");
             return RedirectToAction("Index", "Home");
         }
+        [HttpGet]
+        public async Task<IActionResult> AccessDeniedPage()
+        {
+
+            return View();
+        }
     }
 }
