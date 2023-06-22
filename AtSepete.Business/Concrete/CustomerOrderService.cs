@@ -9,6 +9,7 @@ using AtSepete.Repositories.Abstract;
 using AtSepete.Results;
 using AtSepete.Results.Concrete;
 using Castle.Core.Logging;
+using MassTransit;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,9 @@ using System.Threading.Tasks;
 
 namespace AtSepete.Business.Concrete
 {
-    public class CustomerOrderService :BackgroundService, ICustomerOrderService
+    public class CustomerOrderService :ICustomerOrderService
     {
-        private readonly ISendEndPointProvider _sendEndPointProvider;
+
         private readonly IProductMarketRepository _productMarketRepository;
         private readonly IMarketRepository _marketRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
@@ -31,7 +32,7 @@ namespace AtSepete.Business.Concrete
         private readonly ILoggerService _loggerService;
 
 
-        public CustomerOrderService(IProductMarketRepository productMarketRepository,IMarketRepository marketRepository,IOrderDetailRepository orderDetailRepository,IOrderRepository orderRepository,IProductRepository productRepository,IUserRepository userRepository,IMapper mapper,ILoggerService loggerService,ISendEndPointProvider sendEndPointProvider)
+        public CustomerOrderService(IProductMarketRepository productMarketRepository,IMarketRepository marketRepository,IOrderDetailRepository orderDetailRepository,IOrderRepository orderRepository,IProductRepository productRepository,IUserRepository userRepository,IMapper mapper,ILoggerService loggerService)
         {
             _productMarketRepository = productMarketRepository;
             _marketRepository = marketRepository;
@@ -41,6 +42,7 @@ namespace AtSepete.Business.Concrete
             _userRepository = userRepository;
             _mapper = mapper;
             _loggerService = loggerService;
+
         }
         public async Task<IDataResult<List<CustomerOrderListDto>>> CustomerOrdersAsync(Guid customerId)
         {
@@ -79,7 +81,7 @@ namespace AtSepete.Business.Concrete
                              }).ToList();
 
                 var customerOrders = query.OrderByDescending(x => x.OrderCreatedDate).ToList();
-                var myOrders = _mapper.Map<List<CustomerOrderListDto>>(customerOrders);
+                var myOrders = _mapper.Map<List<CustomerOrderListDto>>(customerOrders);               
                 _loggerService.LogWarning(LogMessages.CustomerOrder_Listed_Success);
                 return new SuccessDataResult<List<CustomerOrderListDto>>(myOrders,Messages.CustomerOrderListedSuccess);
 
@@ -94,9 +96,6 @@ namespace AtSepete.Business.Concrete
             
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

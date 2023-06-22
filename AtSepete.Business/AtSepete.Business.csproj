@@ -11,6 +11,7 @@
     <PackageReference Include="CloudinaryDotNet" Version="1.20.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="FormHelper" Version="4.0.1" />
+    <PackageReference Include="MassTransit" Version="8.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
@@ -34,6 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AtSepete.Dtos\AtSepete.Dtos.csproj" />
     <ProjectReference Include="..\AtSepete.Entities\AtSepete.Entities.csproj" />
+    <ProjectReference Include="..\AtSepete.RabbitMQ.ESB.MassTransit.Shared\AtSepete.RabbitMQ.ESB.MassTransit.Shared.csproj" />
     <ProjectReference Include="..\AtSepete.Repositories\AtSepete.Repositories.csproj" />
   </ItemGroup>
 

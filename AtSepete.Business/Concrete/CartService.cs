@@ -102,6 +102,7 @@ namespace AtSepete.Business.Concrete
                     $"AtSepete";
                 await _emailSender.SendEmailAsync(customerEmail, "Sipariş Durumu", content);
 
+
                 _loggerService.LogInfo(LogMessages.ShoppingCart_Success);
                 return new SuccessResult(Messages.ShoppingCartSuccess);
 

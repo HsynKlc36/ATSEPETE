@@ -24,6 +24,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
+using MassTransit;
+using Microsoft.Extensions.Hosting;
+using MassTransit.Transports;
 
 namespace AtSepete.Business.Extensions
 {
@@ -185,7 +188,9 @@ namespace AtSepete.Business.Extensions
             services.AddScoped<ICustomerOrderService, CustomerOrderService>();
             services.AddSingleton<ILoggerService, LoggerService>();
             services.AddSingleton<IEmailSender, EmailSenderService>();
-            
+            services.AddSingleton<ISendEndpointProvider>();
+
+
             return services;
         }
 

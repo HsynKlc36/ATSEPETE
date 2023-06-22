@@ -11,6 +11,8 @@ using AtSepete.UI.MapperUI.Profiles;
 using AtSepete.Business.Extensions;
 using AtSepete.Repositories.Extensions;
 using System.Globalization;
+using MassTransit;
+using AtSepete.UI.AdminConsumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,27 @@ builder.Services.AddRazorPages();
 builder.Services
     .AddCookieMVCServices(builder.Configuration)
     .AddMvcServices();
-   
+
+//masstransit configuration
+IHost host = Host.CreateDefaultBuilder(args)
+ .ConfigureServices(services =>
+ {
+     services.AddMassTransit(configurator =>
+     {
+         configurator.AddConsumer<AdminMessageConsumer>();//consumer tanýmladýk.
+         configurator.UsingRabbitMq((context,
+            _configurator) =>
+         {
+             _configurator.Host("amqps://gikvqzuf:eKjmPiSgqFLMMfm0w8uwySxpH614wgTz@moose.rmq.cloudamqp.com/gikvqzuf");
+             _configurator.ReceiveEndpoint("createOrder-Queue", e => e.ConfigureConsumer<AdminMessageConsumer>(context));//consumer'ýn hangi queue dinleyeceðini burada belirtmemiz gerekiyor .
+         });
+     });
+
+ })
+ .Build();
+
+
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -70,3 +92,4 @@ app.MapControllerRoute(
 app.MapDefaultControllerRoute();
 
 app.Run();
+await host.RunAsync();
