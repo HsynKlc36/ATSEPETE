@@ -2,6 +2,7 @@
 using AtSepete.Dtos.Dto.CustomerOrders;
 using AtSepete.RabbitMQ.ESB.MassTransit.Shared.Messages;
 using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -14,39 +15,54 @@ namespace AtSepete.Business.Concrete
     public class SendOrderMessageService : BackgroundService, ISendOrderMessageService
     {
         private readonly ISendEndpointProvider _sendEndPointProvider;
-        private List<Guid> _orderIds;
+        private string _createdOrders;
         private bool _triggered;
 
         public SendOrderMessageService(ISendEndpointProvider sendEndPointProvider)
         {
-            _sendEndPointProvider = sendEndPointProvider;
+
             _triggered = false;
+            _sendEndPointProvider = sendEndPointProvider;
         }
-        public async Task GetOrders(CancellationToken stoppingToken, List<Guid> orderIds)
-        {
-            _orderIds = orderIds; // orderIds değerini saklıyoruz
+
+        public async Task GetCreatedOrders(string message)
+        {           
+            _createdOrders = message;
             _triggered = true;
-            await ExecuteAsync(stoppingToken); // ExecuteAsync metodu çağrıldığında önceki değeri kullanıyoruz
+            await TriggerExecution();
+           
         }
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+
+        public async Task TriggerExecution()
         {
-            if (_triggered)
+            if (_triggered && !string.IsNullOrEmpty(_createdOrders)) 
             {
-
-                if (_orderIds != null && _orderIds.Any())
+                var sendEndPoint = await _sendEndPointProvider.GetSendEndpoint(new Uri("queue:createOrders"));
+                await sendEndPoint.Send(new CreateOrdersMessage
                 {
-                    var sendEndPoint = await _sendEndPointProvider.GetSendEndpoint(new("queue:createOrder-Queue"));
-
-                    await sendEndPoint.Send(new CreateOrdersMessage()
-                    {
-                        OrderId = _orderIds
-                    });
-
-                }
-                _orderIds.Clear();
+                    Text = _createdOrders
+                });
+                _createdOrders = null!;
                 _triggered = false;
             }
 
         }
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+
+                if (_triggered && !string.IsNullOrEmpty(_createdOrders))
+                {
+                    await TriggerExecution();
+
+                }
+
+                // İşlemler tamamlandıktan sonra bekleme süresi
+                await Task.Delay(TimeSpan.FromSeconds(1000), stoppingToken);
+            }
+
+        }
+
     }
 }

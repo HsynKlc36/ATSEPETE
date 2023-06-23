@@ -1,0 +1,54 @@
+﻿@model IList<string>?
+@if (Model == null || Model.Count == 0)
+{
+
+    <li class="dropdown notifications-menu">
+        <a asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetailList" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-bell-o"></i>
+            <span id="createdOrdersId" class="label label-warning">@Model.Count</span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <ul class="menu">
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-user text-red">Henüz Sipariş Tanımlanmadı!</i>
+                        </a>
+                    </li>
+
+
+                </ul>
+            </li>
+            <li class="footer"><a asp-area="Admin" asp-controller="Order" asp-action="OrderList">Tüm Siparişler</a></li>
+        </ul>
+    </li>
+}
+else
+{
+        <li class="dropdown notifications-menu">
+            <a asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetailList" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-bell-o"></i>
+                <span id="createdOrdersId" class="label label-warning">@Model.Count</span>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <ul class="menu">
+
+                    @foreach (var item in Model)
+                    {
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-user text-red"></i> @item.ToString()
+                            </a>
+                        </li>
+                    }
+
+                    </ul>
+                </li>
+                <li class="footer"><a asp-area="Admin" asp-controller="Order" asp-action="OrderList">Tüm Siparişler</a></li>
+            </ul>
+        </li>
+
+    
+
+}

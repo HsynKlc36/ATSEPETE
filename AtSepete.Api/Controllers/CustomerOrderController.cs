@@ -14,32 +14,18 @@ namespace AtSepete.Api.Controllers
     public class CustomerOrderController : ControllerBase
     {
         private readonly ICustomerOrderService _customerOrderService;
-        private readonly ISendOrderMessageService _sendOrderMessageService;
 
-        public CustomerOrderController(ICustomerOrderService customerOrderService,ISendOrderMessageService sendOrderMessageService)
+
+        public CustomerOrderController(ICustomerOrderService customerOrderService)
         {
             _customerOrderService = customerOrderService;
-            _sendOrderMessageService = sendOrderMessageService;
+
         }
         [HttpGet]
         [Route("[action]/{customerId}")]
         public async Task<IDataResult<List<CustomerOrderListDto>>> CustomerOrderList([FromRoute]Guid customerId)
         {
-            var customerOrders= await _customerOrderService.CustomerOrdersAsync(customerId);
-            if (customerOrders.IsSuccess)
-            {
-                // Siparişleri almak için başarılı sonuç
-                var orderIds = customerOrders.Data.Select(o => o.OrderId).ToList();
-
-                // SendOrderMessageService'i kullanarak ExecuteAsync metodunu çağır
-                await _sendOrderMessageService.GetOrders(CancellationToken.None, orderIds);
-
-                // Siparişleri dön
-                return customerOrders;
-            }
-           
-                return customerOrders;
-            
+                return await _customerOrderService.CustomerOrdersAsync(customerId);
         }
     }
 }

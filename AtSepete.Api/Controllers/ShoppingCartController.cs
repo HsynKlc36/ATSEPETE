@@ -1,4 +1,5 @@
 ﻿using AtSepete.Business.Abstract;
+using AtSepete.Business.Concrete;
 using AtSepete.Dtos.Dto.Carts;
 using AtSepete.Dtos.Dto.OrderDetails;
 using AtSepete.Dtos.Dto.Orders;
@@ -16,17 +17,25 @@ namespace AtSepete.Api.Controllers
     public class ShoppingCartController : ControllerBase
     {
         private readonly ICartService _cartService;
+        private readonly ISendOrderMessageService _sendOrderMessageService;
 
-        public ShoppingCartController(ICartService cartService)
+        public ShoppingCartController(ICartService cartService,ISendOrderMessageService sendOrderMessageService)
         {
             _cartService = cartService;
+            _sendOrderMessageService = sendOrderMessageService;
         }
         [HttpPost]
         [Route("[action]")]
         [Authorize(AuthenticationSchemes = "Customer")]
         public async Task<IResult> CreateOrderList(List<CreateShoppingCartDto> createShoppingCarts)
         {
-            return await _cartService.AddOrderAndOrderDetailAsync(createShoppingCarts);
+              var createdOrders= await _cartService.AddOrderAndOrderDetailAsync(createShoppingCarts);
+            if (createdOrders.IsSuccess)
+            {
+                await _sendOrderMessageService.GetCreatedOrders($"{DateTime.Now.ToString()} Tarihli Yeni Sipariş!");//sipariş oluştuğunda dolacak ve tetiklenecektir
+                return createdOrders;
+            }
+            return createdOrders;
 
         }
      

@@ -13,6 +13,7 @@ using AtSepete.Repositories.Extensions;
 using System.Globalization;
 using MassTransit;
 using AtSepete.UI.AdminConsumers;
+using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,29 +24,21 @@ builder.Services.AddRazorPages();
 builder.Services
     .AddCookieMVCServices(builder.Configuration)
     .AddMvcServices();
+builder.Services.AddStackExchangeRedisCache(Options => Options.Configuration = "localhost:1453");//docker da ayaða kaldýrdýðýmýz portu yazarýz (REDÝS CACHE)
 
-//masstransit configuration
-IHost host = Host.CreateDefaultBuilder(args)
- .ConfigureServices(services =>
- {
-     services.AddMassTransit(configurator =>
-     {
-         configurator.AddConsumer<AdminMessageConsumer>();//consumer tanýmladýk.
-         configurator.UsingRabbitMq((context,
-            _configurator) =>
-         {
-             _configurator.Host("amqps://gikvqzuf:eKjmPiSgqFLMMfm0w8uwySxpH614wgTz@moose.rmq.cloudamqp.com/gikvqzuf");
-             _configurator.ReceiveEndpoint("createOrder-Queue", e => e.ConfigureConsumer<AdminMessageConsumer>(context));//consumer'ýn hangi queue dinleyeceðini burada belirtmemiz gerekiyor .
-         });
-     });
-
- })
- .Build();
-
-
-
-
+// MassTransit configuration
+builder.Services.AddMassTransit(configurator =>
+{
+    configurator.AddConsumer<AdminMessageConsumer>(); // Consumer tanýmladýk.
+    configurator.UsingRabbitMq((context, _configurator) =>
+    {
+        _configurator.Host("amqps://gikvqzuf:eKjmPiSgqFLMMfm0w8uwySxpH614wgTz@moose.rmq.cloudamqp.com/gikvqzuf");
+        _configurator.ReceiveEndpoint("createOrders", e => e.ConfigureConsumer<AdminMessageConsumer>(context)); // Consumer'ýn hangi queue dinleyeceðini burada belirtmemiz gerekiyor.
+    });
+});
 var app = builder.Build();
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -77,13 +70,13 @@ app.UseNToastNotify();
 app.MapControllerRoute(
     name: "admin",
     pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}"
-    //defaults: new { area = "Admin" }
+//defaults: new { area = "Admin" }
 );
 
 app.MapControllerRoute(
     name: "customer",
     pattern: "{area:exists}/{controller=Customer}/{action=Index}/{id?}"
-    //defaults: new { area = "Customer" }
+//defaults: new { area = "Customer" }
 );
 
 app.MapControllerRoute(
@@ -91,5 +84,14 @@ app.MapControllerRoute(
      pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapDefaultControllerRoute();
 
+
+
 app.Run();
-await host.RunAsync();
+
+
+
+
+
+
+
+

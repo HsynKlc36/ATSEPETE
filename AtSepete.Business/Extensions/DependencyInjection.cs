@@ -188,7 +188,8 @@ namespace AtSepete.Business.Extensions
             services.AddScoped<ICustomerOrderService, CustomerOrderService>();
             services.AddSingleton<ILoggerService, LoggerService>();
             services.AddSingleton<IEmailSender, EmailSenderService>();
-            services.AddSingleton<ISendEndpointProvider>();
+            services.AddScoped<ISendOrderMessageService,SendOrderMessageService>();
+
 
 
             return services;

@@ -10,7 +10,6 @@ using AtSepete.Dtos.Dto;
 using AtSepete.Entities.Data;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
-
 using AtSepete.Repositories.Extensions;
 using AutoMapper;
 using MassTransit;
@@ -39,38 +38,21 @@ builder.Services.AddRepositoriesServices()
 builder.Services.AddEndpointsApiExplorer();
 
 //masstransit ile publisher ayarý(rabbitmq)
-
-Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
-.ConfigureServices(services =>
+builder.Services.AddMassTransit(configurator =>
 {
-    services.AddMassTransit(configurator =>
-    {
         configurator.UsingRabbitMq((context,
            _configurator) =>
         {
             _configurator.Host("amqps://gikvqzuf:eKjmPiSgqFLMMfm0w8uwySxpH614wgTz@moose.rmq.cloudamqp.com/gikvqzuf");
-        
         });
-    });
-
-    services.AddScoped<ISendOrderMessageService,SendOrderMessageService>();
-    services.AddSingleton<ISendEndpointProvider>(provider =>
-    {
-        using (IServiceScope scope = provider.CreateScope())
-        {
-            // ISendEndpointProvider'ý çözün
-            ISendEndpointProvider sendEndPointProvider = scope.ServiceProvider.GetService<ISendEndpointProvider>();
-            return sendEndPointProvider;
-        }
-    });
-    services.AddHostedService<SendOrderMessageService>(provider =>
-    {
+});
+builder.Services.AddHostedService<SendOrderMessageService>(provider =>
+{
         using IServiceScope scope = provider.CreateScope();
         ISendEndpointProvider sendEndPointProvider = scope.ServiceProvider.GetService<ISendEndpointProvider>();
         return new SendOrderMessageService(sendEndPointProvider);//bu parametre ile ayaða kalkar
-    });//publishMessageService  burada bildirdik
-})
-.Build();
+
+});
 
 
 
@@ -123,5 +105,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 await AdminSeedData.SeedAsync(app.Configuration);
+
 app.Run();
-host.Run();

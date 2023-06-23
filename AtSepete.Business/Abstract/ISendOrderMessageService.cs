@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castle.DynamicProxy.Contributors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ namespace AtSepete.Business.Abstract
 {
     public interface ISendOrderMessageService
     {
-        Task GetOrders(CancellationToken stoppingToken, List<Guid> orderIds);
+
+        Task TriggerExecution();
+        Task GetCreatedOrders(string message);
     }
 }

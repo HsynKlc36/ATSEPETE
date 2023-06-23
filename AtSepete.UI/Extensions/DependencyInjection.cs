@@ -6,6 +6,7 @@ using AtSepete.Business.Mapper.Profiles;
 using AtSepete.DataAccess.Context;
 using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
+using AtSepete.UI.AdminConsumers;
 using AtSepete.UI.Controllers;
 using AtSepete.UI.MapperUI.Profiles;
 using AtSepete.UI.Resources;
@@ -42,6 +43,8 @@ namespace AtSepete.UI.Extensions
                Assembly.GetExecutingAssembly(),
                typeof(CategoryVMProfile).Assembly);
             //Bu mapper'lar incelenecek!!!!
+
+            services.AddScoped<AdminMessageConsumer>();
 
             return services;
         }

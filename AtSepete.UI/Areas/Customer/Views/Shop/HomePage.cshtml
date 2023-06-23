@@ -117,10 +117,10 @@
                                                 <img src="@newProductFilter[i].ProductPhotoPath" alt="">
                                             </div>
                                             <div class="latest-product__item__text">
-                                                <h5>@newProductFilter[i].ProductTitle.ToUpper()</h5>
+                                                <h5 style="color:#e1aab6;">@newProductFilter[i].ProductTitle.ToUpper()</h5>
                                                 <h6>@newProductFilter[i].ProductName  @newProductFilter[i].ProductQuantity @newProductFilter[i].ProductUnit</h6>
-                                                <h5><span>@newProductFilter[i].MarketName.ToUpper()</span></h5>
-                                                @newProductFilter[i].ProductPrice TL
+                                                <h5 style="color:#e1aab6;">@newProductFilter[i].MarketName.ToUpper()</h5>
+                                                <h6>@newProductFilter[i].ProductPrice TL</h6>
                                             </div>
                                         </a>
                                     }
@@ -135,10 +135,10 @@
                                                 <img src="@newProductFilter[i].ProductPhotoPath" alt="">
                                             </div>
                                             <div class="latest-product__item__text">
-                                                <h5>@newProductFilter[i].ProductTitle.ToUpper()</h5>
+                                                <h5 style="color:#e1aab6;">@newProductFilter[i].ProductTitle.ToUpper()</h5>
                                                 <h6>@newProductFilter[i].ProductName  @newProductFilter[i].ProductQuantity @newProductFilter[i].ProductUnit</h6>
-                                                <h5><span>@newProductFilter[i].MarketName.ToUpper()</span></h5>
-                                                @newProductFilter[i].ProductPrice TL
+                                                <h5 style="color:#e1aab6;">@newProductFilter[i].MarketName.ToUpper()</h5>
+                                                <h6>@newProductFilter[i].ProductPrice TL</h6>
                                             </div>
                                         </a>
                                     }
@@ -171,8 +171,8 @@
                                                 <li></li>
                                             </ul>
                                         </div>
-                                        <div class="product__discount__item__text">  
-                                            <b><a asp-area="Customer" asp-action="ShopProductDetails" asp-controller="Shop" asp-route-id="@item.ProductId">@item.ProductTitle.ToUpper()</a></b>
+                                        <div class="product__discount__item__text">
+                                            <b><a style="color:#e1aab6;" asp-area="Customer" asp-action="ShopProductDetails" asp-controller="Shop" asp-route-id="@item.ProductId">@item.ProductTitle.ToUpper()</a></b>
                                             <h5><a asp-area="Customer" asp-action="ShopProductDetails" asp-controller="Shop" asp-route-id="@item.ProductId">@item.ProductName @item.ProductQuantity @item.ProductUnit</a></h5>
                                         </div>
                                     </div>
@@ -365,6 +365,7 @@
         divProductItemText.className = "product__item__text";
 
         var h5ProductTitle = document.createElement("h5");
+        h5ProductTitle.style.color = "#e1aab6";
         h5ProductTitle.innerText = item.productTitle.toUpperCase();
         divProductItemText.appendChild(h5ProductTitle);
 
@@ -374,6 +375,7 @@
 
         var h5MarketName = document.createElement("h5");
         var spanMarketName = document.createElement("span");
+        spanMarketName.style.color = "#e1aab6";
         spanMarketName.innerText = item.marketName;
         h5MarketName.appendChild(spanMarketName);
         divProductItemText.appendChild(h5MarketName);
