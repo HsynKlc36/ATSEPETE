@@ -58,7 +58,7 @@ namespace AtSepete.UI.AdminConsumers
         {
             var cacheOptions = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(7)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
             };
 
             // Mesaj listesini önbelleğe ekle
