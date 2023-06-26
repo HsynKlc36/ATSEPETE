@@ -163,7 +163,7 @@
 
             // Sepete ekle düğmesine tıklama işlemi
             addToCartButton.onclick = function () {
-                addToCartProductDetails(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath, item.productStock);
+                addToCartProductDetails(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath,item.productStock);
             };
 
             productDiv.appendChild(addToCartButton);
@@ -172,4 +172,40 @@
         container.appendChild(productDiv);
     }
 
+</script>
+<script>
+        function addToCartProductDetails(productId, marketId, productTitle, productName, productQuantity, productUnit, marketName, productPrice, productPhotoPath, productStock) {
+
+        var quantity = 1; // Varsayılan olarak eklenen ürünün miktarı 1
+
+        // Local Storage'dan sepet verilerini al(js nesnesi olarak)
+        var cart = getCartFromLocalStorage();
+
+        // Ürünü sepete ekle
+        var existingItem = cart.find(item => item.productId === productId && item.marketId === marketId);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        }
+        else {
+            cart.push({
+
+                productId: productId,
+                marketId: marketId,
+                productTitle: productTitle,
+                productName: productName,
+                productQuantity: productQuantity,
+                productUnit: productUnit,
+                productPhotoPath: productPhotoPath,
+                marketName: marketName,
+                productPrice: productPrice,
+                productStock: productStock,
+                quantity: quantity
+            });
+        }
+        //güncellenen  Sepet verilerini Local Storage'a kaydet
+        saveCartToLocalStorage(cart);
+        //fonksiyonu çağrılarak, sepet öğe sayısı  güncellenir.
+        updateCartItemCount();
+        location.reload();
+    }
 </script>

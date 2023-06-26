@@ -127,7 +127,7 @@
             proQtyDiv.appendChild(quantityInput); 
             var decreaseButton = document.createElement('span');
             decreaseButton.textContent = '-';
-            decreaseButton.addEventListener('click', createDecreaseHandler(item.productId,item.productStock, item.marketId, quantityInput));
+            decreaseButton.addEventListener('click', createDecreaseHandler(item.productId, item.marketId, quantityInput));
             var increaseButton = document.createElement('span');
             increaseButton.textContent = '+'; 
             increaseButton.addEventListener('click', createIncreaseHandler(item.productId,item.productStock, item.marketId, quantityInput));
@@ -199,3 +199,23 @@
 </script>
 
 
+<script>
+  
+    function createIncreaseHandler(productId, productStock, marketId, quantityInput) {
+        return function () {
+            var quantity = parseInt(quantityInput.value);
+            if (quantity < productStock) {
+                quantity++;
+                quantityInput.value = quantity;
+                updateCartItemQuantity(productId, marketId, quantity);
+            } else {
+                // Sayfa yenilenerek sayı item.productStock miktarına eşitlensin
+                location.reload();
+            }
+            renderCartItems();
+        };
+    }
+   
+
+  
+</script>
