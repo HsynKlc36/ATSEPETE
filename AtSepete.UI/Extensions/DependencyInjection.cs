@@ -8,8 +8,13 @@ using AtSepete.Repositories.Abstract;
 using AtSepete.Repositories.Concrete;
 using AtSepete.UI.AdminConsumers;
 using AtSepete.UI.Controllers;
+using AtSepete.UI.FluentFilter;
+using AtSepete.UI.FluentValidatiors.LoginValidatiors;
 using AtSepete.UI.MapperUI.Profiles;
 using AtSepete.UI.Resources;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using FormHelper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -18,6 +23,7 @@ using Microsoft.EntityFrameworkCore;
 using NToastNotify;
 using SendGrid;
 using System.Configuration;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 
@@ -25,11 +31,12 @@ namespace AtSepete.UI.Extensions
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddMvcServices(this IServiceCollection services)
+        public static IServiceCollection AddMvcServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllersWithViews().AddNToastNotifyToastr(new ToastrOptions() {
+            services.AddControllersWithViews(options=>options.Filters.Add<ValidationFilter>()).AddNToastNotifyToastr(new ToastrOptions()
+            {
                 PositionClass = ToastPositions.BottomRight,
-                TimeOut=5000,
+                TimeOut = 5000,
                 ShowDuration = 1000, // Bildirimin görüntülenme animasyon süresini milisaniye cinsinden belirler
                 HideDuration = 1000, // Bildirimin kapanma animasyon süresini milisaniye cinsinden belirler
             })
@@ -46,6 +53,13 @@ namespace AtSepete.UI.Extensions
 
             services.AddScoped<AdminMessageConsumer>();
 
+            //services.AddFluentValidationAutoValidation().AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddControllersWithViews().AddFluentValidation(opt => 
+            {
+                opt.RegisterValidatorsFromAssemblyContaining<RegisterVMValidator>();
+                opt.DisableDataAnnotationsValidation = true;
+                opt.ValidatorOptions.LanguageManager.Culture = new CultureInfo("tr");
+             }); 
             return services;
         }
         public static IServiceCollection AddCookieMVCServices(this IServiceCollection services, IConfiguration configuration)
@@ -60,9 +74,9 @@ namespace AtSepete.UI.Extensions
                 options.LoginPath = "/Login/Login/"; // Kimlik doğrulama başarısız olduğunda yönlendirme yapılacak sayfa
                 options.Cookie.HttpOnly = true;
             });
-           
+
             return services;
         }
-       
+
     }
 }

@@ -13,7 +13,7 @@ function updateCartItemCount() {
     var cart = getCartFromLocalStorage();
     var cartItemCount = cart.length;
 }
-function addToCartHomePage(productId, marketId, productTitle, productName, productQuantity, productUnit, marketName, productPrice, productPhotoPath) {
+function addToCartHomePage(productId, marketId, productTitle, productName, productQuantity, productUnit, marketName, productPrice, productPhotoPath, productStock) {
 
     var quantity = 1; // Varsayılan olarak eklenen ürünün miktarı 1
 
@@ -37,6 +37,7 @@ function addToCartHomePage(productId, marketId, productTitle, productName, produ
             productPhotoPath: productPhotoPath,
             marketName: marketName,
             productPrice: productPrice,
+            productStock: productStock,
             quantity: quantity
         });
     }
@@ -45,7 +46,7 @@ function addToCartHomePage(productId, marketId, productTitle, productName, produ
     //fonksiyonu çağrılarak, sepet öğe sayısı  güncellenir.
     updateCartItemCount();
 }
-function addToCartProductDetails(productId, marketId, productTitle, productName, productQuantity, productUnit, marketName, productPrice, productPhotoPath) {
+function addToCartProductDetails(productId, marketId, productTitle, productName, productQuantity, productUnit, marketName, productPrice, productPhotoPath, productStock) {
 
     var quantity = 1; // Varsayılan olarak eklenen ürünün miktarı 1
 
@@ -69,6 +70,7 @@ function addToCartProductDetails(productId, marketId, productTitle, productName,
             productPhotoPath: productPhotoPath,
             marketName: marketName,
             productPrice: productPrice,
+            productStock: productStock,
             quantity: quantity
         });
     }

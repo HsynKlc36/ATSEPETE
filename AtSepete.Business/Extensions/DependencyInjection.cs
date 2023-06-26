@@ -39,7 +39,7 @@ namespace AtSepete.Business.Extensions
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; 
                 options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
 
             })

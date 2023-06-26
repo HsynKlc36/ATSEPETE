@@ -83,7 +83,6 @@
         // Sepet ürünlerini dolaşarak tabloya ekleyin
         for (var i = 0; i < cart.length; i++) {
             var item = cart[i];
-
             // Ürün satırını oluşturun
             var row = document.createElement('tr');
 
@@ -128,10 +127,10 @@
             proQtyDiv.appendChild(quantityInput); 
             var decreaseButton = document.createElement('span');
             decreaseButton.textContent = '-';
-            decreaseButton.addEventListener('click', createDecreaseHandler(item.productId, item.marketId, quantityInput));
+            decreaseButton.addEventListener('click', createDecreaseHandler(item.productId,item.productStock, item.marketId, quantityInput));
             var increaseButton = document.createElement('span');
             increaseButton.textContent = '+'; 
-            increaseButton.addEventListener('click', createIncreaseHandler(item.productId, item.marketId, quantityInput));
+            increaseButton.addEventListener('click', createIncreaseHandler(item.productId,item.productStock, item.marketId, quantityInput));
             proQtyDiv.appendChild(decreaseButton); 
             proQtyDiv.appendChild(increaseButton);
             quantityDiv.appendChild(proQtyDiv);

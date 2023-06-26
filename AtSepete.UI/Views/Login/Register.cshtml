@@ -29,6 +29,7 @@
         <div class="inner content" style="background-color:#FCD7A6">
             <div class="row">
                 <form asp-action="Register" class="text">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <h3>Kayıt Ol</h3>
                     <div class="form-group">
                         <div class="form-wrapper">
@@ -36,14 +37,14 @@
                             <span asp-validation-for="FirstName" class="text-danger"></span>
                         </div>
                         <div class="form-wrapper">
-                            <input asp-for="SecondName" type="text" placeholder="Soyadı" class="form-control" />
-                            <span asp-validation-for="SecondName" class="text-danger"></span>
+                            <input asp-for="LastName" type="text" placeholder="Soyadı" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="form-wrapper">
-                            <input asp-for="LastName" type="text" placeholder="İkinci Adı" class="form-control" />
-                            <span asp-validation-for="LastName" class="text-danger"></span>
+                            <input asp-for="SecondName" type="text" placeholder="İkinci Adı" class="form-control" />
+                            <span asp-validation-for="SecondName" class="text-danger"></span>
                         </div>
                         <div class="form-wrapper">
                             <input asp-for="SecondLastName" type="text" placeholder="İkinci Soyadı" class="form-control" />
@@ -53,7 +54,7 @@
                     <div class="form-group">
                         
                         <div class="form-wrapper">
-                            <input asp-for="Password" type="password" placeholder="Şifre" class="form-control" />
+                            <input asp-for="Password" type="password" placeholder="Şifre" class="form-control"/>
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
                         <div class="form-wrapper">
@@ -79,8 +80,8 @@
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
                         <div class="form-wrapper">
-                            <span asp-validation-for="BirthDate" class="text-danger"></span>
                             <input asp-for="BirthDate" class="form-control" type="date" />
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="form-wrapper">

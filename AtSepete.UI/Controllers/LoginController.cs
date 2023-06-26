@@ -150,6 +150,8 @@ namespace AtSepete.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM registerVM)
         {
+            
+           
             var createUserDto = _mapper.Map<RegisterVM, CreateUserDto>(registerVM);
 
             using (var httpClient = new HttpClient())

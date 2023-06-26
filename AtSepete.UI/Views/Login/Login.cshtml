@@ -13,18 +13,19 @@
         Giriş 
     </div>
     <form asp-action="Login">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="field">
-            <input asp-for="Email" type="text" class="form-control" required/>
+            <input asp-for="Email" type="text" class="form-control" placeholder="Email"/>
             <label asp-for="Email">Email</label>
-            <span class="fas fa-user"></span>
-            <span asp-validation-for="Email" class="text-danger"></span>
+            <span class="fas fa-user"></span>          
         </div>
+        <span asp-validation-for="Email" class="text-danger"></span>
         <div class="field">
-            <input asp-for="Password" type="password" class="form-control" required/>
+            <input asp-for="Password" type="password" class="form-control" placeholder="Şifre"/>
             <label asp-for="Password">Şifre </label>
             <span class="fas fa-lock"></span>
-            <span asp-validation-for="Password" class="text-danger"></span>
         </div>
+            <span asp-validation-for="Password" class="text-danger"></span>
         <div class="forgot-pass">
             <a asp-area="" asp-controller="Login" asp-action="ForgetPassword">Şifremi Unuttum</a>
         </div>
@@ -32,6 +33,7 @@
         <div class="sign-up">
              Üye değil misin?
             <a asp-area="" asp-controller="Login" asp-action="Register">Kayıt Ol</a>
+
         </div>
     </form>
 </div>

@@ -354,9 +354,8 @@
             liShoppingCart.appendChild(aShoppingCart);
             ulProductItemPicHover.appendChild(liShoppingCart);
             aShoppingCart.addEventListener("click", function () {
-                addToCartHomePage(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath);
+                addToCartHomePage(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath, item.productStock);
             });
-
         }
 
         divProductItemPic.appendChild(ulProductItemPicHover);

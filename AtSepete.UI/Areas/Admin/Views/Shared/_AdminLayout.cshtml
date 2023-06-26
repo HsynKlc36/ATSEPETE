@@ -60,11 +60,9 @@
                 </a>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
-                        <!-- Messages: style can be found in dropdown.less-->
-                       
+                        <!-- Messages: style can be found in dropdown.less-->                      
                         <!-- Notifications: style can be found in dropdown.less -->
-                     
-                                     @await Component.InvokeAsync("RabbitMQCreatedOrdersMessage")
+                         @await Component.InvokeAsync("RabbitMQCreatedOrdersMessage")
                         <!-- Tasks: style can be found in dropdown.less -->
                         
                        
@@ -151,8 +149,6 @@
                             <i class="fa fa-th"></i> <span>SİPARİŞ</span><i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-@*                          <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> SİPARİŞ GÜNCELLE</a></li>
-                            <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> SİPARİŞ İPTAL</a></li>*@
                             <li><a asp-area="Admin" asp-controller="Order" asp-action="OrderList"><i class="fa fa-circle-o"></i>SİPARİŞ LİSTELE</a></li>
                         </ul>
                     </li>
@@ -164,8 +160,6 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a asp-area="Admin" asp-controller="Product" asp-action="AddProduct"><i class="fa fa-circle-o"></i> ÜRÜN EKLE</a></li>
-@*                            <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> ÜRÜN SİL</a></li>
-                            <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> ÜRÜN GÜNCELLE</a></li>*@
                             <li><a asp-area="Admin" asp-controller="Product" asp-action="ProductList"><i class="fa fa-circle-o"></i> ÜRÜN LİSTELE</a></li>
                         </ul>
                     </li>
@@ -177,8 +171,6 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a asp-area="Admin" asp-controller="ProductMarket" asp-action="AddProductMarket"></i> ÜRÜN-MARKET EKLE</a></li>
-@*                            <li><a href="pages/UI/icons.html"><i class="fa fa-circle-o"></i> ÜRÜN-MARKET GÜNCELLE</a></li>
-                            <li><a href="pages/UI/buttons.html"><i class="fa fa-circle-o"></i> ÜRÜN-MARKET SİL</a></li>*@
                             <li><a asp-area="Admin" asp-controller="ProductMarket" asp-action="ProductMarketList"></i> ÜRÜN-MARKET LİSTELE</a></li>
                         </ul>
                     </li>
@@ -188,9 +180,6 @@
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                           @* <li><a href="pages/forms/general.html"><i class="fa fa-circle-o"></i> SİPARİŞ-DETAY EKLE</a></li>
-                            <li><a href="pages/forms/advanced.html"><i class="fa fa-circle-o"></i>SİPARİŞ-DETAY GÜNCELLE</a></li>
-                            <li><a href="pages/forms/editors.html"><i class="fa fa-circle-o"></i> SİPARİŞ-DETAY SİL</a></li>*@
                             <li><a asp-area="Admin" asp-controller="OrderDetail" asp-action="OrderDetailList"><i class="fa fa-circle-o"></i> SİPARİŞ-DETAY LİSTELE</a></li>
                         </ul>
                     </li>

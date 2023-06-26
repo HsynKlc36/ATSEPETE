@@ -18,7 +18,7 @@ namespace AtSepete.DataAccess.SeedData
     public static class AdminSeedData
     {
         private const string AdminEmail = "admin@atsepete.com";
-        private const string AdminPassword = "admin123";
+        private const string AdminPassword = "Admin123";
         public static async Task SeedAsync(IConfiguration configuration)
         {
             var dbContextBuilder = new DbContextOptionsBuilder<AtSepeteDbContext>();

@@ -1,5 +1,5 @@
 ﻿// Decrease button click handler
-function createDecreaseHandler(productId, marketId, quantityInput) {
+function createDecreaseHandler(productId, productStock,marketId, quantityInput) {
     return function () {
         var quantity = parseInt(quantityInput.value);
         if (quantity > 1) {
@@ -13,20 +13,34 @@ function createDecreaseHandler(productId, marketId, quantityInput) {
         renderCartItems();
     };
 }
-
-
-
 // Increase button click handler
-function createIncreaseHandler(productId, marketId, quantityInput) {
+function createIncreaseHandler(productId, productStock, marketId, quantityInput) {
     return function () {
         var quantity = parseInt(quantityInput.value);
-        quantity++;
-        quantityInput.value = quantity;
-         updateCartItemQuantity(productId, marketId, quantity);
-        
+        if (quantity < productStock) {
+            quantity++;
+            quantityInput.value = quantity;
+            updateCartItemQuantity(productId, marketId, quantity);
+        } else {
+            // Sayfa yenilenerek sayı item.productStock miktarına eşitlensin
+            location.reload();
+        }
         renderCartItems();
     };
 }
+
+
+// Increase button click handler
+//function createIncreaseHandler(productId,productStock, marketId, quantityInput) {
+//    return function () {
+//        var quantity = parseInt(quantityInput.value);
+//        quantity++;
+//        quantityInput.value = quantity;
+//         updateCartItemQuantity(productId, marketId, quantity);
+        
+//        renderCartItems();
+//    };
+//}
 
 function updateCartItemQuantity(productId, marketId, quantity)
 {

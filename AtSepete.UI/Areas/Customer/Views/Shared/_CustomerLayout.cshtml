@@ -43,7 +43,7 @@ var userName= @Context.User.FindFirst(ClaimTypes.Name).Value.ToString();
         </div>
         <div class="humberger__menu__cart">
             <ul>
-                <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
+                <li><a href="#"><i class="fa fa-heart"></i> <span>0</span></a></li>
                 <li><a asp-area="Customer" asp-controller="Cart" asp-action="ShoppingCartPage"><i class="fa fa-cart-arrow-down"></i> <span></span></a></li>
             </ul>           
         </div>
@@ -88,18 +88,6 @@ var userName= @Context.User.FindFirst(ClaimTypes.Name).Value.ToString();
         <nav class="humberger__menu__nav mobile-menu">
             <ul>
                 <li class="active"><a asp-area="Customer" asp-action="HomePage" asp-controller="Shop">ANASAYFA</a></li>
-               @* <li><a href="./shop-grid.html">Shop</a></li>
-                <li>
-                    <a href="#">Pages</a>
-                    <ul class="header__menu__dropdown">
-                        <li><a href="./shop-details.html">Shop Details</a></li>
-                        <li><a href="./shoping-cart.html">Shoping Cart</a></li>
-                        <li><a href="./checkout.html">Check Out</a></li>
-                        <li><a href="./blog-details.html">Blog Details</a></li>
-                    </ul>
-                </li>
-                <li><a href="./blog.html">Blog</a></li>
-                <li><a href="./contact.html">Contact</a></li>*@
             </ul>
         </nav>
         <div id="mobile-menu-wrap"></div>
@@ -192,25 +180,14 @@ var userName= @Context.User.FindFirst(ClaimTypes.Name).Value.ToString();
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a asp-area="Customer" asp-action="HomePage" asp-controller="Shop">ANASAYFA</a></li>
-                            @*<li><a href="./shop-grid.html">Shop</a></li>
-                            <li>
-                                <a href="#">Pages</a>
-                                <ul class="header__menu__dropdown">
-                                    <li><a href="./shop-details.html">Shop Details</a></li>
-                                    <li><a href="./shoping-cart.html">Shoping Cart</a></li>
-                                    <li><a href="./checkout.html">Check Out</a></li>
-                                    <li><a href="./blog-details.html">Blog Details</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="./blog.html">Blog</a></li>
-                            <li><a href="./contact.html">Contact</a></li>*@
+
                         </ul>
                     </nav>
                 </div>
                 <div class="col-lg-3">
                     <div class="header__cart">
                         <ul>
-                            <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a> Favorilerim</li>
+                            <li><a href="#"><i class="fa fa-heart"></i> <span>0</span></a> Favorilerim</li>
                             <li><a asp-area="Customer" asp-controller="Cart" asp-action="ShoppingCartPage"><i class="fa fa-cart-arrow-down"></i> <span id="cartItemCount"></span></a> Sepetim</li>
                             
                         </ul>
@@ -310,14 +287,7 @@ var userName= @Context.User.FindFirst(ClaimTypes.Name).Value.ToString();
                             <li><a href="#">Privacy Policy</a></li>
                             <li><a href="#">Our Sitemap</a></li>
                         </ul>
-@*                        <ul>
-                            <li><a href="#">Who We Are</a></li>
-                            <li><a href="#">Our Services</a></li>
-                            <li><a href="#">Projects</a></li>
-                            <li><a href="#">Contact</a></li>
-                            <li><a href="#">Innovation</a></li>
-                            <li><a href="#">Testimonials</a></li>
-                        </ul>*@
+
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-12">

@@ -19,7 +19,7 @@ namespace AtSepete.UI.AdminConsumers
             if (context.Message.Text != null)
             {
 
-                await AddMessageToCache(context.Message.Text);//cache ile mesajlar önbellekte tutulacak 7 gün
+                await AddMessageToCache(context.Message.Text);//cache ile mesajlar önbellekte tutulacak 1 gün
 
             }
 
@@ -65,6 +65,7 @@ namespace AtSepete.UI.AdminConsumers
             string messageString = JsonConvert.SerializeObject(messages);
             byte[] messageBytes = Encoding.UTF8.GetBytes(messageString);
             await _distributedCache.SetAsync(key, messageBytes, cacheOptions);
+            
         }
     }
 }
