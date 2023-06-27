@@ -43,7 +43,7 @@ builder.Services.AddMassTransit(configurator =>
         configurator.UsingRabbitMq((context,
            _configurator) =>
         {
-            _configurator.Host("amqps://gikvqzuf:eKjmPiSgqFLMMfm0w8uwySxpH614wgTz@moose.rmq.cloudamqp.com/gikvqzuf");
+            _configurator.Host(builder.Configuration["RabbitMQHost:RabbitMQ"]);
         });
 });
 builder.Services.AddHostedService<SendOrderMessageService>(provider =>

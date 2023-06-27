@@ -30,18 +30,14 @@ namespace AtSepete.UI.Controllers
             _mapper = mapper;
         }
 
-        //[Authorize(Roles ="Admin,Customer")] 
+      
         [HttpGet]
         public async Task<IActionResult> Index()
         {           
            return View();
         }
-        [HttpGet]
-        //[Authorize(Roles = "Customer,Admin")]
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+
+   
 
   
     }

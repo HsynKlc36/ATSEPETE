@@ -20,10 +20,12 @@ namespace AtSepete.UI.Areas.Customer.Controllers
     public class ShopController : CustomerBaseController
     {
         private readonly IMapper _mapper;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public ShopController(IToastNotification toastNotification, IConfiguration configuration, IMapper mapper) : base(toastNotification, configuration)
+        public ShopController(IToastNotification toastNotification, IConfiguration configuration, IMapper mapper, IHttpClientFactory httpClientFactory) : base(toastNotification, configuration)
         {
             _mapper = mapper;
+            _httpClientFactory = httpClientFactory;
         }
         [HttpGet]
         public async Task<IActionResult> HomePage()
@@ -170,12 +172,13 @@ namespace AtSepete.UI.Areas.Customer.Controllers
         }
         public async Task<IActionResult> ShopProductDetails(Guid id)
         {
-            if (id==Guid.Empty)
+            if (id == Guid.Empty)
             {
                 return RedirectToAction("HomePage");
             }
             using (var httpClient = new HttpClient())
             {
+
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
                 using (HttpResponseMessage response = await httpClient.GetAsync($"{ApiBaseUrl}/Shop/ShopProductDetails/{id}"))
                 {
@@ -188,7 +191,7 @@ namespace AtSepete.UI.Areas.Customer.Controllers
 
                     if (shopProductDetails.IsSuccess)
                     {
-                        var filterProducts = _mapper.Map<List<ShopProductDetailDto>, List<CustomerShopProductDetailsVM>>(shopProductDetails.Data);                       
+                        var filterProducts = _mapper.Map<List<ShopProductDetailDto>, List<CustomerShopProductDetailsVM>>(shopProductDetails.Data);
                         NotifySuccess(shopProductDetails.Message);
                         return View(filterProducts);
                     }
@@ -201,6 +204,11 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                 };
             }
         }
+
+
+
+
+
 
     }
 }

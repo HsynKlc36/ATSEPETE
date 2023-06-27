@@ -118,7 +118,6 @@ namespace AtSepete.UI.Areas.Admin.Controllers
             {
                 var updateOrderDetailDto = _mapper.Map<AdminOrderDetailUpdateVM, UpdateOrderDetailDto>(adminOrderDetailUpdateVM);
                
-
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UserToken);
                 StringContent content = new StringContent(JsonConvert.SerializeObject(updateOrderDetailDto), Encoding.UTF8, "application/Json");
                 using (HttpResponseMessage response = await httpClient.PutAsync($"{ApiBaseUrl}/OrderDetail/UpdateOrderDetail/{adminOrderDetailUpdateVM.Id}", content))

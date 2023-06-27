@@ -11,6 +11,7 @@ using AtSepete.UI.Controllers;
 using AtSepete.UI.FluentFilter;
 using AtSepete.UI.FluentValidatiors.LoginValidatiors;
 using AtSepete.UI.MapperUI.Profiles;
+using AtSepete.UI.Middleware;
 using AtSepete.UI.Resources;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -51,15 +52,16 @@ namespace AtSepete.UI.Extensions
                typeof(CategoryVMProfile).Assembly);
             //Bu mapper'lar incelenecek!!!!
 
-            services.AddScoped<AdminMessageConsumer>();
+            services.AddScoped<AdminMessageConsumer>();//rabbitmq
 
-            //services.AddFluentValidationAutoValidation().AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddControllersWithViews().AddFluentValidation(opt => 
             {
                 opt.RegisterValidatorsFromAssemblyContaining<RegisterVMValidator>();
                 opt.DisableDataAnnotationsValidation = true;
                 opt.ValidatorOptions.LanguageManager.Culture = new CultureInfo("tr");
-             }); 
+             });
+
+            services.AddHttpContextAccessor();
             return services;
         }
         public static IServiceCollection AddCookieMVCServices(this IServiceCollection services, IConfiguration configuration)
@@ -77,6 +79,7 @@ namespace AtSepete.UI.Extensions
 
             return services;
         }
+       
 
     }
 }

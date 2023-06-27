@@ -41,6 +41,7 @@ namespace AtSepete.UI.Controllers
 
         protected string? ApiBaseUrl => _configuration["Host:ApiBaseUrl"];
 
+      
         protected IStringLocalizer<SharedModelResource> Localizer => HttpContext.RequestServices.GetService(typeof(IStringLocalizer<SharedModelResource>)) as IStringLocalizer<SharedModelResource>;
 
         //notifySuccess metotları Localized işlemi gerektirmeyenler yani dil çevirisine ihtiyac olmayanlar  controller'larda api'lardan gelen response içeriisindeki dönen mesajları doğrudan kullanacaktır fakat localized'li metotlar ise bu response'lardaki mesajları alıp resources içerisindeki resx lerde çeviri yaparak döndürecektir. 

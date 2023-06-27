@@ -4,6 +4,7 @@ using MassTransit;
 using AtSepete.UI.AdminConsumers;
 using FormHelper;
 using System.Reflection;
+using AtSepete.UI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,7 @@ builder.Services
     .AddCookieMVCServices(builder.Configuration)
     .AddMvcServices(builder.Configuration);
 
-builder.Services.AddStackExchangeRedisCache(Options => Options.Configuration = "localhost:1453");//docker da ayaða kaldýrdýðýmýz portu yazarýz (REDÝS CACHE)
+builder.Services.AddStackExchangeRedisCache(Options => Options.Configuration = builder.Configuration["RedisCache:RedisPort"]);//docker da ayaða kaldýrdýðýmýz portu yazarýz (REDÝS CACHE)
 
 // MassTransit configuration
 builder.Services.AddMassTransit(configurator =>
@@ -19,11 +20,14 @@ builder.Services.AddMassTransit(configurator =>
     configurator.AddConsumer<AdminMessageConsumer>(); // Consumer tanýmladýk.
     configurator.UsingRabbitMq((context, _configurator) =>
     {
-        _configurator.Host("amqps://gikvqzuf:eKjmPiSgqFLMMfm0w8uwySxpH614wgTz@moose.rmq.cloudamqp.com/gikvqzuf");
+        _configurator.Host(builder.Configuration["RabbitMQHost:RabbitMQ"]);
         _configurator.ReceiveEndpoint("createOrders", e => e.ConfigureConsumer<AdminMessageConsumer>(context)); // Consumer'ýn hangi queue dinleyeceðini burada belirtmemiz gerekiyor.
     });
 });
+builder.Services.AddHttpClient();
+var userToken = builder.Configuration["TokenMiddleware:Token"];
 var app = builder.Build();
+
 
 
 // Configure the HTTP request pipeline.
@@ -70,9 +74,6 @@ app.MapControllerRoute(
     name: "default",
      pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapDefaultControllerRoute();
-
-
-
 app.Run();
 
 

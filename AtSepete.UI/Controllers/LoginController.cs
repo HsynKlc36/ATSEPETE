@@ -253,6 +253,7 @@ namespace AtSepete.UI.Controllers
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
                         NotifySuccessLocalized(loginUser.Message);
+                        _configuration["TokenMiddleware:Token"] = loginUser.Data.AccessToken;
                         return RedirectToAction("Index", userRole, new {area=userRole});//login olunca yönleneceği sayfa areasına göre yöneleceği ilk sayfa!
 
                     }
