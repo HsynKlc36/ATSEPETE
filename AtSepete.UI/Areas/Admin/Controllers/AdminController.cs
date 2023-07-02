@@ -44,7 +44,7 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     }
                     else
                     {
-                        NotifyError(user.Message);
+                        NotifyErrorLocalized(user.Message);
                         return RedirectToAction("LogOut", "Login");
                     }
                 };

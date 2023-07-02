@@ -44,12 +44,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (productList.IsSuccess)
                     {
                         var Products = _mapper.Map<List<ProductListDto>, List<AdminProductListVM>>(productList.Data);
-                        NotifySuccess(productList.Message);
+                        NotifySuccessLocalized(productList.Message);
                         return View(Products);
                     }
                     else
                     {
-                        NotifyError(productList.Message);
+                        NotifyErrorLocalized(productList.Message);
                         return RedirectToAction("Index", "Admin");
                     }
                 };
@@ -73,12 +73,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (detailProduct.IsSuccess)
                     {
                         var Product = _mapper.Map<ProductDto, AdminProductDetailVM>(detailProduct.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
-                        NotifySuccess(detailProduct.Message);
+                        NotifySuccessLocalized(detailProduct.Message);
                         return View(Product);
                     }
                     else
                     {
-                        NotifyError(detailProduct.Message);
+                        NotifyErrorLocalized(detailProduct.Message);
                         return RedirectToAction("ProductList");
                     }
                 };
@@ -126,12 +126,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     AddProductResponse addedProduct = JsonConvert.DeserializeObject<AddProductResponse>(apiResponse);//burası patlıyor!!!
                     if (addedProduct.IsSuccess)
                     {
-                        NotifySuccess(addedProduct.Message);
+                        NotifySuccessLocalized(addedProduct.Message);
                         return RedirectToAction("ProductList");
                     }
                     else
                     {
-                        NotifyError(addedProduct.Message);
+                        NotifyErrorLocalized(addedProduct.Message);
                         adminProductCreateVM.Categories = await GetCategoriesAsync();
                         return View(adminProductCreateVM);
                     }
@@ -158,12 +158,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     {
                         var product = _mapper.Map<ProductDto, AdminProductUpdateVM>(updateProduct.Data);
                         product.Categories = await GetCategoriesAsync(product.CategoryId);
-                        NotifySuccess(updateProduct.Message);
+                        NotifySuccessLocalized(updateProduct.Message);
                         return View(product);
                     }
                     else
                     {
-                        NotifyError(updateProduct.Message);
+                        NotifyErrorLocalized(updateProduct.Message);
                         return RedirectToAction("ProductList");
                     }
                 };
@@ -201,12 +201,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     UpdateProductResponse updateProduct = JsonConvert.DeserializeObject<UpdateProductResponse>(apiResponse);
                     if (updateProduct.IsSuccess)
                     {
-                        NotifySuccess(updateProduct.Message);
+                        NotifySuccessLocalized(updateProduct.Message);
                         return RedirectToAction("ProductList");
                     }
                     else
                     {
-                        NotifyError(updateProduct.Message);
+                        NotifyErrorLocalized(updateProduct.Message);
                         adminProductUpdateVM.Categories = await GetCategoriesAsync(adminProductUpdateVM.CategoryId);
                         return View(adminProductUpdateVM);
                     }

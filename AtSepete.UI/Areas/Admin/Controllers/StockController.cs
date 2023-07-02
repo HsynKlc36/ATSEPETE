@@ -37,12 +37,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (stockList.IsSuccess)
                     {
                         var ProductMarkets = _mapper.Map<List<StockListDto>, List<AdminStockListVM>>(stockList.Data);
-                        NotifySuccess(stockList.Message);
+                        NotifySuccessLocalized(stockList.Message);
                         return View(ProductMarkets);
                     }
                     else
                     {
-                        NotifyError(stockList.Message);
+                        NotifyErrorLocalized(stockList.Message);
                         return RedirectToAction("Index", "Admin");
                     }
                 };

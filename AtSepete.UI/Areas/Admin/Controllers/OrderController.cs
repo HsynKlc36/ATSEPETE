@@ -36,12 +36,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (orderList.IsSuccess)
                     {
                         var orders = _mapper.Map<List<OrderListDto>, List<AdminOrderListVM>>(orderList.Data);
-                        NotifySuccess(orderList.Message);
+                        NotifySuccessLocalized(orderList.Message);
                         return View(orders);
                     }
                     else
                     {
-                        NotifyError(orderList.Message);
+                        NotifyErrorLocalized(orderList.Message);
                         return RedirectToAction("Index", "Admin");
                     }
                 };

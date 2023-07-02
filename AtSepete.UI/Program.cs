@@ -4,7 +4,7 @@ using MassTransit;
 using AtSepete.UI.AdminConsumers;
 using FormHelper;
 using System.Reflection;
-using AtSepete.UI.Middleware;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

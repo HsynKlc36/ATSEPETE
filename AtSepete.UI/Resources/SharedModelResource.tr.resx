@@ -117,10 +117,250 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Add_Fail" xml:space="preserve">
+    <value>Ekleme Hatalı</value>
+  </data>
+  <data name="Add_Fail_Already_Exists" xml:space="preserve">
+    <value>Böyle Birşey Zaten Var</value>
+  </data>
+  <data name="Add_Success" xml:space="preserve">
+    <value>Ekleme Başarılı</value>
+  </data>
+  <data name="Add_User_Fail" xml:space="preserve">
+    <value>Kullanıcı Ekleme hatalı</value>
+  </data>
+  <data name="Add_User_Role_Fail" xml:space="preserve">
+    <value>Rol Ekleme Hatalı</value>
+  </data>
+  <data name="Add_User_Success" xml:space="preserve">
+    <value>Kullanıcı Ekleme Başarılı</value>
+  </data>
+  <data name="BestSeller_Listed_Failed" xml:space="preserve">
+    <value>Çok Satanlar Listelenirken Hata Oluştu</value>
+  </data>
+  <data name="BestSeller_Listed_Success" xml:space="preserve">
+    <value>Çok Satanlar Başarıyla Listelendi</value>
+  </data>
+  <data name="Category_Found_Success" xml:space="preserve">
+    <value>Kategori Bulma Başarılı</value>
+  </data>
+  <data name="Category_Not_Found" xml:space="preserve">
+    <value>Kategori Bulunamadı</value>
+  </data>
+  <data name="Change_Password_Fail" xml:space="preserve">
+    <value>Şifre Değiştirme Hatalı</value>
+  </data>
+  <data name="Change_Password_Success" xml:space="preserve">
+    <value>Şifre Başarıyla Değiştirildi</value>
+  </data>
+  <data name="Check_Password_Fail" xml:space="preserve">
+    <value>Şifre Hatalı</value>
+  </data>
+  <data name="Check_Password_Not_Valid" xml:space="preserve">
+    <value>Şifre Doğrulanamadı</value>
+  </data>
+  <data name="Check_Password_Valid" xml:space="preserve">
+    <value>Şifre Doğrulandı</value>
+  </data>
+  <data name="CustomerOrderList_Listed_Failed" xml:space="preserve">
+    <value>Müşteri Sipariş Listesi Hatalı</value>
+  </data>
+  <data name="CustomerOrderList_Listed_Success" xml:space="preserve">
+    <value>Müşteri Sipariş Listesi Başarılı</value>
+  </data>
+  <data name="CustomerOrderList_Not_Found" xml:space="preserve">
+    <value>Müşteri Sipariş Listesi Bulunamadı</value>
+  </data>
+  <data name="Delete_Fail" xml:space="preserve">
+    <value>Silme Hatalı</value>
+  </data>
+  <data name="Delete_Success" xml:space="preserve">
+    <value>Silme Başarılı</value>
+  </data>
+  <data name="Email_Duplicate" xml:space="preserve">
+    <value>Email Eşleşiyor</value>
+  </data>
+  <data name="Email_Failed" xml:space="preserve">
+    <value>Email Hatalı</value>
+  </data>
+  <data name="Email_Or_Password_Invalid" xml:space="preserve">
+    <value>Email veya Şifre Hatalı</value>
+  </data>
+  <data name="Hard_Delete_Fail" xml:space="preserve">
+    <value>Kalıcı Silme Hatalı</value>
+  </data>
+  <data name="Hard_Delete_Success" xml:space="preserve">
+    <value>Kalıcı Silme Başarılı</value>
+  </data>
+  <data name="Listed_Failed" xml:space="preserve">
+    <value>Listeleme Hatalı</value>
+  </data>
+  <data name="Listed_Success" xml:space="preserve">
+    <value>Listeleme Başarılı</value>
+  </data>
   <data name="Login_Failed" xml:space="preserve">
     <value>Giriş Hatalı</value>
   </data>
   <data name="Login_Success" xml:space="preserve">
     <value>Giriş Başarılı</value>
+  </data>
+  <data name="LogOut_Failed" xml:space="preserve">
+    <value>Çıkış Hatalı</value>
+  </data>
+  <data name="LogOut_Success" xml:space="preserve">
+    <value>Çıkış Başarılı</value>
+  </data>
+  <data name="Market_Found_Success" xml:space="preserve">
+    <value>Market Bulma Başarılı</value>
+  </data>
+  <data name="Market_Not_Found" xml:space="preserve">
+    <value>Market Bulunamadı</value>
+  </data>
+  <data name="Object_Not_Found" xml:space="preserve">
+    <value>Nesne Bulunamadı</value>
+  </data>
+  <data name="Object_Not_Valid" xml:space="preserve">
+    <value>Nesne Hatalı</value>
+  </data>
+  <data name="OrderDetail_Failed" xml:space="preserve">
+    <value>Sipariş Detayı Hatalı</value>
+  </data>
+  <data name="OrderDetail_Found_Success" xml:space="preserve">
+    <value>Sipariş Detayı Bulma Başarılı</value>
+  </data>
+  <data name="OrderDetail_Not_Found" xml:space="preserve">
+    <value>Sipariş Detayı Bulunamadı</value>
+  </data>
+  <data name="Order_Added_Failed" xml:space="preserve">
+    <value>Sipariş Eklenirken Hata Oluştu</value>
+  </data>
+  <data name="Order_Added_Success" xml:space="preserve">
+    <value>Sipariş Başarıyla Eklendi</value>
+  </data>
+  <data name="Order_Found_Success" xml:space="preserve">
+    <value>Sipariş bulma Başarılı</value>
+  </data>
+  <data name="Order_Not_Found" xml:space="preserve">
+    <value>Sipariş Bulunamadı</value>
+  </data>
+  <data name="Password_Fail" xml:space="preserve">
+    <value>Şifre Hatalı</value>
+  </data>
+  <data name="Password_Not_Match" xml:space="preserve">
+    <value>Şifreler Eşleşmiyor</value>
+  </data>
+  <data name="Password_Success" xml:space="preserve">
+    <value>Şifre Başarılı</value>
+  </data>
+  <data name="ProductMarket_Found_Success" xml:space="preserve">
+    <value>Ürün-Market Bulma Başarılı</value>
+  </data>
+  <data name="ProductMarket_Not_Found" xml:space="preserve">
+    <value>Ürün-Market Bulunamadı</value>
+  </data>
+  <data name="Product_Found_Success" xml:space="preserve">
+    <value>Ürün Bulma Başarılı</value>
+  </data>
+  <data name="Product_Not_Found" xml:space="preserve">
+    <value>Ürün Bulma Başarısız</value>
+  </data>
+  <data name="Report_Failed" xml:space="preserve">
+    <value>Rapor Görüntüleme Hatalı</value>
+  </data>
+  <data name="Report_Success" xml:space="preserve">
+    <value>Rapor Görüntüleme Başarılı</value>
+  </data>
+  <data name="ResetPasswordEmailSender_Fail" xml:space="preserve">
+    <value>Şifre Yenileme Maili Hatalı</value>
+  </data>
+  <data name="ResetPasswordEmailSender_Success" xml:space="preserve">
+    <value>Şifre Yenileme Maili Başarılı</value>
+  </data>
+  <data name="Reset_Password_Fail" xml:space="preserve">
+    <value>Şifre Yenileme Hatalı</value>
+  </data>
+  <data name="Reset_Password_Success" xml:space="preserve">
+    <value>Şifre Yenileme Başarılı</value>
+  </data>
+  <data name="ShopFilter_Listed_Failed" xml:space="preserve">
+    <value>Alışveriş Filtreleme Listesi Hatalı</value>
+  </data>
+  <data name="ShopFilter_Listed_Not_Found" xml:space="preserve">
+    <value>Alışveriş Filtreleme Listesi Bulunamadı</value>
+  </data>
+  <data name="ShopFilter_Listed_Success" xml:space="preserve">
+    <value>Alışveriş Filtreleme Listesi Başarılı</value>
+  </data>
+  <data name="ShoppingCart_Failed" xml:space="preserve">
+    <value>Alışveriş Tamamlanırken Hata Oluştu</value>
+  </data>
+  <data name="ShoppingCart_Not_Found" xml:space="preserve">
+    <value>Alışveriş Bulunamadı</value>
+  </data>
+  <data name="ShoppingCart_Success" xml:space="preserve">
+    <value>Alışveriş  Tamamlandı</value>
+  </data>
+  <data name="ShopSideBarFilter_Listed_Failed" xml:space="preserve">
+    <value>SideBar Filtreleme Listesi Başarısız</value>
+  </data>
+  <data name="ShopSideBarFilter_Listed_Not_Found" xml:space="preserve">
+    <value>SideBar Filtreleme Listesi Bulunamadı</value>
+  </data>
+  <data name="ShopSideBarFilter_Listed_Success" xml:space="preserve">
+    <value>SideBar Filtreleme Listesi Başarılı</value>
+  </data>
+  <data name="Shop_Listed_Failed" xml:space="preserve">
+    <value>Alışveriş Listesi Hatalı</value>
+  </data>
+  <data name="Shop_Listed_Not_Found" xml:space="preserve">
+    <value>Alışveriş Listesi Bulunamadı</value>
+  </data>
+  <data name="Shop_Listed_Success" xml:space="preserve">
+    <value>Alışveriş Listesi Başarılı</value>
+  </data>
+  <data name="Shop_ProductDetail_Failed" xml:space="preserve">
+    <value>Alışveriş Ürün Detayı Hatalı</value>
+  </data>
+  <data name="Shop_ProductDetail_Not_Found" xml:space="preserve">
+    <value>Alışveriş Ürün Detayı Bulunamadı</value>
+  </data>
+  <data name="Shop_ProductDetail_Success" xml:space="preserve">
+    <value>Alışveriş Ürün Detayı Başarılı</value>
+  </data>
+  <data name="Soft_Delete_Fail" xml:space="preserve">
+    <value>Silme Hatalı</value>
+  </data>
+  <data name="Soft_Delete_Success" xml:space="preserve">
+    <value>Silme Başarılı</value>
+  </data>
+  <data name="Update_Fail" xml:space="preserve">
+    <value>Güncelleme Hatalı</value>
+  </data>
+  <data name="Update_Success" xml:space="preserve">
+    <value>Güncelleme Başarılı</value>
+  </data>
+  <data name="Users_Found_Success" xml:space="preserve">
+    <value>Kullanıcı Bulma Başarılı</value>
+  </data>
+  <data name="Users_Not_Found" xml:space="preserve">
+    <value>Kullanıcılar Bulunamadı</value>
+  </data>
+  <data name="Users_Token_Found_Fail" xml:space="preserve">
+    <value>Token Bulma Hatalı</value>
+  </data>
+  <data name="Users_Token_Found_Success" xml:space="preserve">
+    <value>Token Bulundu</value>
+  </data>
+  <data name="Users_Token_Not_Found" xml:space="preserve">
+    <value>Token Bulunamadı</value>
+  </data>
+  <data name="User_Found_Fail" xml:space="preserve">
+    <value>Kullanıcı Bulma Hatalı</value>
+  </data>
+  <data name="User_Found_Success" xml:space="preserve">
+    <value>Kullanıcı Bulundu</value>
+  </data>
+  <data name="User_Not_Found" xml:space="preserve">
+    <value>Kullanıcı Bulunamadı</value>
   </data>
 </root>

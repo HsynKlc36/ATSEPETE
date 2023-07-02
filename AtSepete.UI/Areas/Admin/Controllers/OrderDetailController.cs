@@ -42,12 +42,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                         ViewBag.CustomerFullName=customerFullName;
                         ViewBag.ProductFullName=productFullName;
                         var orderDetails = _mapper.Map<List<OrderDetailListDto>, List<AdminOrderDetailListVM>>(orderDetailList.Data);
-                        NotifySuccess(orderDetailList.Message);
+                        NotifySuccessLocalized(orderDetailList.Message);
                         return View(orderDetails);
                     }
                     else
                     {
-                        NotifyError(orderDetailList.Message);
+                        NotifyErrorLocalized(orderDetailList.Message);
                         return RedirectToAction("Index", "Admin");
                     }
                 };
@@ -71,12 +71,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (orderDetailResponse.IsSuccess)
                     {
                         var orderDetail = _mapper.Map<OrderDetailDto, AdminOrderDetailVM>(orderDetailResponse.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
-                        NotifySuccess(orderDetailResponse.Message);
+                        NotifySuccessLocalized(orderDetailResponse.Message);
                         return View(orderDetail);
                     }
                     else
                     {
-                        NotifyError(orderDetailResponse.Message);
+                        NotifyErrorLocalized(orderDetailResponse.Message);
                         return RedirectToAction("OrderDetailList");
                     }
                 };
@@ -100,12 +100,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     {
                         var updateOrderDetail = _mapper.Map<OrderDetailDto, AdminOrderDetailUpdateVM>(orderDetail.Data);
                         
-                        NotifySuccess(orderDetail.Message);
+                        NotifySuccessLocalized(orderDetail.Message);
                         return View(updateOrderDetail);
                     }
                     else
                     {
-                        NotifyError(orderDetail.Message);
+                        NotifyErrorLocalized(orderDetail.Message);
                         return RedirectToAction("OrderDetailList");
                     }
                 };
@@ -130,12 +130,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     UpdateOrderDetailResponse updateOrderDetail = JsonConvert.DeserializeObject<UpdateOrderDetailResponse>(apiResponse);
                     if (updateOrderDetail.IsSuccess)
                     {
-                        NotifySuccess(updateOrderDetail.Message);
+                        NotifySuccessLocalized(updateOrderDetail.Message);
                         return RedirectToAction("OrderDetailList");
                     }
                     else
                     {
-                        NotifyError(updateOrderDetail.Message);                        
+                        NotifyErrorLocalized(updateOrderDetail.Message);                        
                         return View(adminOrderDetailUpdateVM);
                     }
                    

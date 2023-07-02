@@ -11,7 +11,6 @@ using AtSepete.UI.Controllers;
 using AtSepete.UI.FluentFilter;
 using AtSepete.UI.FluentValidatiors.LoginValidatiors;
 using AtSepete.UI.MapperUI.Profiles;
-using AtSepete.UI.Middleware;
 using AtSepete.UI.Resources;
 using FluentValidation;
 using FluentValidation.AspNetCore;

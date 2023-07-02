@@ -46,13 +46,13 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     ProductMarketListResponse productMarketList = JsonConvert.DeserializeObject<ProductMarketListResponse>(apiResponse);
                     if (productMarketList.IsSuccess)
                     {
-                        var ProductMarkets = _mapper.Map<List<ProductMarketListDto>, List<AdminProductMarketListVM>>(productMarketList.Data); 
-                        NotifySuccess(productMarketList.Message);
+                        var ProductMarkets = _mapper.Map<List<ProductMarketListDto>, List<AdminProductMarketListVM>>(productMarketList.Data);
+                        NotifySuccessLocalized(productMarketList.Message);
                         return View(ProductMarkets);
                     }
                     else
                     {
-                        NotifyError(productMarketList.Message);
+                        NotifyErrorLocalized(productMarketList.Message);
                         return RedirectToAction("Index", "Admin");
                     }
                 };
@@ -89,12 +89,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     AddProductMarketResponse addedProductMarket = JsonConvert.DeserializeObject<AddProductMarketResponse>(apiResponse);//burası patlıyor!!!
                     if (addedProductMarket.IsSuccess)
                     {
-                        NotifySuccess(addedProductMarket.Message);
+                        NotifySuccessLocalized(addedProductMarket.Message);
                         return RedirectToAction("ProductMarketList");
                     }
                     else
                     {
-                        NotifyError(addedProductMarket.Message);
+                        NotifyErrorLocalized(addedProductMarket.Message);
                         adminProductMarketCreateVM.Products = await GetProductsAsync(adminProductMarketCreateVM.ProductId);
                         adminProductMarketCreateVM.Markets = await GetMarketsAsync(adminProductMarketCreateVM.MarketId);
                         return View(adminProductMarketCreateVM);
@@ -118,13 +118,13 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     DetailProductMarketResponse updateProductMarket = JsonConvert.DeserializeObject<DetailProductMarketResponse>(apiResponse);
                     if (updateProductMarket.IsSuccess)
                     {                     
-                        var productMarket = _mapper.Map<ProductMarketDto, AdminProductMarketUpdateVM>(updateProductMarket.Data);                        
-                        NotifySuccess(updateProductMarket.Message);
+                        var productMarket = _mapper.Map<ProductMarketDto, AdminProductMarketUpdateVM>(updateProductMarket.Data);
+                        NotifySuccessLocalized(updateProductMarket.Message);
                         return View(productMarket);
                     }
                     else
                     {
-                        NotifyError(updateProductMarket.Message);
+                        NotifyErrorLocalized(updateProductMarket.Message);
                         return RedirectToAction("ProductList");
                     }
                 };
@@ -149,12 +149,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     UpdateProductMarketResponse updateProductMarket = JsonConvert.DeserializeObject<UpdateProductMarketResponse>(apiResponse);
                     if (updateProductMarket.IsSuccess)
                     {
-                        NotifySuccess(updateProductMarket.Message);
+                        NotifySuccessLocalized(updateProductMarket.Message);
                         return RedirectToAction("ProductMarketList");
                     }
                     else
                     {
-                        NotifyError(updateProductMarket.Message);
+                        NotifyErrorLocalized(updateProductMarket.Message);
                         return View(adminProductMarketUpdateVM);
                     }
                 };

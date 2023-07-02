@@ -39,12 +39,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (categoryList.IsSuccess)
                     {
                         var categories = _mapper.Map<List<CategoryListDto>, List<AdminCategoryListVM>>(categoryList.Data);
-                        NotifySuccess(categoryList.Message);
+                        NotifySuccessLocalized(categoryList.Message);
                         return View(categories);
                     }
                     else
                     {
-                        NotifyError(categoryList.Message);
+                        NotifyErrorLocalized(categoryList.Message);
                         return RedirectToAction("Index", "Admin");
                     }
                 };
@@ -74,12 +74,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     AddCategoryResponse addedCategory = JsonConvert.DeserializeObject<AddCategoryResponse>(apiResponse);
                     if (addedCategory.IsSuccess)
                     {
-                        NotifySuccess(addedCategory.Message);
+                        NotifySuccessLocalized(addedCategory.Message);
                         return RedirectToAction("CategoryList");  
                     }
                     else
                     {
-                        NotifyError(addedCategory.Message);
+                        NotifyErrorLocalized(addedCategory.Message);
                         return View(adminCategoryCreateVM);
                     }
                 };
@@ -104,12 +104,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (updateCategory.IsSuccess)
                     {
                         var category = _mapper.Map<CategoryDto, AdminCategoryUpdateVM>(updateCategory.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
-                        NotifySuccess(updateCategory.Message);
+                        NotifySuccessLocalized(updateCategory.Message);
                         return View(category);
                     }
                     else
                     {
-                        NotifyError(updateCategory.Message);
+                        NotifyErrorLocalized(updateCategory.Message);
                         return RedirectToAction("CategoryList");
                     }
                 };
@@ -136,13 +136,13 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     UpdateCategoryResponse updateCategory = JsonConvert.DeserializeObject<UpdateCategoryResponse>(apiResponse);
                     if (updateCategory.IsSuccess)
                     {
-                        NotifySuccess(updateCategory.Message);
+                        NotifySuccessLocalized(updateCategory.Message);
                         return RedirectToAction("CategoryList");
 
                     }
                     else
                     {
-                        NotifyError(updateCategory.Message);
+                        NotifyErrorLocalized(updateCategory.Message);
                         return View(adminCategoryUpdateVM);
 
                     }

@@ -35,12 +35,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (reportCountDetail.IsSuccess)
                     {
                         var markets = _mapper.Map<ReportCountDto, AdminReportCountVM>(reportCountDetail.Data);
-                        NotifySuccess(reportCountDetail.Message);
+                        NotifySuccessLocalized(reportCountDetail.Message);
                         return View(markets);
                     }
                     else
                     {
-                        NotifyError(reportCountDetail.Message);
+                        NotifyErrorLocalized(reportCountDetail.Message);
                         return RedirectToAction("Index", "Admin");
                     }
                 };

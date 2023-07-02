@@ -38,12 +38,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (marketList.IsSuccess)
                     {
                         var markets = _mapper.Map<List<MarketListDto>, List<AdminMarketListVM>>(marketList.Data);
-                        NotifySuccess(marketList.Message);
+                        NotifySuccessLocalized(marketList.Message);
                         return View(markets);
                     }
                     else
                     {
-                        NotifyError(marketList.Message);
+                        NotifyErrorLocalized(marketList.Message);
                         return RedirectToAction("Index", "Admin");
                     }
                 };
@@ -73,12 +73,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     AddMarketResponse addedMarket = JsonConvert.DeserializeObject<AddMarketResponse>(apiResponse);
                     if (addedMarket.IsSuccess)
                     {
-                        NotifySuccess(addedMarket.Message);
+                        NotifySuccessLocalized(addedMarket.Message);
                         return RedirectToAction("MarketList");
                     }
                     else
                     {
-                        NotifyError(addedMarket.Message);
+                        NotifyErrorLocalized(addedMarket.Message);
                         return View(adminMarketCreateVM);
                     }
                 };
@@ -102,12 +102,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (detailMarket.IsSuccess)
                     {
                         var market = _mapper.Map<MarketDto, AdminMarketDetailVM>(detailMarket.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
-                        NotifySuccess(detailMarket.Message);
+                        NotifySuccessLocalized(detailMarket.Message);
                         return View(market);
                     }
                     else
                     {
-                        NotifyError(detailMarket.Message);
+                        NotifyErrorLocalized(detailMarket.Message);
                         return RedirectToAction("MarketList");
                     }
                 };
@@ -131,12 +131,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     if (updateMarket.IsSuccess)
                     {
                         var market = _mapper.Map<MarketDto, AdminMarketUpdateVM>(updateMarket.Data);//data'ların response' den boş gelme ihtimalkeri de kontrol edilmeli
-                        NotifySuccess(updateMarket.Message);
+                        NotifySuccessLocalized(updateMarket.Message);
                         return View(market);
                     }
                     else
                     {
-                        NotifyError(updateMarket.Message);
+                        NotifyErrorLocalized(updateMarket.Message);
                         return RedirectToAction("MarketList");
                     }
                 };
@@ -162,12 +162,12 @@ namespace AtSepete.UI.Areas.Admin.Controllers
                     UpdateMarketResponse updateMarket = JsonConvert.DeserializeObject<UpdateMarketResponse>(apiResponse);
                     if (updateMarket.IsSuccess)
                     {
-                        NotifySuccess(updateMarket.Message);
+                        NotifySuccessLocalized(updateMarket.Message);
                         return RedirectToAction("MarketList");
                     }
                     else
                     {
-                        NotifyError(updateMarket.Message);
+                        NotifyErrorLocalized(updateMarket.Message);
                         return View(adminMarketUpdateVM);
                     }
                 };
