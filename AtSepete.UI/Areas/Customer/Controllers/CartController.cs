@@ -61,12 +61,12 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                     AddOrderListResponse addedOrderList = JsonConvert.DeserializeObject<AddOrderListResponse>(apiResponse);
                     if (addedOrderList.IsSuccess)
                     {
-                        NotifySuccess(addedOrderList.Message);
+                        NotifySuccessLocalized(addedOrderList.Message);
                         return Json(addedOrderList.IsSuccess);
                     }
                     else
                     {
-                        NotifyError(addedOrderList.Message);
+                        NotifyErrorLocalized(addedOrderList.Message);
                         return Json(addedOrderList.IsSuccess);
                     }
                    

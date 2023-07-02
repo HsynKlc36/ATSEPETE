@@ -45,7 +45,6 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                     if (shopList.IsSuccess)
                     {
                         var products = _mapper.Map<List<ShopListDto>, List<CustomerShopListVM>>(shopList.Data);
-                        NotifySuccess(shopList.Message);
                         ViewBag.ShopList = products;
                         //aşağıdaki satırlar diğer action'lardan aldığımız veriler
                         var serializedFilterProducts = TempData["ShopFilterList"] as string;
@@ -82,13 +81,11 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                     if (bestSellerProductList.IsSuccess)
                     {
                         var bestSellerProducts = _mapper.Map<List<BestSellerProductListDto>, List<CustomerBestSellerListVM>>(bestSellerProductList.Data);
-                        NotifySuccess(bestSellerProductList.Message);
                         ViewBag.BestSellerProductList = bestSellerProducts;
 
                     }
                     else
                     {
-                        NotifyError(bestSellerProductList.Message);
                         return RedirectToAction("Index", "Home", new { area = "" });
                     }
                 }
@@ -117,14 +114,12 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                         var SideBarFilterproducts = _mapper.Map<List<ShopSideBarFilterListDto>, List<CustomerShopSideBarFilterListVM>>(shopSideBarFilterList.Data);
                         var serializedSideBarFilterProducts = JsonSerializer.Serialize(SideBarFilterproducts);
                         TempData["ShopSideBarFilterList"] = serializedSideBarFilterProducts;
-                        NotifySuccess(shopSideBarFilterList.Message);
-                        
+
                         return Json(new { success = shopSideBarFilterList.IsSuccess });
                     }
                     else
                     {
-                        NotifyError(shopSideBarFilterList.Message);
-                      
+                        NotifyErrorLocalized(shopSideBarFilterList.Message);                     
                         return Json(new { success = shopSideBarFilterList.IsSuccess });
                     }
 
@@ -158,12 +153,12 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                         var filterProducts = _mapper.Map<List<ShopFilterListDto>, List<CustomerShopFilterListVM>>(shopFilterList.Data);
                         var serializedFilterProducts = JsonSerializer.Serialize(filterProducts);
                         TempData["ShopFilterList"] = serializedFilterProducts;//homePage de görüntüledik
-                        NotifySuccess(shopFilterList.Message);
+
                         return RedirectToAction("HomePage");
                     }
                     else
                     {
-                        NotifyError(shopFilterList.Message);
+                        NotifyErrorLocalized(shopFilterList.Message);
                         return RedirectToAction("HomePage");
                     }
 
@@ -192,12 +187,11 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                     if (shopProductDetails.IsSuccess)
                     {
                         var filterProducts = _mapper.Map<List<ShopProductDetailDto>, List<CustomerShopProductDetailsVM>>(shopProductDetails.Data);
-                        NotifySuccess(shopProductDetails.Message);
                         return View(filterProducts);
                     }
                     else
                     {
-                        NotifyError(shopProductDetails.Message);
+                        NotifyErrorLocalized(shopProductDetails.Message);
                         return RedirectToAction("HomePage");
                     }
 

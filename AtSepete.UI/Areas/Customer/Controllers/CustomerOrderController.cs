@@ -37,13 +37,13 @@ namespace AtSepete.UI.Areas.Customer.Controllers
                     if (customerOrderList.IsSuccess)
                     {
                         var customerOrders = _mapper.Map<List<CustomerOrderListDto>, List<CustomerCustomerOrderListVM>>(customerOrderList.Data);
-                        NotifySuccess(customerOrderList.Message);
+                        NotifySuccessLocalized(customerOrderList.Message);
                         return View(customerOrders);
 
                     }
                     else
                     {
-                        NotifyError(customerOrderList.Message);
+                        NotifyErrorLocalized(customerOrderList.Message);
                         return RedirectToAction("HomePage", "Shop");
                     }
 

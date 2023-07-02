@@ -62,10 +62,10 @@ namespace AtSepete.UI.Controllers
                     ChangePasswordResponse changePasswordResponse = JsonConvert.DeserializeObject<ChangePasswordResponse>(apiAnswer);
                     if (!changePasswordResponse.IsSuccess)
                     {
-                        NotifyError(changePasswordResponse.Message);
+                        NotifyErrorLocalized(changePasswordResponse.Message);
                         return View(changePasswordVM);
                     }
-                    NotifySuccess(changePasswordResponse.Message);
+                    NotifySuccessLocalized(changePasswordResponse.Message);
                     return RedirectToAction("Index", UserRole, new {area=UserRole});
                 }
             }
@@ -91,10 +91,10 @@ namespace AtSepete.UI.Controllers
                     ForgetPasswordResponse forgetPasswordResponse = JsonConvert.DeserializeObject<ForgetPasswordResponse>(apiAnswer);
                     if (!forgetPasswordResponse.IsSuccess)
                     {
-                        NotifyError(forgetPasswordResponse.Message);
+                        NotifyErrorLocalized(forgetPasswordResponse.Message);
                         return View(forgetPasswordVM);
                     }
-                    NotifySuccess(forgetPasswordResponse.Message);
+                    NotifySuccessLocalized(forgetPasswordResponse.Message);
                     return RedirectToAction("Login", "Login");
                 }
             }
@@ -132,10 +132,10 @@ namespace AtSepete.UI.Controllers
                     NewPasswordResponse newPasswordResponse = JsonConvert.DeserializeObject<NewPasswordResponse>(apiAnswer);
                     if (!newPasswordResponse.IsSuccess)
                     {
-                        NotifyError(newPasswordResponse.Message);
+                        NotifyErrorLocalized(newPasswordResponse.Message);
                         return RedirectToAction("ForgetPassword", "Login");
                     }
-                    NotifySuccess(newPasswordResponse.Message);
+                    NotifySuccessLocalized(newPasswordResponse.Message);
                     return RedirectToAction("Login", "Login");
                 }
             }
@@ -163,10 +163,10 @@ namespace AtSepete.UI.Controllers
                     CreateUserResponse createUserResponse = JsonConvert.DeserializeObject<CreateUserResponse>(apiAnswer);
                     if (!createUserResponse.IsSuccess)
                     {
-                        NotifyError(createUserResponse.Message);
+                        NotifyErrorLocalized(createUserResponse.Message);
                         return View(registerVM);
                     }
-                    NotifySuccess(createUserResponse.Message);
+                    NotifySuccessLocalized(createUserResponse.Message);
                     return RedirectToAction("Login", "Login");
                 }
             }
@@ -253,14 +253,13 @@ namespace AtSepete.UI.Controllers
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
                         NotifySuccessLocalized(loginUser.Message);
-                        _configuration["TokenMiddleware:Token"] = loginUser.Data.AccessToken;
                         return RedirectToAction("Index", userRole, new {area=userRole});//login olunca yönleneceği sayfa areasına göre yöneleceği ilk sayfa!
 
                     }
                     else
                     {
                         NotifyErrorLocalized(loginUser.Message);
-                        return RedirectToAction("Login", "Login");//giriş yapılamazsa!!
+                        return View();//giriş yapılamazsa!!
                     }
 
 
