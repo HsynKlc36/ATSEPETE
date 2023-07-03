@@ -17,7 +17,7 @@ namespace AtSepete.UI.FluentValidatiors.AdminValidators
          .NotEmpty()
          .WithName("Ürün Adı")
          .WithMessage("{PropertyName} alanı boş bırakılamaz.")
-         .Length(2, 50)
+         .Length(2, 150)
          .WithName("Ürün Adı")
          .WithMessage("{PropertyName}  {MinLength} - {MaxLength} aralığında olmak zorundadır.")
          .Matches(new Regex(@"^[a-zA-ZıİğĞüÜşŞöÖçÇ\s\d\W]+$"))
@@ -27,9 +27,9 @@ namespace AtSepete.UI.FluentValidatiors.AdminValidators
        .NotEmpty()
        .WithName("Ürün Açıklaması")
        .WithMessage("{PropertyName} alanı boş bırakılamaz.")
-       .Length(2, 150)
+       .MinimumLength(2)
        .WithName("Ürün Açıklaması")
-       .WithMessage("{PropertyName}  {MinLength} - {MaxLength} karakter aralığında olmak zorundadır.")
+       .WithMessage("{PropertyName} en az {MinLength} karakter olmak zorundadır.")
        .Matches(new Regex(@"^[a-zA-ZıİğĞüÜşŞöÖçÇ\s\d\W]+$"))
        .WithMessage("lütfen Sadece harf,rakam ve özel karakter giriniz");
 

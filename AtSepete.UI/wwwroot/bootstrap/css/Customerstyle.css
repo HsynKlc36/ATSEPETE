@@ -1180,7 +1180,8 @@ ol {
 
 .sidebar__item__color {
     float: left;
-    width: 40%;
+    /*width: 40%;*/
+    margin-left: 3px;
 }
 
     .sidebar__item__color.sidebar__item__color--white label:after {

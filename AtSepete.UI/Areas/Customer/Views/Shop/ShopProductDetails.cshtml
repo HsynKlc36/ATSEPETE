@@ -161,10 +161,12 @@
             addToCartButton.style.backgroundColor = '#f7cdd0';
             addToCartButton.style.borderColor = '#f7cdd0';
 
-            // Sepete ekle düğmesine tıklama işlemi
-            addToCartButton.onclick = function () {
-                addToCartProductDetails(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath,item.productStock);
-            };
+
+            addToCartButton.onclick = (function (item) {
+                return function () {
+                    addToCartProductDetails(item.productId, item.marketId, item.productTitle, item.productName, item.productQuantity, item.productUnit, item.marketName, item.productPrice, item.productPhotoPath, item.productStock);
+                };
+            })(item);
 
             productDiv.appendChild(addToCartButton);
         }

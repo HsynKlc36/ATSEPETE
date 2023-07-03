@@ -1,5 +1,6 @@
 ﻿using AtSepete.UI.Areas.Admin.Models.ProductMarketVMs;
 using FluentValidation;
+using System.Globalization;
 
 namespace AtSepete.UI.FluentValidatiors.AdminValidators
 {
@@ -33,22 +34,23 @@ namespace AtSepete.UI.FluentValidatiors.AdminValidators
             })
             .WithMessage("{PropertyName} alanına yalnızca sayısal değer girilmelidir ve sıfırdan büyük  olmalıdır.");
 
-
             RuleFor(x => x.Price)
-           .NotEmpty()
-          .WithName("Market Ürün Fiyatı")
-          .WithMessage("{PropertyName} alanı boş bırakılamaz")
-          .Must(x =>
-          {
-              if (x == null)
-                  return false;
+                      .NotEmpty()
+                     .WithName("Market Ürün Fiyatı")
+                     .WithMessage("{PropertyName} alanı boş bırakılamaz")
+                     .Must(x =>
+                     {
+                         if (x == null)
+                             return false;
 
-              if (!int.TryParse(x.ToString(), out int result))
-                  return false;
+                         var stringValue = x.ToString().Replace(',', '.');
+                         if (!decimal.TryParse(stringValue, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal result))
+                             return false;
 
-              return result > 0;
-          })
-            .WithMessage("{PropertyName} alanına yalnızca sayısal değer girilmelidir ve sıfırdan büyük  olmalıdır.");
+                         return result > 0;
+
+                     })
+                       .WithMessage("{PropertyName} alanına yalnızca sayısal değer girilmelidir ve sıfırdan büyük  olmalıdır.");
         }
     }
     

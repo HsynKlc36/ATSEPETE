@@ -38,7 +38,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.CategoryId)
             </th>
-            <th></th>
+            <th>İşlemler</th>
         </tr>
     </thead>
     <tbody>
@@ -66,7 +66,10 @@
                     @Html.DisplayFor(modelItem => item.Unit)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    <a href="#" style="color:black;" data-toggle="tooltip" title="@item.Description">
+                        @item.Description.Substring(0, 25)...
+                    </a>
+                    
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Title)
@@ -135,5 +138,12 @@
                 });
             }
         });
+    });
+</script>
+
+     
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
     });
 </script>

@@ -48,7 +48,7 @@ namespace AtSepete.DataAccess.SeedData
                 CreatedDate = DateTime.Now,
                 Gender = Gender.Male,
                 PhoneNumber = "05555555555",
-                LockoutEnabled = false,
+                LockoutEnabled = true,
                 IsActive = true,
                 Role = Role.Admin
 
