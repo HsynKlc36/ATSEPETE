@@ -11,10 +11,7 @@ namespace AtSepete.Business.CloudinaryImageUploader
 {
     public static class ImageUploaderService //bir bulut sunucusunda fotoğraflarımızı depolayacaktır.Cloudinary de!
     {
-        private static Account account = new Account(
-                 "df70ifqzq",
-                 "991312396234646",
-                  "sgSBwEpi-68kJQQG5jHsx4bnrHA");
+        private static Account account = new Account();
 
         private static Cloudinary _cloudinary = new Cloudinary(account);
         #region UI SaveImageAsync metodu
